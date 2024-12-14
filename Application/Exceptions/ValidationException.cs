@@ -11,7 +11,7 @@ public class ValidationException : Exception
         Errors = new Dictionary<string, string[]>();   
     }
 
-    public ValidationException(IEnumerable<ValidationFailure> failures)  : this
+    public ValidationException(IEnumerable<ValidationFailure> failures)  : this()
     {
         foreach (var failure in failures)
         {
