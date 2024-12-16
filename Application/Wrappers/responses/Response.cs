@@ -1,4 +1,6 @@
-﻿namespace Application.Wrappers.responses;
+﻿using Application.Wrappers.common.responses;
+
+namespace Application.Wrappers.responses;
 
 public class Response<T> : BaseResponse
 {

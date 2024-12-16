@@ -5,7 +5,7 @@ namespace Domain.Entities;
 
 public class Customer : BaseEntity
 {
-
+    public Guid CustomerId { get; set; }
     public string Name { get; set; }
     public DateTime Birthdate { get; set; }
     public string Telefono { get; set; }

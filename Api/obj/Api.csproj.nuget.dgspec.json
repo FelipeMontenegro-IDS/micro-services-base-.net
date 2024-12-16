@@ -29,6 +29,12 @@
             "projectReferences": {
               "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj": {
                 "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj"
+              },
+              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj"
+              },
+              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj"
               }
             }
           }
@@ -45,9 +51,21 @@
           "dependencies": {
             "MediatR": {
               "target": "Package",
-              "version": "[12.4.1, )"
+              "version": "[11.0.0, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
               "version": "[7.0.20, )"
             },
@@ -101,7 +119,11 @@
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -114,6 +136,10 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "Ardalis.Specification": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[12.0.1, )"
@@ -128,7 +154,210 @@
             },
             "MediatR.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
-              "version": "[11.1.0, )"
+              "version": "[11.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.410/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj",
+        "projectName": "Domain",
+        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj",
+        "packagesPath": "/Users/isw21/.nuget/packages/",
+        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/obj/",
+        "projectStyle": "PackageReference",
+        "UsingMicrosoftNETSdk": false,
+        "configFilePaths": [
+          "/Users/isw21/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.410/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj",
+        "projectName": "Persistence",
+        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj",
+        "packagesPath": "/Users/isw21/.nuget/packages/",
+        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/obj/",
+        "projectStyle": "PackageReference",
+        "UsingMicrosoftNETSdk": false,
+        "configFilePaths": [
+          "/Users/isw21/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj"
+              },
+              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Ardalis.Specification.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Microsoft.Extensions.Options.ConfigurationExtensions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.410/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj",
+        "projectName": "Shared",
+        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj",
+        "packagesPath": "/Users/isw21/.nuget/packages/",
+        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/obj/",
+        "projectStyle": "PackageReference",
+        "UsingMicrosoftNETSdk": false,
+        "configFilePaths": [
+          "/Users/isw21/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.Extensions.Options.ConfigurationExtensions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
             }
           },
           "imports": [

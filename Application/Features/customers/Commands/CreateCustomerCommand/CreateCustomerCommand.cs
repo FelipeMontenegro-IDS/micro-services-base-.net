@@ -1,7 +1,7 @@
 ﻿using Application.Wrappers.responses;
 using MediatR;
 
-namespace Application.Feautres.customers.Commands.CreateCustomerCommand;
+namespace Application.Features.customers.Commands.CreateCustomerCommand;
 
 public class CreateCustomerCommand : IRequest<Response<int>>
 {
