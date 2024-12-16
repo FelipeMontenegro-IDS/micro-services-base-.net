@@ -958,40 +958,33 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\FELIPE\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/isw21/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Api\\Api.csproj",
+      "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Api/Api.csproj",
       "projectName": "Api",
-      "projectPath": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Api\\Api.csproj",
-      "packagesPath": "C:\\Users\\FELIPE\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Api\\obj\\",
+      "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Api/Api.csproj",
+      "packagesPath": "/Users/isw21/.nuget/packages/",
+      "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Api/obj/",
       "projectStyle": "PackageReference",
       "UsingMicrosoftNETSdk": false,
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\FELIPE\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/isw21/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Application\\Application.csproj": {
-              "projectPath": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Application\\Application.csproj"
+            "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj": {
+              "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj"
             }
           }
         }
@@ -1038,7 +1031,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\FELIPE\\.dotnet\\sdk\\7.0.410\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.410/RuntimeIdentifierGraph.json"
       }
     }
   },

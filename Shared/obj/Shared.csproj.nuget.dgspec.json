@@ -1,32 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Shared\\Shared.csproj": {}
+    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj": {}
   },
   "projects": {
-    "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Shared\\Shared.csproj": {
+    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Shared\\Shared.csproj",
+        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj",
         "projectName": "Shared",
-        "projectPath": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Shared\\Shared.csproj",
-        "packagesPath": "C:\\Users\\FELIPE\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Shared\\obj\\",
+        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj",
+        "packagesPath": "/Users/isw21/.nuget/packages/",
+        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/obj/",
         "projectStyle": "PackageReference",
         "UsingMicrosoftNETSdk": false,
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\FELIPE\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/isw21/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -60,7 +54,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\FELIPE\\.dotnet\\sdk\\7.0.410\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.410/RuntimeIdentifierGraph.json"
         }
       }
     }
