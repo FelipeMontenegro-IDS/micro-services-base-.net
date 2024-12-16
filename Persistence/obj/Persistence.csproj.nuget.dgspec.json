@@ -1,26 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj": {}
+    "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Persistence\\Persistence.csproj": {}
   },
   "projects": {
-    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj": {
+    "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Persistence\\Persistence.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj",
+        "projectUniqueName": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Persistence\\Persistence.csproj",
         "projectName": "Persistence",
-        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj",
-        "packagesPath": "/Users/isw21/.nuget/packages/",
-        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/obj/",
+        "projectPath": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Persistence\\Persistence.csproj",
+        "packagesPath": "C:\\Users\\FELIPE\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\FELIPE\\RiderProjects\\micro-services-base-.net\\Persistence\\obj\\",
         "projectStyle": "PackageReference",
         "UsingMicrosoftNETSdk": false,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/isw21/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\FELIPE\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -54,7 +60,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.410/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\FELIPE\\.dotnet\\sdk\\7.0.410\\RuntimeIdentifierGraph.json"
         }
       }
     }
