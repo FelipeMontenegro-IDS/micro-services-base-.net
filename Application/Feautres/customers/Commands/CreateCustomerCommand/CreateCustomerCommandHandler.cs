@@ -11,6 +11,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
 
     public async  Task<Response<int>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
+        var person = new List<int>();
         throw new NotImplementedException(); 
     }
 }
