@@ -1,1 +1,20 @@
+# Archivos generados por el proyecto
+bin/
+obj/
+packages/
+*.user
+*.suo
+*.tmp
+*.cache
 
+# Archivos específicos de tu entorno
+*.bak
+~$
+.vs/
+
+# Otros patrones útiles
+.vscode/
+*.log
+
+# Para Rider
+.idea/
