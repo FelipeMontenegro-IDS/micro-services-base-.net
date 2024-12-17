@@ -11,20 +11,20 @@ public class Customer : BaseEntity
     public string Telefono { get; set; }
     public string Email { get; set; }
     public string Address { get; set; }
-    public int _Age
-    {
-        get 
-        {
-            if (this._Age <= 0)
-            {
-                this._Age = new DateTime(DateTime.Now.Subtract(Birthdate).Ticks).Year - 1;
-            }
-
-            return this._Age;
-        }
-
-        set => throw new NotImplementedException();
-    }
+    // public int _Age
+    // {
+    //     get 
+    //     {
+    //         if (this._Age <= 0)
+    //         {
+    //             this._Age = new DateTime(DateTime.Now.Subtract(Birthdate).Ticks).Year - 1;
+    //         }
+    //
+    //         return this._Age;
+    //     }
+    //
+    //     set => throw new NotImplementedException();
+    // }
 
     public Customer()
     {

@@ -1,21 +1,19 @@
+using System.Collections;
 using FluentValidation.Results;
 
 namespace Application.Exceptions;
 
 public class ValidationException : Exception
 {
-    public Dictionary<string,string[]> Errors { get; set; }
-    
+    public Dictionary<string, List<string>> Errors { get; set; }
+
     public ValidationException() : base("One or more validation failures have occurred.")
     {
-        Errors = new Dictionary<string, string[]>();   
+        Errors = new();
     }
 
-    public ValidationException(IEnumerable<ValidationFailure> failures)  : this()
+    public ValidationException(Dictionary<string, List<string>> errors) : this()
     {
-        foreach (var failure in failures)
-        {
-            Errors.Add(failure.PropertyName, failure.ErrorMessage.Split(','));
-        }
+        Errors = errors;
     }
 }

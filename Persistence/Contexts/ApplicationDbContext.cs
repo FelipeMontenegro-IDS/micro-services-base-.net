@@ -9,7 +9,7 @@ namespace Persistence.Contexts;
 public class ApplicationDbContext : DbContext
 {
     private readonly IDateTimeService _dateTime;
-    public DbSet<Customer> Customers; 
+    public DbSet<Customer> Customers { get; set; }
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IDateTimeService dateTime) : base(options)
     {

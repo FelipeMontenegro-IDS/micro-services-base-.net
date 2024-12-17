@@ -1,3 +1,4 @@
+using Api.Extensions;
 using Application;
 using Persistence;
 using Shared;
@@ -9,6 +10,7 @@ builder.Services.AddPersistenceInfraestructure(builder.Configuration);
 builder.Services.AddSharedInfrastructure(builder.Configuration);
 builder.Services.AddApplicationLayer();
 builder.Services.AddControllers();
+builder.Services.AddApiVersioningExtension();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -25,7 +27,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseErrorHandlingMiddleware();
 app.MapControllers();
 
 app.Run();

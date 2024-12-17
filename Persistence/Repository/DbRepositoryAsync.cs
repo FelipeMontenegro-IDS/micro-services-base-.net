@@ -11,10 +11,11 @@ public class DbRepositoryAsync<T> : RepositoryBase<T>, IWriteRepositoryAsync<T>,
     IReadRepositoryAsync<T>
     where T : class
 {
-    private readonly ApplicationDbContext? _dbContext;
+    private readonly ApplicationDbContext _dbContext;
     
-    public DbRepositoryAsync(DbContext dbContext) : base(dbContext)
+    public DbRepositoryAsync(ApplicationDbContext dbContext) : base(dbContext)
     {
-        _dbContext = dbContext as ApplicationDbContext;
+        _dbContext = dbContext ?? 
+                     throw new ArgumentNullException(nameof(dbContext), "The provided DbContext is null.");    
     }
 }

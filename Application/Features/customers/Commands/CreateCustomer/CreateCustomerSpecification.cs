@@ -3,7 +3,7 @@ using Application.Wrappers.common.responses;
 using Ardalis.Specification;
 using Domain.Entities;
 
-namespace Application.Features.customers.Commands.CreateCustomerCommand;
+namespace Application.Features.customers.Commands.CreateCustomer;
 
 public class CreateCustomerSpecification : BaseSpecification<Customer>
 {

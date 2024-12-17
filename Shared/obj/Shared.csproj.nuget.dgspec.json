@@ -59,9 +59,17 @@
               "target": "Package",
               "version": "[11.11.0, )"
             },
+            "MediatR": {
+              "target": "Package",
+              "version": "[11.0.0, )"
+            },
             "MediatR.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[11.0.0, )"
+            },
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.2.2, )"
             }
           },
           "imports": [
