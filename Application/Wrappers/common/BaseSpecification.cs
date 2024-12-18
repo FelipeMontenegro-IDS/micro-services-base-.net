@@ -1,35 +1,55 @@
 using System.Linq.Expressions;
 using Ardalis.Specification;
 
-namespace Application.Wrappers.common.responses;
+namespace Application.Wrappers.Common.Responses;
 
-public class BaseSpecification<T> : Specification<T> where T : class
+public abstract class BaseSpecification<T> : Specification<T> where T : class
 {
-    public BaseSpecification(Expression<Func<T, bool>>? expression = null,
-        Expression<Func<T, object?>> orderBy = null!,
-        List<Expression<Func<T, object>>>? includes = null)
+    protected BaseSpecification(
+        Expression<Func<T, bool>>? criteria = null,
+        Expression<Func<T, object?>>? orderBy = null,
+        Expression<Func<T, object?>>? orderByDescending = null,
+        List<Expression<Func<T, object>>>? includes = null,
+        int? skip = null,
+        int? take = null)
     {
-        if (expression != null) Query.Where(expression, false);
-        ApplyOrderBy(orderBy);
-        ApplyIncludes(includes);
-    }
-    
-    private void ApplyOrderBy(Expression<Func<T, object?>> orderBy)
-    {
-        if (orderBy != null)
-        {
-            Query.OrderBy(orderBy);
-        }
-    }
+        // Aplicar criterios
+        if (criteria != null) Query.Where(criteria);
 
-    private void ApplyIncludes(List<Expression<Func<T, object>>>? includes)
-    {
-        if (includes != null && includes.Any())
+        // Ordenamientos
+        if (orderBy != null) Query.OrderBy(orderBy);
+        if (orderByDescending != null) Query.OrderByDescending(orderByDescending);
+
+        // Relaciones (Includes)
+        if (includes != null)
         {
             foreach (var include in includes)
-            {
-                Query.Include(include,false);
-            }
+                Query.Include(include);
         }
+
+        // Paginación
+        if (skip.HasValue) Query.Skip(skip.Value);
+        if (take.HasValue) Query.Take(take.Value);
+    }
+
+    // Métodos adicionales para extender comportamiento
+    public void AddInclude(Expression<Func<T, object>> includeExpression)
+    {
+        Query.Include(includeExpression);
+    }
+
+    public void AddOrderBy(Expression<Func<T, object?>> orderByExpression)
+    {
+        Query.OrderBy(orderByExpression);
+    }
+
+    public void AddOrderByDescending(Expression<Func<T, object?>> orderByDescendingExpression)
+    {
+        Query.OrderByDescending(orderByDescendingExpression);
+    }
+
+    public void ApplyPagination(int skip, int take)
+    {
+        Query.Skip(skip).Take(take);
     }
 }

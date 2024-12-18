@@ -25,19 +25,28 @@ public class ErrorHandlerMiddleware
         {
             var response = context.Response;
             response.ContentType = "application/json";
+            
             var responseModel = new ErrorApiResponse { Message = error.Message };
-
+            
+            var fullRequestUri = GetUri(context);
+            var (offendingFile, offendingLine) = ExtractFileAndLineFromStackTrace(error.StackTrace);            
+            
             switch (error)
             {
                 case ApiExcepcion e:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    responseModel = CreateResponse(e, (int)HttpStatusCode.BadRequest);
+                    responseModel = CreateResponse(e, (int)HttpStatusCode.BadRequest,                     fullRequestUri,
+                        offendingFile,
+                        offendingLine);
                     break;
                 case Application.Exceptions.ValidationException e:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     responseModel = CreateResponse(
                         e,
                         (int)HttpStatusCode.BadRequest,
+                        fullRequestUri,
+                        offendingFile,
+                        offendingLine,
                         e.Errors.ToDictionary(
                             k => k.Key,
                             v => v.Value.ToList()
@@ -46,20 +55,33 @@ public class ErrorHandlerMiddleware
                     break;
                 case KeyNotFoundException e:
                     response.StatusCode = (int)HttpStatusCode.NotFound;
-                    responseModel = CreateResponse(e, (int)HttpStatusCode.NotFound);
+                    responseModel = CreateResponse(e, (int)HttpStatusCode.NotFound,                     fullRequestUri,
+                        offendingFile,
+                        offendingLine);
                     break;
                 default:
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    responseModel = CreateResponse(error, (int)HttpStatusCode.InternalServerError);
+                    responseModel = CreateResponse(error, (int)HttpStatusCode.InternalServerError,                     fullRequestUri,
+                        offendingFile,
+                        offendingLine);
                     break;
             }
 
-            var result = JsonSerializer.Serialize(responseModel);
+            var result = JsonSerializer.Serialize(responseModel, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
             await response.WriteAsync(result);
         }
     }
 
-    private ErrorApiResponse CreateResponse(Exception exception, int statusCode,
+    private ErrorApiResponse CreateResponse(
+        Exception exception, 
+        int statusCode,
+        string fullRequestUri,
+        string? offendingFile,
+        string? offendingLine,
         Dictionary<string, List<string>> errors = null!)
     {
         return new ErrorApiResponse
@@ -71,7 +93,39 @@ public class ErrorHandlerMiddleware
                 : new Dictionary<string, List<string>>
                 {
                     { "error", new List<string> { exception.Message } }
-                }
+                },
+            additionalDetails = new AdditionalDetails()
+            {
+                FullRequestUri = fullRequestUri,
+                File = offendingFile,
+                Line = offendingLine
+            }
         };
+    }
+
+    private string  GetUri(HttpContext context)
+    {
+        return $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
+    }
+    
+    private (string? File, string? Line) ExtractFileAndLineFromStackTrace(string? stackTrace)
+    {
+        if (string.IsNullOrEmpty(stackTrace))
+        {
+            return (null, null);
+        }
+
+        var stackLines = stackTrace.Split('\n'); // Dividir por líneas el StackTrace
+        var firstRelevantLine = stackLines.FirstOrDefault(line => line.Contains(".cs"));
+        var fileInfo = firstRelevantLine?.Split(':');
+
+        if (fileInfo != null && fileInfo.Length >= 2)
+        {
+            var file = fileInfo[0]?.Trim(); // Archivo donde ocurrió la excepción
+            var line = fileInfo[1]?.Trim(); // Línea de código
+            return (file, line);
+        }
+
+        return (null, null);
     }
 }

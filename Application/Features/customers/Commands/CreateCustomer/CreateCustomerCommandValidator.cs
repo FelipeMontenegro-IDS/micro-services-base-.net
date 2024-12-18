@@ -15,7 +15,9 @@ public class CreateCustomerCommandValidator : AbstractValidator<CreateCustomerCo
 
         RuleFor(p => p.Email)
             .NotEmpty()
-            .WithMessage("is required.");
+            .WithMessage("is required.")
+            .EmailAddress()
+            .WithMessage("The email address you entered is not in the correct format.");
 
         RuleFor(p => p.Telefono)
             .NotEmpty()
