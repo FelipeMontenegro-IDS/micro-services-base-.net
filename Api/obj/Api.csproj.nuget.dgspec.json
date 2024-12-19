@@ -171,6 +171,10 @@
             "Microsoft.AspNetCore.Http": {
               "target": "Package",
               "version": "[2.2.2, )"
+            },
+            "Microsoft.AspNetCore.Mvc": {
+              "target": "Package",
+              "version": "[2.2.0, )"
             }
           },
           "imports": [
@@ -295,6 +299,10 @@
             "Ardalis.Specification.EntityFrameworkCore": {
               "target": "Package",
               "version": "[7.0.0, )"
+            },
+            "Azure.Messaging.ServiceBus": {
+              "target": "Package",
+              "version": "[7.18.2, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",

@@ -25,17 +25,22 @@ public class ErrorHandlerMiddleware
         {
             var response = context.Response;
             response.ContentType = "application/json";
-            
+
+            var httpMethod = context.Request.Method;
             var responseModel = new ErrorApiResponse { Message = error.Message };
-            
+
+
             var fullRequestUri = GetUri(context);
-            var (offendingFile, offendingLine) = ExtractFileAndLineFromStackTrace(error.StackTrace);            
-            
+            var (offendingFile, offendingLine) = ExtractFileAndLineFromStackTrace(error.StackTrace);
+
             switch (error)
             {
                 case ApiExcepcion e:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    responseModel = CreateResponse(e, (int)HttpStatusCode.BadRequest,                     fullRequestUri,
+                    responseModel = CreateResponse(
+                        e, (int)HttpStatusCode.BadRequest,
+                        httpMethod,
+                        fullRequestUri,
                         offendingFile,
                         offendingLine);
                     break;
@@ -44,6 +49,7 @@ public class ErrorHandlerMiddleware
                     responseModel = CreateResponse(
                         e,
                         (int)HttpStatusCode.BadRequest,
+                        httpMethod,
                         fullRequestUri,
                         offendingFile,
                         offendingLine,
@@ -55,15 +61,26 @@ public class ErrorHandlerMiddleware
                     break;
                 case KeyNotFoundException e:
                     response.StatusCode = (int)HttpStatusCode.NotFound;
-                    responseModel = CreateResponse(e, (int)HttpStatusCode.NotFound,                     fullRequestUri,
+                    responseModel = CreateResponse
+                    (e,
+                        (int)HttpStatusCode.NotFound,
+                        httpMethod,
+                        fullRequestUri,
                         offendingFile,
-                        offendingLine);
+                        offendingLine
+                    );
                     break;
                 default:
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    responseModel = CreateResponse(error, (int)HttpStatusCode.InternalServerError,                     fullRequestUri,
+                    responseModel = CreateResponse
+                    (
+                        error,
+                        (int)HttpStatusCode.InternalServerError,
+                        httpMethod,
+                        fullRequestUri,
                         offendingFile,
-                        offendingLine);
+                        offendingLine
+                    );
                     break;
             }
 
@@ -77,8 +94,9 @@ public class ErrorHandlerMiddleware
     }
 
     private ErrorApiResponse CreateResponse(
-        Exception exception, 
+        Exception exception,
         int statusCode,
+        string httpMethod,
         string fullRequestUri,
         string? offendingFile,
         string? offendingLine,
@@ -88,6 +106,8 @@ public class ErrorHandlerMiddleware
         {
             StatusCode = statusCode,
             Message = exception.Message,
+            httpMethod = httpMethod,
+            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
             Errors = exception is Application.Exceptions.ValidationException
                 ? errors
                 : new Dictionary<string, List<string>>
@@ -103,11 +123,12 @@ public class ErrorHandlerMiddleware
         };
     }
 
-    private string  GetUri(HttpContext context)
+    private string GetUri(HttpContext context)
     {
-        return $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
+        //{context.Request.Scheme}://{context.Request.Host}
+        return $"{context.Request.Path}{context.Request.QueryString}";
     }
-    
+
     private (string? File, string? Line) ExtractFileAndLineFromStackTrace(string? stackTrace)
     {
         if (string.IsNullOrEmpty(stackTrace))

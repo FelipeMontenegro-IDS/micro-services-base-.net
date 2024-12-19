@@ -20,8 +20,8 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
     public async Task<Response<int>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
         var newCustomer = _mapper.Map<Customer>(request);
-        var data = await _repository.AddAsync(newCustomer);
-
+        var data = await _repository.AddAsync(newCustomer, cancellationToken);
+        if (data == null) return null!;
         return new Response<int>(1, "correct.");
     }
 }

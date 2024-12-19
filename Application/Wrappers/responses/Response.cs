@@ -2,14 +2,12 @@
 
 namespace Application.Wrappers.responses;
 
-public class Response<T> : BaseResponse
+public class Response<T> : BaseResponse<T>
 {
     public Response()
     {
     }
-
-    public T? Data { get; set; }
-
+    
     public Response(T? data)
     {
         Data = data;
@@ -19,13 +17,17 @@ public class Response<T> : BaseResponse
     {
         Data = data;
         Message = message;
-        Succeeded = true;
     }
 
     public Response(string message)
     {
         Message = message;
-        Succeeded = false;
+    }
+
+    public Response(string message, T? data)
+    {
+        Data = data;
+        Message = message;
     }
 
 }

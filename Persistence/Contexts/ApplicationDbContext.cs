@@ -25,6 +25,7 @@ public class ApplicationDbContext : DbContext
             {
                 case EntityState.Added:
                     entry.Entity.Created = _dateTime.nowUtc;
+                    entry.Entity.Modified = _dateTime.nowUtc;
                     break;
                 case EntityState.Modified:
                     entry.Entity.Modified = _dateTime.nowUtc;

@@ -1,5 +1,6 @@
 using Api.Extensions;
 using Application;
+using Application.Filters;
 using Persistence;
 using Shared;
 
@@ -9,7 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceInfraestructure(builder.Configuration);
 builder.Services.AddSharedInfrastructure(builder.Configuration);
 builder.Services.AddApplicationLayer();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiResponseFilter>();
+});
+
 builder.Services.AddApiVersioningExtension();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
