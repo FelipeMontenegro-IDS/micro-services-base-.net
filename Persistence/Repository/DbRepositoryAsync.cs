@@ -1,8 +1,5 @@
 using Application.Interfaces;
-using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
-using Domain.Common;
-using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
 
 namespace Persistence.Repository;

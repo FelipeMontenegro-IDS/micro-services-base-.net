@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces;
-using Application.Wrappers.responses;
+using Application.Wrappers.Responses;
 using AutoMapper;
 using Domain.Entities;
 using MediatR;

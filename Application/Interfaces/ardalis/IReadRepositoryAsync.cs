@@ -1,5 +1,4 @@
 using Ardalis.Specification;
-using Domain.Common;
 
 namespace Application.Interfaces;
 

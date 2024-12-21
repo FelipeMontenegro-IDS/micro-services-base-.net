@@ -1,7 +1,5 @@
 using System.Linq.Expressions;
-using Application.Wrappers.common.responses;
-using Application.Wrappers.Common.Responses;
-using Ardalis.Specification;
+using Application.Wrappers.Bases;
 using Domain.Entities;
 
 namespace Application.Features.customers.Commands.CreateCustomer;

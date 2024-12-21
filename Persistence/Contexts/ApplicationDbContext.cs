@@ -1,6 +1,6 @@
 using System.Reflection;
 using Application.Interfaces;
-using Domain.Common;
+using Domain.Bases;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

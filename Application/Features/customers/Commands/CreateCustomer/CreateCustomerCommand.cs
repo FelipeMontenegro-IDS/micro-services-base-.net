@@ -1,4 +1,4 @@
-﻿using Application.Wrappers.responses;
+﻿using Application.Wrappers.Responses;
 using MediatR;
 
 namespace Application.Features.customers.Commands.CreateCustomer;

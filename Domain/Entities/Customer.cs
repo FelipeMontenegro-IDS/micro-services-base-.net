@@ -1,5 +1,5 @@
 using System.Reflection.PortableExecutable;
-using Domain.Common;
+using Domain.Bases;
 
 namespace Domain.Entities;
 

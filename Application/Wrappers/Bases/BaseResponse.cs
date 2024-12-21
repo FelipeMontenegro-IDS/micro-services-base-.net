@@ -1,4 +1,4 @@
-﻿namespace Application.Wrappers.common.responses;
+﻿namespace Application.Wrappers.Bases;
 
 public abstract class BaseResponse<T>
 {

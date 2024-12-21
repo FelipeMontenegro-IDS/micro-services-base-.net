@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using Application.Exceptions;
-using Application.Wrappers.responses;
+using Application.Wrappers.Responses;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Middlewares;

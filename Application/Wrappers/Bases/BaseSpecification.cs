@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Ardalis.Specification;
 
-namespace Application.Wrappers.Common.Responses;
+namespace Application.Wrappers.Bases;
 
 public abstract class BaseSpecification<T> : Specification<T> where T : class
 {

@@ -1,6 +1,6 @@
-﻿using Application.Wrappers.common.responses;
+﻿using Application.Wrappers.Bases;
 
-namespace Application.Wrappers.responses;
+namespace Application.Wrappers.Responses;
 
 public class Response<T> : BaseResponse<T>
 {

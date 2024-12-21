@@ -1,4 +1,4 @@
-namespace Application.Wrappers.responses;
+namespace Application.Wrappers.Responses;
 
 public class ResponsePagedResult<T>
 {

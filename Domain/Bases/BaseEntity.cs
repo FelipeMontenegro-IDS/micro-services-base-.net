@@ -1,4 +1,4 @@
-namespace Domain.Common;
+namespace Domain.Bases;
 
 public abstract class BaseEntity
 {

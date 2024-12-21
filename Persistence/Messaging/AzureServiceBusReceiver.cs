@@ -21,10 +21,7 @@ public class AzureServiceBusReceiver<T> : IMessageReceiver<T>
             var body = args.Message.Body.ToString();
             var message = JsonSerializer.Deserialize<T>(body);
 
-            if (message != null)
-            {
-                await processMessageAsync(message);
-            }
+            if (message != null) await processMessageAsync(message);
 
             await args.CompleteMessageAsync(args.Message);
         };
