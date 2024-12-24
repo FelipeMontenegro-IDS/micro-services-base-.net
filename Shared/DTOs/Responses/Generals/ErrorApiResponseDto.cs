@@ -1,6 +1,6 @@
-namespace Application.Wrappers.Responses;
+namespace Shared.DTOs.Responses.Generals;
 
-public class ErrorApiResponse
+public class ErrorApiResponseDto
 {
     public int StatusCode { get; set; }
     public string httpMethod { get; set; }
@@ -9,10 +9,10 @@ public class ErrorApiResponse
     public string Message { get; set; }
     public object Data { get; set; }
     public Dictionary<string,List<string>> Errors { get; set; }
-    public AdditionalDetails additionalDetails { get; set; }
+    public AdditionalDetailsDto additionalDetails { get; set; }
 }
 
-public class AdditionalDetails
+public class AdditionalDetailsDto
 {
     public string FullRequestUri { get; set; }
     public string? File { get; set; }

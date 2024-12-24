@@ -8,4 +8,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Application
-build_property.ProjectDir = /Users/isw21/RiderProjects/micro-service-base-pruebas/Application/
+build_property.ProjectDir = /Users/isw21/RiderProjects/micro-services-base-.net/Application/

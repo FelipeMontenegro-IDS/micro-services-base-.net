@@ -1,6 +1,6 @@
-using Application.Wrappers.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Shared.DTOs.Responses.Generals;
 
 namespace Application.Filters;
 
@@ -17,7 +17,7 @@ public class ApiResponseFilter : IActionFilter
         {
             var httpMethod = context.HttpContext.Request.Method; // Tipo de método HTTP (GET, POST, PUT, DELETE)
             var data = objectResult.Value; 
-            ApiResponse<object> apiResponse;
+            ApiResponseDto<object> apiResponse;
             
             switch (httpMethod)
             {
@@ -26,7 +26,7 @@ public class ApiResponseFilter : IActionFilter
                     break;
 
                 case "POST":
-                    apiResponse = new ApiResponse<object>(
+                    apiResponse = new ApiResponseDto<object>(
                         objectResult.StatusCode ?? 201,
                         "Resource created successfully.",
                         data
@@ -34,7 +34,7 @@ public class ApiResponseFilter : IActionFilter
                     break;
 
                 case "PUT":
-                    apiResponse = new ApiResponse<object>(
+                    apiResponse = new ApiResponseDto<object>(
                         objectResult.StatusCode ?? 200,
                         "Resource updated successfully.",
                         data
@@ -42,14 +42,14 @@ public class ApiResponseFilter : IActionFilter
                     break;
 
                 case "DELETE":
-                    apiResponse = new ApiResponse<object>(
+                    apiResponse = new ApiResponseDto<object>(
                         objectResult.StatusCode ?? 200,
                         "Resource deleted successfully."
                     );
                     break;
 
                 default:
-                    apiResponse = new ApiResponse<object>(
+                    apiResponse = new ApiResponseDto<object>(
                         objectResult.StatusCode ?? 200,
                         "Request handled successfully.",
                         data
@@ -66,12 +66,12 @@ public class ApiResponseFilter : IActionFilter
         }
     }
     
-    private ApiResponse<object> HandleGetResponse(object data)
+    private ApiResponseDto<object> HandleGetResponse(object data)
     {
         // Si `data` es nulo (por ejemplo, un recurso no encontrado)
         if (data == null)
         {
-            return new ApiResponse<object>(
+            return new ApiResponseDto<object>(
                 404,
                 "Resource not found.",
                 null
@@ -79,9 +79,9 @@ public class ApiResponseFilter : IActionFilter
         }
 
         // Detectar si es "paginación", "arreglo de datos", o un objeto único
-        if (data is ResponsePagedResult<Object> pagedResult) // Manejo de paginación
+        if (data is ResponsePagedDto<Object> pagedResult) // Manejo de paginación
         {
-            return new ApiResponse<object>(
+            return new ApiResponseDto<object>(
                 200,
                 "Paged data retrieved successfully.",
                 pagedResult
@@ -89,7 +89,7 @@ public class ApiResponseFilter : IActionFilter
         }
         else if (data is IEnumerable<object> list) // Manejo de listas
         {
-            return new ApiResponse<object>(
+            return new ApiResponseDto<object>(
                 200,
                 "List retrieved successfully.",
                 list
@@ -97,7 +97,7 @@ public class ApiResponseFilter : IActionFilter
         }
         else // Manejo de objetos únicos
         {
-            return new ApiResponse<object>(
+            return new ApiResponseDto<object>(
                 200,
                 "Resource retrieved successfully.",
                 data

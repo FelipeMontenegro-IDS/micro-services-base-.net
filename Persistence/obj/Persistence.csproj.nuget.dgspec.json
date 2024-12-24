@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj": {}
+    "/Users/isw21/RiderProjects/micro-services-base-.net/Persistence/Persistence.csproj": {}
   },
   "projects": {
-    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj": {
+    "/Users/isw21/RiderProjects/micro-services-base-.net/Application/Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj",
+        "projectUniqueName": "/Users/isw21/RiderProjects/micro-services-base-.net/Application/Application.csproj",
         "projectName": "Application",
-        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj",
+        "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Application/Application.csproj",
         "packagesPath": "/Users/isw21/.nuget/packages/",
-        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/obj/",
+        "outputPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Application/obj/",
         "projectStyle": "PackageReference",
         "UsingMicrosoftNETSdk": false,
         "configFilePaths": [
@@ -27,8 +27,11 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj": {
-                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj"
+              "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj"
+              },
+              "/Users/isw21/RiderProjects/micro-services-base-.net/Shared/Shared.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Shared/Shared.csproj"
               }
             }
           }
@@ -96,14 +99,14 @@
         }
       }
     },
-    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj": {
+    "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj",
+        "projectUniqueName": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj",
+        "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj",
         "packagesPath": "/Users/isw21/.nuget/packages/",
-        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/obj/",
+        "outputPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/obj/",
         "projectStyle": "PackageReference",
         "UsingMicrosoftNETSdk": false,
         "configFilePaths": [
@@ -150,14 +153,14 @@
         }
       }
     },
-    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj": {
+    "/Users/isw21/RiderProjects/micro-services-base-.net/Persistence/Persistence.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj",
+        "projectUniqueName": "/Users/isw21/RiderProjects/micro-services-base-.net/Persistence/Persistence.csproj",
         "projectName": "Persistence",
-        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/Persistence.csproj",
+        "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Persistence/Persistence.csproj",
         "packagesPath": "/Users/isw21/.nuget/packages/",
-        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Persistence/obj/",
+        "outputPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Persistence/obj/",
         "projectStyle": "PackageReference",
         "UsingMicrosoftNETSdk": false,
         "configFilePaths": [
@@ -173,14 +176,11 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj": {
-                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj"
+              "/Users/isw21/RiderProjects/micro-services-base-.net/Application/Application.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Application/Application.csproj"
               },
-              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj": {
-                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj"
-              },
-              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj": {
-                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj"
+              "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj": {
+                "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj"
               }
             }
           }
@@ -242,14 +242,14 @@
         }
       }
     },
-    "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj": {
+    "/Users/isw21/RiderProjects/micro-services-base-.net/Shared/Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj",
+        "projectUniqueName": "/Users/isw21/RiderProjects/micro-services-base-.net/Shared/Shared.csproj",
         "projectName": "Shared",
-        "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/Shared.csproj",
+        "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Shared/Shared.csproj",
         "packagesPath": "/Users/isw21/.nuget/packages/",
-        "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Shared/obj/",
+        "outputPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Shared/obj/",
         "projectStyle": "PackageReference",
         "UsingMicrosoftNETSdk": false,
         "configFilePaths": [
@@ -264,11 +264,7 @@
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
-            "projectReferences": {
-              "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj": {
-                "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Application/Application.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -281,9 +277,21 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "Microsoft.Extensions.Options.ConfigurationExtensions": {
+            "Azure.Storage.Blobs": {
+              "target": "Package",
+              "version": "[12.22.2, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
               "target": "Package",
               "version": "[7.0.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "System.Configuration.ConfigurationManager": {
+              "target": "Package",
+              "version": "[6.0.0, )"
             }
           },
           "imports": [

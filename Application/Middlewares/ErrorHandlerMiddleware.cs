@@ -1,8 +1,8 @@
 using System.Net;
 using System.Text.Json;
 using Application.Exceptions;
-using Application.Wrappers.Responses;
 using Microsoft.AspNetCore.Http;
+using Shared.DTOs.Responses.Generals;
 
 namespace Application.Middlewares;
 
@@ -27,7 +27,7 @@ public class ErrorHandlerMiddleware
             response.ContentType = "application/json";
 
             var httpMethod = context.Request.Method;
-            var responseModel = new ErrorApiResponse { Message = error.Message };
+            var responseModel = new ErrorApiResponseDto() { Message = error.Message };
 
 
             var fullRequestUri = GetUri(context);
@@ -93,7 +93,7 @@ public class ErrorHandlerMiddleware
         }
     }
 
-    private ErrorApiResponse CreateResponse(
+    private ErrorApiResponseDto CreateResponse(
         Exception exception,
         int statusCode,
         string httpMethod,
@@ -102,7 +102,7 @@ public class ErrorHandlerMiddleware
         string? offendingLine,
         Dictionary<string, List<string>> errors = null!)
     {
-        return new ErrorApiResponse
+        return new ErrorApiResponseDto
         {
             StatusCode = statusCode,
             Message = exception.Message,
@@ -114,7 +114,7 @@ public class ErrorHandlerMiddleware
                 {
                     { "error", new List<string> { exception.Message } }
                 },
-            additionalDetails = new AdditionalDetails()
+            additionalDetails = new AdditionalDetailsDto()
             {
                 FullRequestUri = fullRequestUri,
                 File = offendingFile,

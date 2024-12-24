@@ -1,9 +1,9 @@
-﻿using Application.Wrappers.Responses;
-using MediatR;
+﻿using MediatR;
+using Shared.DTOs.Responses.Generals;
 
 namespace Application.Features.customers.Commands.CreateCustomer;
 
-public class CreateCustomerCommand : IRequest<Response<int>>
+public class CreateCustomerCommand : IRequest<ResponseDto<int>>
 {
     public string Name { get; set; }
     public DateTime? Birthdate { get; set; }

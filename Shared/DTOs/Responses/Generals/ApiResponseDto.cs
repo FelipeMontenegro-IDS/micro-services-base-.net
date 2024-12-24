@@ -1,35 +1,35 @@
-using Application.Wrappers.Bases;
+using Shared.Bases;
 
-namespace Application.Wrappers.Responses;
+namespace Shared.DTOs.Responses.Generals;
 
-public class ApiResponse<T> : BaseResponse<T>
+public class ApiResponseDto<T> : BaseResponse<T>
 {
     public int StatusCode { get; set; }
     public bool Succeeded  { get; set; }  
     
-    public ApiResponse()
+    public ApiResponseDto()
     {
     }
     
-    public ApiResponse(T? data)
+    public ApiResponseDto(T? data)
     {
         Data = data;
     }
 
-    public ApiResponse(T? data, string message = null!)
+    public ApiResponseDto(T? data, string message = null!)
     {
         Data = data;
         Message = message;
         Succeeded = true;
     }
 
-    public ApiResponse(string message)
+    public ApiResponseDto(string message)
     {
         Message = message;
         Succeeded = false;
     }
 
-    public ApiResponse(int statusCode, string message, T? data)
+    public ApiResponseDto(int statusCode, string message, T? data)
     {
         StatusCode = statusCode;
         Data = data;

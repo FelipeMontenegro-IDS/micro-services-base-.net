@@ -1,6 +1,6 @@
-namespace Application.Wrappers.Responses;
+namespace Shared.DTOs.Responses.Generals;
 
-public class ResponsePagedResult<T>
+public class ResponsePagedDto<T>
 {
     public int CurrentPage { get; set; }
     public int PageSize { get; set; }
@@ -8,7 +8,7 @@ public class ResponsePagedResult<T>
     public int TotalCount { get; set; }
     public IEnumerable<T> Items { get; set; }
 
-    public ResponsePagedResult(IEnumerable<T> items, int count, int pageNumber, int pageSize)
+    public ResponsePagedDto(IEnumerable<T> items, int count, int pageNumber, int pageSize)
     {
         Items = items;
         TotalCount = count;

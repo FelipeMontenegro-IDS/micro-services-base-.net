@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "807nyfPtBtc=",
+  "dgSpecHash": "u+doP0OtWmc=",
   "success": true,
-  "projectFilePath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj",
+  "projectFilePath": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

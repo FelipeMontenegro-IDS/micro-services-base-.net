@@ -18,14 +18,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="DTOs\" />
       <Folder Include="Features\customers\Queries\GetAllCustomers\" />
       <Folder Include="Features\customers\Queries\GetCustomerById\" />
-      <Folder Include="Services\" />
+      <Folder Include="Interfaces\common\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
 </Project>

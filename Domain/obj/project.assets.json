@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj",
+      "projectUniqueName": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj",
       "projectName": "Domain",
-      "projectPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/Domain.csproj",
+      "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj",
       "packagesPath": "/Users/isw21/.nuget/packages/",
-      "outputPath": "/Users/isw21/RiderProjects/micro-service-base-pruebas/Domain/obj/",
+      "outputPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/obj/",
       "projectStyle": "PackageReference",
       "UsingMicrosoftNETSdk": false,
       "configFilePaths": [
