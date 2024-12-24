@@ -2,7 +2,7 @@ using Application.Interfaces;
 using Ardalis.Specification.EntityFrameworkCore;
 using Persistence.Contexts;
 
-namespace Persistence.Repository;
+namespace Persistence.Repositories;
 
 public class DbRepositoryAsync<T> : RepositoryBase<T>, IWriteRepositoryAsync<T>,
     IReadRepositoryAsync<T>

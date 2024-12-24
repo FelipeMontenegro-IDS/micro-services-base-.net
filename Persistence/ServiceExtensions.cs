@@ -1,5 +1,4 @@
 using Application.Interfaces;
-using Ardalis.Specification.EntityFrameworkCore;
 using Azure.Messaging.ServiceBus;
 using Domain.Messaging;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
 using Persistence.Messaging;
-using Persistence.Repository;
+using Persistence.Repositories;
 using Shared.Configurations;
 
 namespace Persistence;
@@ -38,8 +37,10 @@ public static class ServiceExtensions
             throw new ArgumentException("AzureServiceBus connection string is missing");
         }
 
-        services.AddScoped(typeof(IMessageSender<>), typeof(AzureServiceBusSender<>));
-        services.AddScoped(typeof(IMessageReceiver<>), typeof(AzureServiceBusReceiver<>));
+        services.AddScoped(typeof(IMessageSender), typeof(AzureServiceBusSender));
+        services.AddScoped(typeof(IMessageReceiver), typeof(AzureServiceBusReceiver));
+        services.AddScoped(typeof(IMessageService),typeof(AzureServiceBusMessage));
+
 
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),

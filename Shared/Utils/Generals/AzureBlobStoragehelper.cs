@@ -16,18 +16,25 @@ namespace Shared.Utils.Generals
         }
 
         // Crea un contenedor si no existe
-        public async Task CreateContainerIfNotExistsAsync(string containerName)
+        public async Task CreateIfNotExistsAsync(string containerName,
+            PublicAccessType accessType = PublicAccessType.None)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+            await containerClient.CreateIfNotExistsAsync(accessType);
         }
 
         // Carga un archivo al contenedor
-        public async Task UploadFileAsync(string containerName, string blobName, Stream fileStream)
+        public async Task UploadFileAsync(string containerName, string blobName, Stream fileStream,
+            IDictionary<string, string> metadata = null!)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             var blobClient = containerClient.GetBlobClient(blobName);
             await blobClient.UploadAsync(fileStream, true);
+
+            if (metadata != null)
+            {
+                await blobClient.SetMetadataAsync(metadata);
+            }
         }
 
         // Descarga un archivo del contenedor
@@ -39,6 +46,18 @@ namespace Shared.Utils.Generals
             return downloadInfo.Value.Content;
         }
 
+        public async Task DownloadFileToLocalAsync(string containerName, string blobName, string localFilePath)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            var blobClient = containerClient.GetBlobClient(blobName);
+            var downloadInfo = await blobClient.DownloadAsync();
+
+            using (var fileStream = File.OpenWrite(localFilePath))
+            {
+                await downloadInfo.Value.Content.CopyToAsync(fileStream);
+            }
+        }
+
         // Elimina un archivo del contenedor
         public async Task DeleteFileAsync(string containerName, string blobName)
         {
@@ -48,12 +67,12 @@ namespace Shared.Utils.Generals
         }
 
         // Lista todos los blobs en un contenedor
-        public async Task<List<string>> ListBlobsAsync(string containerName)
+        public async Task<List<string>> ListBlobsAsync(string containerName, string prefix = null!)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             var blobs = new List<string>();
 
-            await foreach (var blobItem in containerClient.GetBlobsAsync())
+            await foreach (var blobItem in containerClient.GetBlobsAsync(prefix: prefix))
             {
                 blobs.Add(blobItem.Name);
             }
@@ -76,6 +95,7 @@ namespace Shared.Utils.Generals
             var sourceContainerClient = _blobServiceClient.GetBlobContainerClient(sourceContainerName);
             var sourceBlobClient = sourceContainerClient.GetBlobClient(sourceBlobName);
             var destinationContainerClient = _blobServiceClient.GetBlobContainerClient(destinationContainerName);
+
             await destinationContainerClient.CreateIfNotExistsAsync();
 
             var destinationBlobClient = destinationContainerClient.GetBlobClient(destinationBlobName);

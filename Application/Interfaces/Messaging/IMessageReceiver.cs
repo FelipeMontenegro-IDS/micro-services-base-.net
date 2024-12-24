@@ -1,6 +1,6 @@
 namespace Domain.Messaging;
 
-public interface IMessageReceiver<T>
+public interface IMessageReceiver
 {
-    Task RegisterMessageHandler(string queueOrTopicName, Func<T, Task> processMessageAsync);
+    Task RegisterMessageHandler<TResponse>(string queueOrTopicName, Func<TResponse, Task> processMessageAsync);
 }

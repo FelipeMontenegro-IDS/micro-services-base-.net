@@ -1,6 +1,6 @@
 namespace Domain.Messaging;
 
-public interface IMessageSender<T>
+public interface IMessageSender
 {
-    Task SendMessageAsync(T message, string queueOrTopicName);
+    Task SendMessageAsync<TRequest>( TRequest message, string queueOrTopicName);
 }

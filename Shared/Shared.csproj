@@ -14,8 +14,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="DTOs\Requests\Services\" />
       <Folder Include="DTOs\Responses\Customers\" />
-      <Folder Include="Queues\" />
+      <Folder Include="DTOs\Responses\Micro-services\" />
+      <Folder Include="Queues\Persons\" />
     </ItemGroup>
 
 </Project>

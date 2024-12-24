@@ -4,7 +4,7 @@ using Domain.Messaging;
 
 namespace Persistence.Messaging;
 
-public class AzureServiceBusSender<T> : IMessageSender<T>
+public class AzureServiceBusSender : IMessageSender
 {
     private readonly ServiceBusClient _client;
 
@@ -13,12 +13,12 @@ public class AzureServiceBusSender<T> : IMessageSender<T>
         _client = client;
     }
 
-    public async Task SendMessageAsync(T message, string queueOrTopicName)
+    public async Task SendMessageAsync<TRequest>(TRequest message, string queueOrTopicName)
     {
         var sender = _client.CreateSender(queueOrTopicName);
         var serializedMessage = JsonSerializer.Serialize(message);
         var serviceBusMessage = new ServiceBusMessage(serializedMessage);
 
-        await sender.SendMessageAsync(serviceBusMessage);
+        await sender.SendMessageAsync(serviceBusMessage);    
     }
 }
