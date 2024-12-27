@@ -54,7 +54,7 @@ public static class ServiceExtensions
                 cfg.Host(serviceBusOptions.ConnectionString);
                 cfg.ReceiveEndpoint("req_prueba_request", e =>
                 {
-                    e.ConfigureConsumer<RequestConsumer>(context);
+                    // e.ConfigureConsumer<RequestConsumer>(context);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(10)));  // Retry 3 times with a 10-second interval
                 });
             });
