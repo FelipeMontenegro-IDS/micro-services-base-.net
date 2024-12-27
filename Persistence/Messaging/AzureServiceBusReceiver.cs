@@ -13,7 +13,11 @@ public class AzureServiceBusReceiver : IMessageReceiver
     {
         _client = client;
     }
-    public async Task RegisterMessageHandler<T>(string queueOrTopicName, Func<T,CancellationToken ,Task> processMessageAsync,ServiceBusProcessorOptions options,CancellationToken cancellationToken = default) where T : class
+
+    public async Task RegisterMessageHandler<T>(string queueOrTopicName,
+        Func<T, CancellationToken, Task> processMessageAsync, 
+        ServiceBusProcessorOptions options,
+        CancellationToken cancellationToken = default) where T : class
     {
         var processor = _client.CreateProcessor(queueOrTopicName, options);
 
@@ -25,15 +29,15 @@ public class AzureServiceBusReceiver : IMessageReceiver
             if (message != null)
                 try
                 {
-                    await processMessageAsync(message,cancellationToken);
+                    await processMessageAsync(message, cancellationToken);
                 }
                 catch (Exception ex)
                 {
-                    await args.AbandonMessageAsync(args.Message,null,cancellationToken); 
+                    await args.AbandonMessageAsync(args.Message, null, cancellationToken);
                     return;
                 }
 
-            await args.CompleteMessageAsync(args.Message,cancellationToken);
+            await args.CompleteMessageAsync(args.Message, cancellationToken);
         };
 
         processor.ProcessErrorAsync += (args) =>

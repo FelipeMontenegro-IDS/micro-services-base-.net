@@ -21,7 +21,6 @@
     <ItemGroup>
       <Folder Include="Features\customers\Queries\GetAllCustomers\" />
       <Folder Include="Features\customers\Queries\GetCustomerById\" />
-      <Folder Include="Interfaces\common\" />
     </ItemGroup>
 
     <ItemGroup>

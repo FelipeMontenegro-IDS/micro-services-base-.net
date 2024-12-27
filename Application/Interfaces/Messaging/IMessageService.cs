@@ -1,17 +1,32 @@
 using Azure.Messaging.ServiceBus;
+using Shared.Utils.Enums;
 
 namespace Application.Interfaces.Messaging;
 
-public interface IMessageService 
+public interface IMessageService
 {
     Task<TResponse> ProcessRequestAsync<TRequest, TResponse>(
         TRequest request,
         string queueRequest,
         string queueResponse,
-        CancellationToken cancellationToken = default) where TRequest : class where TResponse : class;
+        ServiceBusProcessorOptions options,
+        CancellationToken cancellationToken = default,
+        IDictionary<string, object>? headers = null,
+        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries) where TRequest : class where TResponse : class;
 
-    Task<TResponse> ReceiveAndResponseAsync<TRequest, TResponse>(string queueRequest,
+    Task<TResponse> ReceiveAndResponseAsync<TRequest, TResponse>(
+        string queueRequest,
         string queueResponse,
+        ServiceBusProcessorOptions options,
         Func<TRequest, CancellationToken, Task<TResponse>> processResponseToSend,
-        CancellationToken cancellationToken = default) where TRequest : class where TResponse : class;
+        CancellationToken cancellationToken = default,
+        IDictionary<string, object>? headers = null,
+        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries) where TRequest : class where TResponse : class;
+    
+    Task SendAsync<T>(
+        T message,
+        string queue,
+        IDictionary<string, object>? headers = null,
+        CancellationToken cancellationToken = default,
+        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries);
 }

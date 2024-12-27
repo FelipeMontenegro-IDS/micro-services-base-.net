@@ -5,30 +5,67 @@ namespace Persistence.Wrappers;
 
 public class ConsumeContext<T> where T : class
 {
-    public T Message { get; }
+    public T? Message { get; }
     public string MessageId { get; }
     public ProcessMessageEventArgs ReceivedMessage { get; }
 
     public ConsumeContext(ProcessMessageEventArgs receivedMessage)
     {
         
-        ReceivedMessage = receivedMessage;
+        ReceivedMessage = receivedMessage ?? throw new ArgumentNullException(nameof(receivedMessage));
         MessageId = receivedMessage.Identifier;
-        Message = JsonSerializer.Deserialize<T>(receivedMessage.Message.Body.ToString()) ?? throw new NullReferenceException("Message is null"); 
+        try
+        {
+            Message = JsonSerializer.Deserialize<T>(receivedMessage.Message.Body.ToString());
+        }
+        catch (JsonException ex)
+        {
+            // Loguear el error, si es necesario
+            Console.WriteLine($"Error deserializing message: {ex.Message}");
+            Message = null;
+        }
+        
     }
     
     public async Task CompleteAsync(CancellationToken cancellationToken = default)
     {
-        await ReceivedMessage.CompleteMessageAsync(ReceivedMessage.Message, cancellationToken); 
+        try
+        {
+            await ReceivedMessage.CompleteMessageAsync(ReceivedMessage.Message, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error completing message: {MessageId}, Exception: {ex.Message}");
+            throw;
+        }
+        
     }
 
     public async Task AbandonAsync(CancellationToken cancellationToken = default)
     {
-        await ReceivedMessage.AbandonMessageAsync(ReceivedMessage.Message,null,cancellationToken);
+        try
+        {
+            await ReceivedMessage.AbandonMessageAsync(ReceivedMessage.Message, null, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error abandoning message: {MessageId}, Exception: {ex.Message}");
+            throw;
+        }
+        
     }
 
     public async Task DeadLetterAsync(CancellationToken cancellationToken = default)
     {
-        await ReceivedMessage.DeadLetterMessageAsync(ReceivedMessage.Message,null,null,cancellationToken);
+        try
+        {
+            await ReceivedMessage.DeadLetterMessageAsync(ReceivedMessage.Message, null, null, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error dead-lettering message: {MessageId}, Exception: {ex.Message}");
+            throw;
+        }
+        
     }
 }

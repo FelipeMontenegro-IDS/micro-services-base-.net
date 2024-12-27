@@ -1,7 +1,6 @@
 namespace Shared.Queues.Configurations;
 
-public class QueueResponseConstants
+public static class QueueResponseConstants
 {
-    const string RES_CONFIGURATION_BLOB_STORAGE = "res_configuration_blob_storage";
-
+    public const string RES_CONFIGURATION_BLOB_STORAGE = "res_configuration_blob_storage";
 }

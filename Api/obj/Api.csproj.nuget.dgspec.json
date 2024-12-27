@@ -305,6 +305,14 @@
               "target": "Package",
               "version": "[7.18.2, )"
             },
+            "MassTransit.Azure.ServiceBus.Core": {
+              "target": "Package",
+              "version": "[7.3.1, )"
+            },
+            "MassTransit.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[7.3.1, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[7.0.0, )"
