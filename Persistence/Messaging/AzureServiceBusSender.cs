@@ -1,6 +1,6 @@
 using System.Text.Json;
+using Application.Interfaces.Messaging;
 using Azure.Messaging.ServiceBus;
-using Domain.Messaging;
 
 namespace Persistence.Messaging;
 
@@ -13,12 +13,13 @@ public class AzureServiceBusSender : IMessageSender
         _client = client;
     }
 
-    public async Task SendMessageAsync<TRequest>(TRequest message, string queueOrTopicName)
+    public async Task SendMessageAsync<TRequest>(TRequest message, string queueOrTopicName,
+        CancellationToken cancellationToken = default)
     {
         var sender = _client.CreateSender(queueOrTopicName);
         var serializedMessage = JsonSerializer.Serialize(message);
         var serviceBusMessage = new ServiceBusMessage(serializedMessage);
 
-        await sender.SendMessageAsync(serviceBusMessage);    
+        await sender.SendMessageAsync(serviceBusMessage, cancellationToken);
     }
 }

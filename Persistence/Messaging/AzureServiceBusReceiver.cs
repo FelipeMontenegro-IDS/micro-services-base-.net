@@ -1,6 +1,7 @@
 using System.Text.Json;
+using Application.Interfaces.Messaging;
 using Azure.Messaging.ServiceBus;
-using Domain.Messaging;
+using Persistence.Wrappers;
 
 namespace Persistence.Messaging;
 
@@ -12,26 +13,35 @@ public class AzureServiceBusReceiver : IMessageReceiver
     {
         _client = client;
     }
-    public async Task RegisterMessageHandler<TResponse>(string queueOrTopicName, Func<TResponse, Task> processMessageAsync)
+    public async Task RegisterMessageHandler<T>(string queueOrTopicName, Func<T,CancellationToken ,Task> processMessageAsync,ServiceBusProcessorOptions options,CancellationToken cancellationToken = default) where T : class
     {
-        var processor = _client.CreateProcessor(queueOrTopicName);
+        var processor = _client.CreateProcessor(queueOrTopicName, options);
 
-        processor.ProcessMessageAsync += async args =>
+        processor.ProcessMessageAsync += async (args) =>
         {
-            var body = args.Message.Body.ToString();
-            var message = JsonSerializer.Deserialize<TResponse>(body);
+            var consumeContext = new ConsumeContext<T>(args);
+            var message = consumeContext.Message;
 
-            if (message != null) await processMessageAsync(message);
+            if (message != null)
+                try
+                {
+                    await processMessageAsync(message,cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    await args.AbandonMessageAsync(args.Message,null,cancellationToken); 
+                    return;
+                }
 
-            await args.CompleteMessageAsync(args.Message);
+            await args.CompleteMessageAsync(args.Message,cancellationToken);
         };
 
-        processor.ProcessErrorAsync += args =>
+        processor.ProcessErrorAsync += (args) =>
         {
             // Manejar errores aquí
             return Task.CompletedTask;
         };
 
-        await processor.StartProcessingAsync();
+        await processor.StartProcessingAsync(cancellationToken);
     }
 }

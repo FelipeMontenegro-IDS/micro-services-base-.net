@@ -1,9 +1,17 @@
-namespace Domain.Messaging;
+using Azure.Messaging.ServiceBus;
 
-public interface IMessageService
+namespace Application.Interfaces.Messaging;
+
+public interface IMessageService 
 {
-    Task<TResponse> SendRequestAsync<TRequest, TResponse>(
-        TRequest request, 
-        string queueRequest, 
-        string queueResponse);
+    Task<TResponse> ProcessRequestAsync<TRequest, TResponse>(
+        TRequest request,
+        string queueRequest,
+        string queueResponse,
+        CancellationToken cancellationToken = default) where TRequest : class where TResponse : class;
+
+    Task<TResponse> ReceiveAndResponseAsync<TRequest, TResponse>(string queueRequest,
+        string queueResponse,
+        Func<TRequest, CancellationToken, Task<TResponse>> processResponseToSend,
+        CancellationToken cancellationToken = default) where TRequest : class where TResponse : class;
 }

@@ -13,7 +13,7 @@ public class ConfigurationMicroServices : IConfigurationMicroServices
     
     public async Task<string> GetConfigurationBlobStorageByCustomerId(Guid customerId)
     {
-        return await _messageService.SendRequestAsync<Guid, string>(customerId,"", "");
+        return await _messageService.ProcessRequestAsync<Guid, string>(customerId,"", "");
     }
     
 }
