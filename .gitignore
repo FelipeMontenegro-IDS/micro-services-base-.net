@@ -6,6 +6,10 @@ packages/
 *.suo
 *.tmp
 *.cache
+*.apsx.designer.cs
+*.designer.cs
+*.vshost.exe
+
 
 # Archivos específicos de tu entorno
 *.bak
@@ -21,3 +25,6 @@ packages/
 
 # Archivos de configuración de NuGet
 *.nupkg
+
+*.generatedassets
+*.obj
