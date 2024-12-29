@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Application.Interfaces.Messaging;
 using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Logging;
 using Persistence.Wrappers;
 
 namespace Persistence.Messaging;
@@ -8,22 +9,27 @@ namespace Persistence.Messaging;
 public class AzureServiceBusReceiver : IMessageReceiver
 {
     private readonly ServiceBusClient _client;
-
-    public AzureServiceBusReceiver(ServiceBusClient client)
+    private readonly ILogger<AzureServiceBusReceiver> _receiverLogger;
+    private readonly ILoggerFactory _loggerFactory;
+    public AzureServiceBusReceiver(ServiceBusClient client, ILogger<AzureServiceBusReceiver> receiverLogger, ILoggerFactory loggerFactoryr)
     {
-        _client = client;
+        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _receiverLogger = receiverLogger ?? throw new ArgumentNullException(nameof(receiverLogger));
+        _loggerFactory = loggerFactoryr ?? throw new ArgumentNullException(nameof(loggerFactoryr));
     }
 
-    public async Task RegisterMessageHandler<T>(string queueOrTopicName,
+    public async Task RegisterMessageHandler<T>(string queue,
         Func<T, CancellationToken, Task> processMessageAsync, 
         ServiceBusProcessorOptions options,
         CancellationToken cancellationToken = default) where T : class
     {
-        var processor = _client.CreateProcessor(queueOrTopicName, options);
+        var processor = _client.CreateProcessor(queue, options);
 
         processor.ProcessMessageAsync += async (args) =>
         {
-            var consumeContext = new ConsumeContext<T>(args);
+            var messageId = args.Message.MessageId;
+            var loggerForContext = _loggerFactory.CreateLogger<ProcessedMessageContext<T>>();
+            var consumeContext = new ProcessedMessageContext<T>(args,loggerForContext);
             var message = consumeContext.Message;
 
             if (message != null)

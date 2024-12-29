@@ -1,5 +1,6 @@
 using Azure.Messaging.ServiceBus;
 using Application.Interfaces.Messaging;
+using Microsoft.Extensions.Logging;
 using Persistence.Wrappers;
 using Shared.Utils.Enums;
 
@@ -10,13 +11,17 @@ public class AzureServiceBusMessage : IMessageService
     private readonly IMessageSender _messageSender;
     private readonly IMessageReceiver _messageReceiver;
     private readonly IMessageRetryPolicy _retryPolicy;
+    private readonly ILogger<AzureServiceBusMessage> _receiverLogger;
+    private readonly ILoggerFactory _loggerFactory;
 
     public AzureServiceBusMessage(IMessageSender messageSender, IMessageReceiver messageReceiver,
-        IMessageRetryPolicy retryPolicy)
+        IMessageRetryPolicy retryPolicy,ILogger<AzureServiceBusMessage> receiverLogger, ILoggerFactory loggerFactory)
     {
         _messageSender = messageSender;
         _messageReceiver = messageReceiver;
         _retryPolicy = retryPolicy;
+        _receiverLogger = receiverLogger ?? throw new ArgumentNullException(nameof(receiverLogger));
+        _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
     }
 
 
@@ -41,9 +46,10 @@ public class AzureServiceBusMessage : IMessageService
         await _messageReceiver.RegisterMessageHandler<ProcessMessageEventArgs>(queueResponse, async (args, token) =>
         {
             try
-            {
+            {           
+                var loggerForContext = _loggerFactory.CreateLogger<ProcessedMessageContext<TResponse>>();
                 // Deserializar el mensaje de respuesta a tipo TResponse
-                var consumeContext = new ConsumeContext<TResponse>(args);
+                var consumeContext = new ProcessedMessageContext<TResponse>(args,loggerForContext);
                 var message = consumeContext.Message;
                 if (message == null)
                     throw new InvalidOperationException("Error occurred while processing the message.");
@@ -82,7 +88,8 @@ public class AzureServiceBusMessage : IMessageService
         {
             try
             {
-                var consumeContext = new ConsumeContext<TRequest>(args);
+                var loggerForContext = _loggerFactory.CreateLogger<ProcessedMessageContext<TRequest>>();
+                var consumeContext = new ProcessedMessageContext<TRequest>(args,loggerForContext);
                 var message = consumeContext.Message;
 
                 if (message == null)

@@ -9145,36 +9145,42 @@
     ]
   },
   "packageFolders": {
-    "/Users/isw21/.nuget/packages/": {}
+    "C:\\Users\\Ana\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/isw21/RiderProjects/micro-services-base-.net/Application/Application.csproj",
+      "projectUniqueName": "C:\\Users\\Ana\\RiderProjects\\micro-services-base-.net\\Application\\Application.csproj",
       "projectName": "Application",
-      "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Application/Application.csproj",
-      "packagesPath": "/Users/isw21/.nuget/packages/",
-      "outputPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Application/obj/",
+      "projectPath": "C:\\Users\\Ana\\RiderProjects\\micro-services-base-.net\\Application\\Application.csproj",
+      "packagesPath": "C:\\Users\\Ana\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Ana\\RiderProjects\\micro-services-base-.net\\Application\\obj\\",
       "projectStyle": "PackageReference",
-      "UsingMicrosoftNETSdk": false,
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/isw21/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Ana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj": {
-              "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Domain/Domain.csproj"
+            "C:\\Users\\Ana\\RiderProjects\\micro-services-base-.net\\Domain\\Domain.csproj": {
+              "projectPath": "C:\\Users\\Ana\\RiderProjects\\micro-services-base-.net\\Domain\\Domain.csproj"
             },
-            "/Users/isw21/RiderProjects/micro-services-base-.net/Shared/Shared.csproj": {
-              "projectPath": "/Users/isw21/RiderProjects/micro-services-base-.net/Shared/Shared.csproj"
+            "C:\\Users\\Ana\\RiderProjects\\micro-services-base-.net\\Shared\\Shared.csproj": {
+              "projectPath": "C:\\Users\\Ana\\RiderProjects\\micro-services-base-.net\\Shared\\Shared.csproj"
             }
           }
         }
@@ -9242,7 +9248,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.410/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.410\\RuntimeIdentifierGraph.json"
       }
     }
   }
