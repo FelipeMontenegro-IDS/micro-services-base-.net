@@ -13,10 +13,10 @@ public class AzureServiceBusSender : IMessageSender
         _client = client;
     }
 
-    public async Task SendMessageAsync<TRequest>(TRequest message, string queueOrTopicName,
+    public async Task SendMessageAsync<T>(T message, string queue,
         CancellationToken cancellationToken = default)
     {
-        var sender = _client.CreateSender(queueOrTopicName);
+        var sender = _client.CreateSender(queue);
         var serializedMessage = JsonSerializer.Serialize(message);
         var serviceBusMessage = new ServiceBusMessage(serializedMessage);
 

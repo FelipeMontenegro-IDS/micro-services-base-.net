@@ -1,3 +1,4 @@
+using Shared.Utils.Collections;
 using Shared.Utils.Enums;
 
 namespace Shared.Utils.Generals;
@@ -7,23 +8,33 @@ public static class DateTimeHelper
     // Obtiene la fecha y hora actual en UTC
     public static DateTime GetCurrentUtcDateTime()
     {
-        TimeZoneOption timeZoneOption = GetTimeZoneOption(); // Obtiene la zona horaria local
-        TimeZoneInfo timeZoneInfo = GetTimeZoneInfo(timeZoneOption); // Convierte el enum a TimeZoneInfo
-
-        DateTime utcNow = DateTime.UtcNow; // Obtiene la hora actual en UTC
-        return TimeZoneInfo.ConvertTimeFromUtc(utcNow, timeZoneInfo); // Convierte a la zona horaria especificada
+        return DateTime.UtcNow;
     }
 
-    // Convierte una fecha y hora a UTC
-    public static DateTime ConvertToUtc(DateTime localDateTime)
+    // Convierte una fecha y hora a UTC desde la zona horaria local del usuario
+    public static DateTime ConvertToUtc(DateTime localDateTime,
+        string timeZoneOption)
     {
-        return TimeZoneInfo.ConvertTimeToUtc(localDateTime);
+        TimeZoneOption timeZone = CollectionTimeZone.GetTimeZoneOption(timeZoneOption);
+        TimeZoneInfo timeZoneInfo = CollectionTimeZone.GetTimeZoneInfo(timeZone);
+        return TimeZoneInfo.ConvertTimeToUtc(localDateTime, timeZoneInfo);
     }
 
-    // Convierte una fecha y hora UTC a la hora local
-    public static DateTime ConvertToLocal(DateTime utcDateTime)
+    // Convierte una fecha y hora UTC a la hora local de un usuario
+    public static DateTime ConvertToLocal(DateTime utcDateTime,
+        string timeZoneOption)
     {
-        return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local);
+        TimeZoneOption timeZone = CollectionTimeZone.GetTimeZoneOption(timeZoneOption);
+        TimeZoneInfo timeZoneInfo = CollectionTimeZone.GetTimeZoneInfo(timeZone);
+        return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timeZoneInfo);
+    }
+
+    // Obtiene la fecha y hora actual en una zona horaria específica
+    public static DateTime GetCurrentDateTimeInTimeZone(string timeZoneOption)
+    {
+        TimeZoneOption timeZone = CollectionTimeZone.GetTimeZoneOption(timeZoneOption);
+        TimeZoneInfo timeZoneInfo = CollectionTimeZone.GetTimeZoneInfo(timeZone);
+        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfo);
     }
 
     // Formatea una fecha en un formato específico
@@ -73,13 +84,13 @@ public static class DateTimeHelper
     {
         return !IsWeekend(dateTime);
     }
-    
+
     // Obtiener la cantidad de semanas entre dos fechas
     public static int WeeksBetween(DateTime startDate, DateTime endDate)
     {
         return (int)((endDate - startDate).TotalDays / 7);
     }
-    
+
     // Obtiene la fecha de inicio de la semana (lunes) para una fecha dada
     public static DateTime GetStartOfWeek(DateTime dateTime)
     {
@@ -87,7 +98,7 @@ public static class DateTimeHelper
         if (diff < 0) diff += 7;
         return dateTime.AddDays(-diff).Date;
     }
-    
+
     // Obtiene la fecha de fin de la semana (domingo) para una fecha dada
     public static DateTime GetEndOfWeek(DateTime dateTime)
     {
@@ -95,24 +106,26 @@ public static class DateTimeHelper
         if (diff < 0) diff += 7;
         return dateTime.AddDays(diff).Date;
     }
-    
+
     // Verifica si una fecha está dentro de un rango
     public static bool IsDateInRange(DateTime dateTime, DateTime startDate, DateTime endDate)
     {
         return dateTime >= startDate && dateTime <= endDate;
     }
-    
+
     // Obtiene la cantidad de días en un mes específico
     public static int GetDaysInMonth(int year, int month)
     {
         return DateTime.DaysInMonth(year, month);
     }
-    
-    
+
+
     // Clona un objeto DateTime con una nueva zona horaria
-    public static DateTime ChangeTimeZone(DateTime dateTime, TimeZoneInfo newTimeZone)
+    public static DateTime ChangeTimeZone(DateTime dateTime, string timeZoneOption,
+        TimeZoneInfo newTimeZone)
     {
-        DateTime utcDateTime = ConvertToUtc(dateTime);
+        // Asegúrate de pasar la zona horaria para la conversión
+        DateTime utcDateTime = ConvertToUtc(dateTime, timeZoneOption);
         return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, newTimeZone);
     }
 
@@ -120,47 +133,5 @@ public static class DateTimeHelper
     public static DateTime GetCurrentDateTimeInTimeZone(TimeZoneInfo timeZone)
     {
         return TimeZoneInfo.ConvertTimeFromUtc(GetCurrentUtcDateTime(), timeZone);
-    }
-    
-    private static TimeZoneInfo GetTimeZoneInfo(TimeZoneOption timeZoneOption)
-    {
-        return timeZoneOption switch
-        {
-            TimeZoneOption.PacificStandardTime => TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time"),
-            TimeZoneOption.EasternStandardTime => TimeZoneInfo.FindSystemTimeZoneById("SA Eastern Standard Time"),
-            TimeZoneOption.CentralStandardTime => TimeZoneInfo.FindSystemTimeZoneById("SA Central Standard Time"),
-            TimeZoneOption.GreenwichMeanTime => TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time"),
-            TimeZoneOption.BritishSummerTime => TimeZoneInfo.FindSystemTimeZoneById("GMT Daylight Time"),
-            TimeZoneOption.CentralEuropeanTime => TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"),
-            TimeZoneOption.EasternEuropeanTime => TimeZoneInfo.FindSystemTimeZoneById("Eastern European Standard Time"),
-            TimeZoneOption.IndiaStandardTime => TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"),
-            TimeZoneOption.JapanStandardTime => TimeZoneInfo.FindSystemTimeZoneById("Japan Standard Time"),
-            TimeZoneOption.AustralianEasternStandardTime => TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time"),
-            TimeZoneOption.MountainStandardTime => TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time"),
-            TimeZoneOption.AtlanticStandardTime => TimeZoneInfo.FindSystemTimeZoneById("Atlantic Standard Time"),
-            _ => throw new ArgumentOutOfRangeException(nameof(timeZoneOption), "Zona horaria no soportada.")
-        };
-    }
-    private  static TimeZoneOption GetTimeZoneOption()
-    {
-        TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
-
-        // Mapeo de zonas horarias a tu enum
-        return localTimeZone.Id switch
-        {
-            "SA Pacific Standard Time" => TimeZoneOption.PacificStandardTime,
-            "SA Eastern Standard Time" => TimeZoneOption.EasternStandardTime,
-            "SA Central Standard Time" => TimeZoneOption.CentralStandardTime,
-            "GMT Standard Time" => TimeZoneOption.GreenwichMeanTime,
-            "GMT Daylight Time" => TimeZoneOption.BritishSummerTime,
-            "Central European Standard Time" => TimeZoneOption.CentralEuropeanTime,
-            "Eastern European Standard Time" => TimeZoneOption.EasternEuropeanTime,
-            "India Standard Time" => TimeZoneOption.IndiaStandardTime,
-            "Japan Standard Time" => TimeZoneOption.JapanStandardTime,
-            "AUS Eastern Standard Time" => TimeZoneOption.AustralianEasternStandardTime,
-            "Mountain Standard Time" => TimeZoneOption.MountainStandardTime,
-            "Atlantic Standard Time" => TimeZoneOption.AtlanticStandardTime,
-            _ => throw new ArgumentOutOfRangeException("Zona horaria no soportada.")
-        };
     }
 }

@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,8 @@ public class ProcessedMessageContext<T> where T : class
 
         try
         {
-            Message = JsonSerializer.Deserialize<T>(receivedMessage.Message.Body.ToString() ?? string.Empty);
+            var body = Encoding.UTF8.GetString(receivedMessage.Message.Body) ?? string.Empty;
+            Message = JsonSerializer.Deserialize<T>(body,new JsonSerializerOptions { PropertyNameCaseInsensitive = true});
 
             if (Message == null)
             {

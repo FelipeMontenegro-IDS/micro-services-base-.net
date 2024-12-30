@@ -14,9 +14,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="DTOs\Requests\Services\" />
+      <Folder Include="DTOs\Requests\Microservices\" />
       <Folder Include="DTOs\Responses\Customers\" />
-      <Folder Include="DTOs\Responses\Micro-services\" />
+      <Folder Include="DTOs\Responses\Microservices\" />
       <Folder Include="Queues\Persons\" />
     </ItemGroup>
 
