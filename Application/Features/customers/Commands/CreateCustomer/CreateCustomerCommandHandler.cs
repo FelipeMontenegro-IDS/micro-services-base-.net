@@ -7,6 +7,7 @@ using Azure.Messaging.ServiceBus;
 using Domain.Entities;
 using MediatR;
 using Shared.DTOs.Responses.Generals;
+using Shared.Queues.Configurations;
 
 namespace Application.Features.customers.Commands.CreateCustomer;
 
@@ -17,12 +18,13 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
     private readonly IMessageService _messageService;
     // private readonly IConfigurationMicroServices _configurationMicroServices;
     // private readonly IMessageReceiver _messageReceiver;
-    //private readonly IMessageSender _messageSender;
-    public CreateCustomerCommandHandler(IWriteRepositoryAsync<Customer> repository, IMapper mapper,IMessageService messageService)
+    private readonly IMessageSender _messageSender;
+    public CreateCustomerCommandHandler(IWriteRepositoryAsync<Customer> repository, IMapper mapper,IMessageService messageService,IMessageSender messageSender)
     {
         _repository = repository;
         _mapper = mapper;
         // _configurationMicroServices = configurationMicroServices;
+        _messageSender = messageSender;
         _messageService = messageService; 
     }
 
@@ -37,9 +39,15 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             //     Console.WriteLine(message);
             // },new ServiceBusProcessorOptions{ AutoCompleteMessages = false},cancellationToken);
             
-            // await _messageSender.SendMessageAsync(new ObjectTestRequest{ PersonId = Guid.NewGuid() },"req_prueba_request",cancellationToken);
+            await _messageSender.SendMessageAsync(new ObjectTestRequest{ PersonId = Guid.NewGuid() },"req_prueba_request",cancellationToken);
 
-            await _messageService.SendAsync(new ObjectTestRequest{ PersonId = Guid.NewGuid() },"req_prueba_request",null,cancellationToken);
+            // var res = await _messageService.ProcessRequestAsync<ObjectTestRequest, ObjectTestResponse>(
+            //     new ObjectTestRequest { PersonId = Guid.NewGuid() },
+            //     QueueRequestConstants.REQ_CONFIGURATION_BLOB_STORAGE,
+            //     QueueResponseConstants.RES_CONFIGURATION_BLOB_STORAGE,
+            //     new ServiceBusProcessorOptions { AutoCompleteMessages = false },
+            //     cancellationToken);
+            
             var data = await _repository.AddAsync(newCustomer, cancellationToken);
 
             if (data == null) return null!;

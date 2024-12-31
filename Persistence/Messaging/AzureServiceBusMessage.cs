@@ -12,16 +12,14 @@ public class AzureServiceBusMessage : IMessageService
     private readonly IMessageReceiver _messageReceiver;
     private readonly IMessageRetryPolicy _retryPolicy;
     private readonly ILogger<AzureServiceBusMessage> _receiverLogger;
-    private readonly ILoggerFactory _loggerFactory;
 
     public AzureServiceBusMessage(IMessageSender messageSender, IMessageReceiver messageReceiver,
-        IMessageRetryPolicy retryPolicy,ILogger<AzureServiceBusMessage> receiverLogger, ILoggerFactory loggerFactory)
+        IMessageRetryPolicy retryPolicy, ILogger<AzureServiceBusMessage> receiverLogger)
     {
-        _messageSender = messageSender;
-        _messageReceiver = messageReceiver;
-        _retryPolicy = retryPolicy;
+        _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+        _messageReceiver = messageReceiver ?? throw new ArgumentNullException(nameof(messageReceiver));
+        _retryPolicy = retryPolicy ?? throw new ArgumentNullException(nameof(retryPolicy));
         _receiverLogger = receiverLogger ?? throw new ArgumentNullException(nameof(receiverLogger));
-        _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
     }
 
 
@@ -32,25 +30,21 @@ public class AzureServiceBusMessage : IMessageService
         ServiceBusProcessorOptions options,
         CancellationToken cancellationToken = default,
         IDictionary<string, object>? headers = null,
-        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries) where TRequest : class where TResponse : class
+        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries)
+        where TRequest : class where TResponse : class
     {
         if (request == null) throw new InvalidOperationException("The Request is null.");
         // Enviar solicitud
-        
 
         await RetryAndSendMessageAsync(request, queueRequest, retryPolicyDefaults, cancellationToken);
 
         var tcs = new TaskCompletionSource<TResponse>();
-    
+
         // Crear una tarea para esperar la respuesta
-        await _messageReceiver.RegisterMessageHandler<ProcessMessageEventArgs>(queueResponse, async (args, token) =>
+        await _messageReceiver.RegisterMessageHandler<TResponse>(queueResponse, async (message, token) =>
         {
             try
-            {           
-                var loggerForContext = _loggerFactory.CreateLogger<ProcessedMessageContext<TResponse>>();
-                // Deserializar el mensaje de respuesta a tipo TResponse
-                var consumeContext = new ProcessedMessageContext<TResponse>(args,loggerForContext);
-                var message = consumeContext.Message;
+            {
                 if (message == null)
                     throw new InvalidOperationException("Error occurred while processing the message.");
                 tcs.SetResult(message);
@@ -72,7 +66,7 @@ public class AzureServiceBusMessage : IMessageService
         return await tcs.Task;
     }
 
-    public async Task<TResponse> ReceiveAndResponseAsync<TRequest, TResponse>(
+    public async Task ReceiveAndResponseAsync<TRequest, TResponse>(
         string queueRequest,
         string queueResponse,
         ServiceBusProcessorOptions options,
@@ -82,40 +76,23 @@ public class AzureServiceBusMessage : IMessageService
         RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries)
         where TRequest : class where TResponse : class
     {
-        var tcs = new TaskCompletionSource<TResponse>();
-
-        await _messageReceiver.RegisterMessageHandler<ProcessMessageEventArgs>(queueRequest, async (args, token) =>
+        await _messageReceiver.RegisterMessageHandler<TRequest>(queueRequest, async (message, token) =>
         {
             try
             {
-                var loggerForContext = _loggerFactory.CreateLogger<ProcessedMessageContext<TRequest>>();
-                var consumeContext = new ProcessedMessageContext<TRequest>(args,loggerForContext);
-                var message = consumeContext.Message;
-
                 if (message == null)
                     throw new InvalidOperationException("Error occurred while processing the request.");
 
                 TResponse responseMessage = await processResponseToSend(message, token);
 
-                await RetryAndSendMessageAsync(responseMessage, queueRequest, retryPolicyDefaults, cancellationToken);
-
-                await consumeContext.CompleteAsync(cancellationToken);
-
-                tcs.SetResult(responseMessage);
+                await RetryAndSendMessageAsync(responseMessage, queueResponse, retryPolicyDefaults,
+                    cancellationToken);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                if (args.CancellationToken.IsCancellationRequested)
-                {
-                    tcs.TrySetCanceled(args.CancellationToken);
-                }
-                else
-                {
-                    tcs.TrySetException(e);
-                }
+                _receiverLogger.LogError($"Error while processing message: {ex.Message}");
             }
         }, options, cancellationToken);
-        return await tcs.Task;  
     }
 
     public async Task SendAsync<T>(
@@ -124,11 +101,43 @@ public class AzureServiceBusMessage : IMessageService
         IDictionary<string, object>? headers = null,
         CancellationToken cancellationToken = default,
         RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries
-    )
+    ) where T : class
     {
         if (message == null) throw new InvalidOperationException("The message is null.");
 
         await RetryAndSendMessageAsync(message, queue, retryPolicyDefaults, cancellationToken);
+    }
+
+    public async Task<T> ProcessAndReturnMessageAsync<T>(
+        string queue,
+        Func<T, CancellationToken, Task<T>> processMessage,
+        ServiceBusProcessorOptions options,
+        CancellationToken cancellationToken = default) where T : class
+    {
+        var tcs = new TaskCompletionSource<T>();
+
+        await _messageReceiver.RegisterMessageHandler<T>(queue, async (message, token) =>
+        {
+            if (message == null)
+            {
+                tcs.TrySetException(new InvalidOperationException("Error occurred while processing the message."));
+                return;
+            }
+
+            try
+            {
+                var processedMessage = await processMessage(message, token);
+                tcs.TrySetResult(processedMessage);
+            }
+            catch (Exception ex)
+            {
+                _receiverLogger.LogError($"Error while processing message: {ex.Message}");
+                tcs.TrySetException(ex);
+                throw;
+            }
+        }, options, cancellationToken);
+
+        return await tcs.Task;
     }
 
 

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Application.Interfaces.Messaging;
+using Azure.Core.Amqp;
 using Azure.Messaging.ServiceBus;
 
 namespace Persistence.Messaging;
@@ -18,7 +19,12 @@ public class AzureServiceBusSender : IMessageSender
     {
         var sender = _client.CreateSender(queue);
         var serializedMessage = JsonSerializer.Serialize(message);
+        // AmqpMessageId amqpMessageId = new AmqpMessageId(serializedMessage);
         var serviceBusMessage = new ServiceBusMessage(serializedMessage);
+        // serviceBusMessage.MessageId = "";
+            
+
+        
 
         await sender.SendMessageAsync(serviceBusMessage, cancellationToken);
     }

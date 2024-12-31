@@ -14,7 +14,7 @@ public interface IMessageService
         IDictionary<string, object>? headers = null,
         RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries) where TRequest : class where TResponse : class;
 
-    Task<TResponse> ReceiveAndResponseAsync<TRequest, TResponse>(
+    Task ReceiveAndResponseAsync<TRequest, TResponse>(
         string queueRequest,
         string queueResponse,
         ServiceBusProcessorOptions options,
@@ -28,5 +28,12 @@ public interface IMessageService
         string queue,
         IDictionary<string, object>? headers = null,
         CancellationToken cancellationToken = default,
-        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries);
+        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries) where T : class;
+
+    public Task<T> ProcessAndReturnMessageAsync<T>(
+        string queue,
+        Func<T, CancellationToken, Task<T>> processMessage,
+        ServiceBusProcessorOptions options,
+        CancellationToken cancellationToken = default)
+        where T : class;
 }
