@@ -1,4 +1,4 @@
-﻿namespace Shared.Utils.Generals;
+﻿namespace Shared.Utils.Helpers;
 
 public static class AzureServicesBusHelper
 {

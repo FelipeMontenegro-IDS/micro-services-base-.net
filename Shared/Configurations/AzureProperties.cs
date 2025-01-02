@@ -66,4 +66,12 @@ public class AzureProperties
     /// El identificador del grupo para la respuesta.
     /// </summary>
     public string? ReplyToGroupId { get; set; }
+    
+    public string? PartitionKey { get; set; }
+    public string? ReplyToSessionId { get; set; }
+    public TimeSpan? TimeToLive { get; set; }
+    public DateTimeOffset? ScheduledEnqueueTimeUtc { get; set; }
+
+    public string? SessionId { get; set; }
+    
 }

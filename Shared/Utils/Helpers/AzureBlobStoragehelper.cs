@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Shared.Utils.Generals
+namespace Shared.Utils.Helpers
 {
     public class AzureBlobStorageHelper
     {

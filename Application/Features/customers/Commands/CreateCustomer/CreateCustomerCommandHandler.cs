@@ -8,6 +8,7 @@ using Domain.Entities;
 using MediatR;
 using Shared.DTOs.Responses.Generals;
 using Shared.Queues.Configurations;
+using Shared.Utils.Helpers;
 
 namespace Application.Features.customers.Commands.CreateCustomer;
 
@@ -50,7 +51,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             
             var data = await _repository.AddAsync(newCustomer, cancellationToken);
 
-            if (data == null) return null!;
+            if (ValidationHelper.IsNull(data)) return null!;
 
             return new ResponseDto<int>(1, "correct.");
 

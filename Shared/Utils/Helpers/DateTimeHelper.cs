@@ -1,7 +1,7 @@
 using Shared.Utils.Collections;
 using Shared.Utils.Enums;
 
-namespace Shared.Utils.Generals;
+namespace Shared.Utils.Helpers;
 
 public static class DateTimeHelper
 {

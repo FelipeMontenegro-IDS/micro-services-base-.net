@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Utils.Generals;
+using Shared.Utils.Helpers;
 
 namespace Shared;
 
