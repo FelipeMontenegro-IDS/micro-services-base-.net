@@ -1,4 +1,4 @@
-using Application.Interfaces;
+using Application.Interfaces.Ardalis;
 using Ardalis.Specification.EntityFrameworkCore;
 using Persistence.Contexts;
 

@@ -1,4 +1,4 @@
-using Application.Features.customers.Commands.CreateCustomer;
+using Application.Features.Customers.Commands.CreateCustomer;
 using AutoMapper;
 using Domain.Entities;
 

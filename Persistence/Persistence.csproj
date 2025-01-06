@@ -27,7 +27,6 @@
 
     <ItemGroup>
       <Folder Include="Microservices\Persons\" />
-      <Folder Include="Wrappers\azure-services-bus\" />
     </ItemGroup>
 
 </Project>

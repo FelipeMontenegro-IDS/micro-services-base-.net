@@ -1,5 +1,5 @@
-using Shared.Utils.Collections;
 using Shared.Utils.Enums;
+using Shared.Utils.Providers;
 
 namespace Shared.Utils.Helpers;
 
@@ -15,8 +15,8 @@ public static class DateTimeHelper
     public static DateTime ConvertToUtc(DateTime localDateTime,
         string timeZoneOption)
     {
-        TimeZoneOption timeZone = CollectionTimeZone.GetTimeZoneOption(timeZoneOption);
-        TimeZoneInfo timeZoneInfo = CollectionTimeZone.GetTimeZoneInfo(timeZone);
+        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZoneOption(timeZoneOption);
+        TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
         return TimeZoneInfo.ConvertTimeToUtc(localDateTime, timeZoneInfo);
     }
 
@@ -24,16 +24,16 @@ public static class DateTimeHelper
     public static DateTime ConvertToLocal(DateTime utcDateTime,
         string timeZoneOption)
     {
-        TimeZoneOption timeZone = CollectionTimeZone.GetTimeZoneOption(timeZoneOption);
-        TimeZoneInfo timeZoneInfo = CollectionTimeZone.GetTimeZoneInfo(timeZone);
+        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZoneOption(timeZoneOption);
+        TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
         return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timeZoneInfo);
     }
 
     // Obtiene la fecha y hora actual en una zona horaria específica
     public static DateTime GetCurrentDateTimeInTimeZone(string timeZoneOption)
     {
-        TimeZoneOption timeZone = CollectionTimeZone.GetTimeZoneOption(timeZoneOption);
-        TimeZoneInfo timeZoneInfo = CollectionTimeZone.GetTimeZoneInfo(timeZone);
+        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZoneOption(timeZoneOption);
+        TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
         return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfo);
     }
 

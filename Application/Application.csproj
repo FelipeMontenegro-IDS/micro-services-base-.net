@@ -19,8 +19,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\customers\Queries\GetAllCustomers\" />
-      <Folder Include="Features\customers\Queries\GetCustomerById\" />
+      <Folder Include="Features\Customers\Queries\GetAllCustomers\" />
+      <Folder Include="Features\Customers\Queries\GetCustomerById\" />
     </ItemGroup>
 
     <ItemGroup>

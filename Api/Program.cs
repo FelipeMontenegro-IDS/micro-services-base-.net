@@ -10,10 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceInfraestructure(builder.Configuration);
 builder.Services.AddApplicationShared(builder.Configuration);
 builder.Services.AddApplicationLayer();
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ApiResponseFilter>();
-});
+builder.Services.AddControllers(options => {  options.Filters.Add<ApiResponseFilter>(); });
 
 builder.Services.AddApiVersioningExtension();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

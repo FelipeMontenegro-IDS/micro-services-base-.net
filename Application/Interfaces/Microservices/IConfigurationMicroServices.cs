@@ -1,4 +1,4 @@
-using Application.Interfaces.common;
+using Application.Interfaces.Common;
 
 namespace Application.Interfaces.Microservices;
 

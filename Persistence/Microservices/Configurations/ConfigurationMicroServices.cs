@@ -1,5 +1,5 @@
-using Application.Interfaces.common;
-using Application.Interfaces.Messaging;
+using Application.Interfaces.Azure.ServicesBus;
+using Application.Interfaces.Common;
 using Application.Interfaces.Microservices;
 using Azure.Messaging.ServiceBus;
 using Shared.Queues.Configurations;
@@ -8,9 +8,9 @@ namespace Persistence.Microservices.Configurations;
 
 public class ConfigurationMicroServices : IConfigurationMicroServices
 {
-    private readonly IMessageService _messageService;
+    private readonly IMessage  _messageService;
 
-    public ConfigurationMicroServices(IMessageService messageService)
+    public ConfigurationMicroServices(IMessage messageService)
     {
         _messageService = messageService;
     }

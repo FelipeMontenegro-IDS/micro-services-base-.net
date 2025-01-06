@@ -1,4 +1,6 @@
-﻿namespace Shared.Configurations;
+﻿using Shared.Utils.Enums;
+
+namespace Shared.Configurations;
 
 public class AzureProperties
 {
@@ -35,7 +37,7 @@ public class AzureProperties
     /// <summary>
     /// El tipo de contenido del mensaje (por ejemplo, application/json).
     /// </summary>
-    public string? ContentType { get; set; }
+    public ContentType? ContentType { get; set; }
 
     /// <summary>
     /// La codificación del contenido del mensaje.
@@ -71,7 +73,8 @@ public class AzureProperties
     public string? ReplyToSessionId { get; set; }
     public TimeSpan? TimeToLive { get; set; }
     public DateTimeOffset? ScheduledEnqueueTimeUtc { get; set; }
-
     public string? SessionId { get; set; }
+    public BinaryData? Body { get; set; }
+    public string? TransactionPartitionKey { get; set; }
     
 }

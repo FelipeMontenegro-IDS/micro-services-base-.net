@@ -1,16 +1,19 @@
 using Application.Interfaces;
-using Application.Interfaces.Messaging;
+using Application.Interfaces.Ardalis;
+using Application.Interfaces.Azure.ServicesBus;
 using Application.Interfaces.Microservices;
 using Azure.Messaging.ServiceBus;
+using Azure.Storage.Blobs;
 using GreenPipes;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
-using Persistence.Messaging;
 using Persistence.Microservices.Configurations;
 using Persistence.Repositories;
+using Persistence.Wrappers.azure.BlobStorage;
+using Persistence.Wrappers.azure.ServicesBus;
 using Shared.Configurations;
 
 namespace Persistence;
@@ -43,23 +46,19 @@ public static class ServiceExtensions
 
         services.AddScoped(typeof(IMessageSender), typeof(AzureServiceBusSender));
         services.AddScoped(typeof(IMessageReceiver), typeof(AzureServiceBusReceiver));
-        services.AddScoped(typeof(IMessageRetryPolicy),typeof(AzureServiceBusRetryPolicy));
+        services.AddScoped(typeof(IMessageRetryPolicy), typeof(AzureServiceBusRetryPolicy));
         services.AddScoped(typeof(IConfigurationMicroServices), typeof(ConfigurationMicroServices));
-        services.AddScoped(typeof(IMessageService),typeof(AzureServiceBusMessage));
+        services.AddScoped(typeof(IMessage), typeof(AzureServiceBusMessage));
 
-        services.AddMassTransit(busConfigurator =>
+
+        services.AddSingleton<AzureBlobStorage>(sp =>
         {
-            busConfigurator.UsingAzureServiceBus((context, cfg) =>
-            {
-                cfg.Host(serviceBusOptions.ConnectionString);
-                cfg.ReceiveEndpoint("req_prueba_request", e =>
-                {
-                    // e.ConfigureConsumer<RequestConsumer>(context);
-                    e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(10)));  // Retry 3 times with a 10-second interval
-                });
-            });
-        }); 
-        
+            // Get the connection string from configuration
+            var connectionString = configuration.GetConnectionString("AzureBlobStorage");
+            var blobClient = new BlobServiceClient(connectionString);
+            return new AzureBlobStorage(blobClient ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
+        });
+
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),
             b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)

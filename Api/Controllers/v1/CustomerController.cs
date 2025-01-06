@@ -1,9 +1,8 @@
-using Application.Features.customers.Commands.CreateCustomer;
+using Application.Features.Customers.Commands.CreateCustomer;
 using Asp.Versioning;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace Api.Controllers.v1;
 
 [ApiVersion("1.0")]
 public class CustomerController : BaseApiController
