@@ -1,11 +1,8 @@
-using Application.Interfaces;
 using Application.Interfaces.Ardalis;
 using Application.Interfaces.Azure.ServicesBus;
 using Application.Interfaces.Microservices;
 using Azure.Messaging.ServiceBus;
-using Azure.Storage.Blobs;
-using GreenPipes;
-using MassTransit;
+using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +16,7 @@ namespace Persistence;
 
 public static class ServiceExtensions
 {
-    public static void AddPersistenceInfraestructure(this IServiceCollection services, IConfiguration configuration)
+    public static void AddPersistenceInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         #region DbContext and Azure Services Bus
 
@@ -27,6 +24,9 @@ public static class ServiceExtensions
 
         IConfiguration configurationSection = configuration.GetSection("AzureServiceBus");
         serviceBusOptions.ConnectionString = configurationSection["ConnectionString"];
+
+        services.AddSingleton(new ServiceBusAdministrationClient(configurationSection["ConnectionString"]));
+
 
         services.AddOptions<AzureServiceBusOptions>()
             .Bind(configuration.GetSection("AzureServiceBus"))
@@ -48,6 +48,7 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IMessageRetryPolicy), typeof(AzureServiceBusRetryPolicy));
         services.AddScoped(typeof(IConfigurationMicroServices), typeof(ConfigurationMicroServices));
         services.AddScoped(typeof(IMessage), typeof(AzureServiceBusMessage));
+        services.AddScoped(typeof(IServiceBusQueueManager),typeof(ServiceBusQueueManager));
 
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),

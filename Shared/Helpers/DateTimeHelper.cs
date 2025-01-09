@@ -1,3 +1,4 @@
+using System.Globalization;
 using Shared.Enums;
 using Shared.Providers;
 
@@ -38,9 +39,9 @@ public static class DateTimeHelper
     }
 
     // Formatea una fecha en un formato específico
-    public static string FormatDate(DateTime dateTime, string format)
+    public static string FormatDate(DateTime dateTime, DateFormat format)
     {
-        return dateTime.ToString(format);
+        return dateTime.ToString(DateFormatProvider.GetDateFormat(format), new CultureInfo("en-US"));
     }
 
     // Calcula la diferencia en días entre dos fechas

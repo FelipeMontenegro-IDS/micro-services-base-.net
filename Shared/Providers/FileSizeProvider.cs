@@ -15,7 +15,10 @@ public static class FileSizeProvider
         { FileSize.MB50, FileSizeConstants.MB50 },
         { FileSize.MB100, FileSizeConstants.MB100 },
         { FileSize.MB200, FileSizeConstants.MB200 },
-        { FileSize.MB500, FileSizeConstants.MB500 }
+        { FileSize.MB500, FileSizeConstants.MB500 },
+        { FileSize.GB1 ,FileSizeConstants.GB1},
+        { FileSize.GB2 ,FileSizeConstants.GB2},
+        { FileSize.GB3 ,FileSizeConstants.GB3}
     };
 
     public static long GetFileSize(FileSize fileSize)

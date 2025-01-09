@@ -23,7 +23,7 @@ public class AzureServiceBusReceiver : IMessageReceiver
         CancellationToken cancellationToken = default) where T : class
     {
         var processor = _client.CreateProcessor(queue, options);
-
+        
         processor.ProcessMessageAsync += async (args) =>
         {
             var messageId = args.Message.MessageId;
