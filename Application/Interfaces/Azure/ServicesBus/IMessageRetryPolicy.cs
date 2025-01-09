@@ -1,4 +1,4 @@
-using Shared.Utils.Enums;
+using Shared.Enums;
 
 namespace Application.Interfaces.Azure.ServicesBus;
 

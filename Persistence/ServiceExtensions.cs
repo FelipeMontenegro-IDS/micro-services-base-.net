@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
 using Persistence.Microservices.Configurations;
 using Persistence.Repositories;
-using Persistence.Wrappers.azure.BlobStorage;
 using Persistence.Wrappers.azure.ServicesBus;
 using Shared.Configurations;
 
@@ -49,15 +48,6 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IMessageRetryPolicy), typeof(AzureServiceBusRetryPolicy));
         services.AddScoped(typeof(IConfigurationMicroServices), typeof(ConfigurationMicroServices));
         services.AddScoped(typeof(IMessage), typeof(AzureServiceBusMessage));
-
-
-        services.AddSingleton<AzureBlobStorage>(sp =>
-        {
-            // Get the connection string from configuration
-            var connectionString = configuration.GetConnectionString("AzureBlobStorage");
-            var blobClient = new BlobServiceClient(connectionString);
-            return new AzureBlobStorage(blobClient ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
-        });
 
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),

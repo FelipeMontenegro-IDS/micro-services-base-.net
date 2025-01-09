@@ -1,4 +1,4 @@
-namespace Shared.Utils.Enums;
+namespace Shared.Enums;
 
 public enum RetryPolicyDefaults
 {

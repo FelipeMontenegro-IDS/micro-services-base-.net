@@ -1,7 +1,7 @@
-using Shared.Utils.Enums;
-using Shared.Utils.Providers;
+using Shared.Enums;
+using Shared.Providers;
 
-namespace Shared.Utils.Helpers;
+namespace Shared.Helpers;
 
 public static class DateTimeHelper
 {

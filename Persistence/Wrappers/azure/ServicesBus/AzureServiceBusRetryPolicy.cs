@@ -1,6 +1,6 @@
 using Application.Interfaces.Azure.ServicesBus;
-using Shared.Utils.Enums;
-using Shared.Utils.Helpers;
+using Shared.Helpers;
+using Shared.Enums;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 

@@ -1,4 +1,5 @@
-﻿using Shared.Utils.Enums;
+﻿
+using Shared.Enums;
 
 namespace Shared.Configurations;
 

@@ -5,7 +5,7 @@ using AutoMapper;
 using Domain.Entities;
 using MediatR;
 using Shared.DTOs.Responses.Generals;
-using Shared.Utils.Helpers;
+using Shared.Helpers;
 
 namespace Application.Features.Customers.Commands.CreateCustomer;
 

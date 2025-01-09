@@ -1,4 +1,4 @@
-﻿namespace Shared.Utils.Helpers;
+﻿namespace Shared.Helpers;
 
 public static class ValueAssignmentHelper
 {

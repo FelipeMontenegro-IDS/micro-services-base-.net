@@ -1,7 +1,7 @@
 using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
-using Shared.Utils.Helpers;
+using Shared.Helpers;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 

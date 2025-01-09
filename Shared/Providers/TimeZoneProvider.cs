@@ -1,6 +1,6 @@
-using Shared.Utils.Enums;
+using Shared.Enums;
 
-namespace Shared.Utils.Providers;
+namespace Shared.Providers;
 
 public static class TimeZoneProvider
 {

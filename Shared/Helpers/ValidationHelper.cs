@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Shared.Utils.Helpers;
+namespace Shared.Helpers;
 
 public class ValidationHelper
 {

@@ -2,7 +2,7 @@ using System.Reflection;
 using Domain.Bases;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Shared.Utils.Helpers;
+using Shared.Helpers;
 
 namespace Persistence.Contexts;
 

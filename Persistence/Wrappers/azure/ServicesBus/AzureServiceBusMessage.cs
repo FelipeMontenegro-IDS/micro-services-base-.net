@@ -1,8 +1,8 @@
 using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
-using Shared.Utils.Enums;
-using Shared.Utils.Helpers;
+using Shared.Helpers;
+using Shared.Enums;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 

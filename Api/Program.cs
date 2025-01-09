@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddPersistenceInfraestructure(builder.Configuration);
 builder.Services.AddApplicationShared(builder.Configuration);
-builder.Services.AddApplicationLayer();
+builder.Services.AddApplicationLayer(builder.Configuration);
 builder.Services.AddControllers(options => {  options.Filters.Add<ApiResponseFilter>(); });
 
 builder.Services.AddApiVersioningExtension();
