@@ -16,7 +16,7 @@ public static class DateTimeHelper
     public static DateTime ConvertToUtc(DateTime localDateTime,
         string timeZoneOption)
     {
-        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZoneOption(timeZoneOption);
+        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
         TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
         return TimeZoneInfo.ConvertTimeToUtc(localDateTime, timeZoneInfo);
     }
@@ -25,7 +25,7 @@ public static class DateTimeHelper
     public static DateTime ConvertToLocal(DateTime utcDateTime,
         string timeZoneOption)
     {
-        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZoneOption(timeZoneOption);
+        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
         TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
         return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timeZoneInfo);
     }
@@ -33,7 +33,7 @@ public static class DateTimeHelper
     // Obtiene la fecha y hora actual en una zona horaria específica
     public static DateTime GetCurrentDateTimeInTimeZone(string timeZoneOption)
     {
-        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZoneOption(timeZoneOption);
+        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
         TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
         return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfo);
     }

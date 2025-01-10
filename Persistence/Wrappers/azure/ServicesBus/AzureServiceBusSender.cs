@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus;
+using Persistence.Interfaces.Azure.ServicesBus;
 using Shared.Configurations;
 using Shared.Helpers;
 using Shared.Providers;

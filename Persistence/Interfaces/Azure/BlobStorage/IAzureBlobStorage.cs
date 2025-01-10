@@ -1,13 +1,12 @@
 using Azure.Storage.Blobs.Models;
 
-namespace Application.Interfaces.Azure.BlobStorage;
+namespace Persistence.Interfaces.Azure.BlobStorage;
 
 /// <summary>
 /// Interfaz que define las operaciones para interactuar con Azure Blob Storage.
 /// </summary>
 public interface IAzureBlobStorage
 {
-    
     /// <summary>
     /// Crea un contenedor en Azure Blob Storage si no existe.
     /// </summary>
@@ -18,15 +17,13 @@ public interface IAzureBlobStorage
     /// <returns>
     /// Una tarea vacía que representa la operación asincrónica.
     /// </returns>
-    
     public Task CreateIfNotExistsAsync(
-        string containerName, 
+        string containerName,
         PublicAccessType accessType = PublicAccessType.None,
         IDictionary<string, string>? metadata = null,
         CancellationToken cancellationToken = default);
 
-    
-    
+
     /// <summary>
     /// Sube un archivo a un contenedor en Azure Blob Storage.
     /// </summary>
@@ -39,7 +36,6 @@ public interface IAzureBlobStorage
     /// <returns>
     /// Una tarea vacía que representa la operación asincrónica.
     /// </returns>
-    
     public Task UploadFileAsync(
         string containerName,
         string blobName,
@@ -48,7 +44,7 @@ public interface IAzureBlobStorage
         IDictionary<string, string>? metadata = null,
         CancellationToken cancellationToken = default);
 
-    
+
     /// <summary>
     /// Descarga un archivo de un contenedor en Azure Blob Storage.
     /// </summary>
@@ -59,14 +55,13 @@ public interface IAzureBlobStorage
     /// <returns>
     /// Un flujo que representa el archivo descargado.
     /// </returns>
-    
     public Task<Stream> DownloadFileAsync(
-        string containerName, 
-        string blobName, 
+        string containerName,
+        string blobName,
         string[] subFolders,
         CancellationToken cancellationToken = default);
 
-    
+
     /// <summary>
     /// Descarga un archivo de un contenedor en Azure Blob Storage a una ruta local.
     /// </summary>
@@ -78,7 +73,6 @@ public interface IAzureBlobStorage
     /// <returns>
     /// Una tarea vacía que representa la operación asincrónica.
     /// </returns>
-    
     public Task DownloadFileToLocalAsync(
         string containerName,
         string blobName,
@@ -86,7 +80,7 @@ public interface IAzureBlobStorage
         string[] subFolders,
         CancellationToken cancellationToken = default);
 
-    
+
     /// <summary>
     /// Elimina un archivo de un contenedor en Azure Blob Storage.
     /// </summary>
@@ -99,12 +93,12 @@ public interface IAzureBlobStorage
     /// </returns>
     /// 
     public Task DeleteFileAsync(
-        string containerName, 
-        string blobName, 
+        string containerName,
+        string blobName,
         string[] subFolders,
         CancellationToken cancellationToken = default);
 
-    
+
     /// <summary>
     /// Lista los blobs en un contenedor de Azure Blob Storage.
     /// </summary>
@@ -114,10 +108,10 @@ public interface IAzureBlobStorage
     /// <returns>
     /// Una lista de nombres de blobs en el contenedor.
     /// </returns>
-    
-    public Task<List<string>> ListBlobsAsync(string containerName, string? prefix = null,CancellationToken cancellationToken = default);
+    public Task<List<string>> ListBlobsAsync(string containerName, string? prefix = null,
+        CancellationToken cancellationToken = default);
 
-    
+
     /// <summary>
     /// Obtiene la URL de un blob en Azure Blob Storage.
     /// </summary>
@@ -127,13 +121,12 @@ public interface IAzureBlobStorage
     /// <returns>
     /// La URL del blob.
     /// </returns>
-    
     public string GetBlobUrl(
-        string containerName, 
-        string blobName, 
+        string containerName,
+        string blobName,
         string[] subFolders);
 
-    
+
     /// <summary>
     /// Copia un blob de un contenedor a otro en Azure Blob Storage.
     /// </summary>
@@ -147,7 +140,6 @@ public interface IAzureBlobStorage
     /// <returns>
     /// Una tarea vacía que representa la operación asincrónica.
     /// </returns>
-
     public Task CopyBlobAsync(
         string sourceContainerName,
         string sourceBlobName,
@@ -157,7 +149,7 @@ public interface IAzureBlobStorage
         string[] destinationSubFolders,
         CancellationToken cancellationToken = default);
 
-    
+
     /// <summary>
     /// Mueve un blob de un contenedor a otro en Azure Blob Storage.
     /// </summary>
@@ -171,13 +163,12 @@ public interface IAzureBlobStorage
     /// <returns>
     /// Una tarea vacía que representa la operación asincrónica.
     /// </returns>
-
     public Task MoveBlobAsync(
         string sourceContainerName,
         string sourceBlobName,
         string destinationContainerName,
         string destinationBlobName,
-        string[] sourceSubFolders, 
+        string[] sourceSubFolders,
         string[] destinationSubFolders,
         CancellationToken cancellationToken = default);
 }

@@ -7,11 +7,31 @@ namespace Shared.Converters;
 /// </summary>
 public static class FileSizeConverter
 {
+    /// <summary>
+    /// Representa el número de bytes en un kilobyte.
+    /// </summary>
     private const long BytesInKilobyte = 1024;
+    
+    /// <summary>
+    /// Representa el número de bytes en un megabyte.
+    /// </summary>
     private const long BytesInMegabyte = BytesInKilobyte * 1024;
+    
+    /// <summary>
+    /// Representa el número de bytes en un gigabyte.
+    /// </summary>
     private const long BytesInGigabyte = BytesInMegabyte * 1024;
 
 
+    
+    /// <summary>
+    /// Convierte un tamaño de archivo de una unidad a otra.
+    /// </summary>
+    /// <param name="size">El tamaño a convertir.</param>
+    /// <param name="fromUnit">La unidad de origen del tamaño.</param>
+    /// <param name="toUnit">La unidad de destino a la que se convertirá el tamaño.</param>
+    /// <returns>El tamaño convertido en la unidad de destino.</returns>
+    /// <exception cref="NotSupportedException">Se lanza si se proporciona una unidad no soportada.</exception>
     public static long Convert(long size, FileSizeUnit fromUnit, FileSizeUnit toUnit)
     {
         long sizeInBytes = fromUnit switch

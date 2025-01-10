@@ -1,8 +1,7 @@
-namespace Application.Interfaces.Azure.ServicesBus;
+namespace Persistence.Interfaces.Azure.ServicesBus;
 
 public interface IServiceBusQueueManager
 {
-    
     /// <summary>
     /// Crea una cola en Azure Service Bus si no existe, con opciones personalizadas.
     /// </summary>
@@ -10,5 +9,5 @@ public interface IServiceBusQueueManager
     /// <param name="cancellationToken">cancelar</param>
     /// <returns>Una tarea vacía que representa la operación asincrónica.</returns>
     Task CreateQueueIfNotExists(string queueName, CancellationToken cancellationToken = default);
-    
+
 }

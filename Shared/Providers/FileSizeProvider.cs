@@ -8,17 +8,17 @@ public static class FileSizeProvider
 {
     private static readonly Dictionary<FileSize, long> FileSizes = new()
     {
-        { FileSize.MB1, FileSizeConstants.MB1 },
-        { FileSize.MB2, FileSizeConstants.MB2 },
-        { FileSize.MB5, FileSizeConstants.MB5 },
-        { FileSize.MB10, FileSizeConstants.MB10 },
-        { FileSize.MB50, FileSizeConstants.MB50 },
-        { FileSize.MB100, FileSizeConstants.MB100 },
-        { FileSize.MB200, FileSizeConstants.MB200 },
-        { FileSize.MB500, FileSizeConstants.MB500 },
-        { FileSize.GB1 ,FileSizeConstants.GB1},
-        { FileSize.GB2 ,FileSizeConstants.GB2},
-        { FileSize.GB3 ,FileSizeConstants.GB3}
+        { FileSize.Mb1, FileSizeConstants.Mb1 },
+        { FileSize.Mb2, FileSizeConstants.Mb2 },
+        { FileSize.Mb5, FileSizeConstants.Mb5 },
+        { FileSize.Mb10, FileSizeConstants.Mb10 },
+        { FileSize.Mb50, FileSizeConstants.Mb50 },
+        { FileSize.Mb100, FileSizeConstants.Mb100 },
+        { FileSize.Mb200, FileSizeConstants.Mb200 },
+        { FileSize.Mb500, FileSizeConstants.Mb500 },
+        { FileSize.Gb1 ,FileSizeConstants.Gb1},
+        { FileSize.Gb2 ,FileSizeConstants.Gb2},
+        { FileSize.Gb3 ,FileSizeConstants.Gb3}
     };
 
     public static long GetFileSize(FileSize fileSize)
@@ -37,5 +37,10 @@ public static class FileSizeProvider
             return mapping.Key;
 
         throw new ArgumentOutOfRangeException(nameof(fileSize), "tamaño no soportado.");
+    }
+    
+    public static IEnumerable<long> GetAllFileSizes()
+    {
+        return FileSizes.Values;
     }
 }

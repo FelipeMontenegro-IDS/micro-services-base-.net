@@ -21,6 +21,7 @@
     <ItemGroup>
       <Folder Include="Features\Customers\Queries\GetAllCustomers\" />
       <Folder Include="Features\Customers\Queries\GetCustomerById\" />
+      <Folder Include="Interfaces\Azure\BlobStorage\" />
     </ItemGroup>
 
     <ItemGroup>

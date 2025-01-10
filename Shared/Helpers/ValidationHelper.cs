@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Shared.Helpers;
 
-public class ValidationHelper
+public static class ValidationHelper
 {
  /// <summary>
     /// Verifica si un objeto de tipo referencia es nulo.

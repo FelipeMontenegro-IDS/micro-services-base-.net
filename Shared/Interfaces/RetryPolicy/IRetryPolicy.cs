@@ -1,8 +1,8 @@
 using Shared.Enums;
 
-namespace Application.Interfaces.Azure.ServicesBus;
+namespace Shared.Interfaces.RetryPolicy;
 
-public interface IMessageRetryPolicy
+public interface IRetryPolicy 
 {
     Task RetryPolicyAsync(Func<Task> operation, RetryPolicyDefaults retryPolicyDefaults,
         CancellationToken cancellationToken = default);

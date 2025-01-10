@@ -14,15 +14,13 @@ public static class ContentTypeProvider
         { ContentType.TextHtml, ContentTypeConstants.Html },
         { ContentType.MultipartFormData, ContentTypeConstants.MultipartFormData },
         { ContentType.ApplicationXWwwFormUrlencoded, ContentTypeConstants.FormUrlEncoded },
-        { ContentType.ApplicationOctetStream, ContentTypeConstants.OctetStream }
+        { ContentType.ApplicationOctetStream, ContentTypeConstants.OctetStream },
+        { ContentType.ApplicationPdf, ContentTypeConstants.Pdf }
     };
 
     public static string GetContentType(ContentType contentType)
     {
-        if (ContentTypes.TryGetValue(contentType, out var getContentType))
-            return getContentType;
-
-        throw new ArgumentOutOfRangeException(nameof(contentType), "Tipo de contenido no soportado.");
+        return ContentTypes.GetValueOrDefault(contentType, ContentTypeConstants.Json);
     }
 
     public static ContentType GetContentType(string contentType)
@@ -32,7 +30,7 @@ public static class ContentTypeProvider
         if (ValidationHelper.IsNotNull<ContentType>(mapping.Key) && ValidationHelper.IsNotNull(mapping.Value))
             return mapping.Key;
 
-        throw new ArgumentOutOfRangeException(nameof(contentType), "Tipo de contenido no soportado.");
+        return ContentType.ApplicationJson;
     }
 
     public static IEnumerable<string> GetAllContentTypes()

@@ -1,14 +1,16 @@
 using Application.Interfaces.Ardalis;
-using Application.Interfaces.Azure.ServicesBus;
 using Application.Interfaces.Microservices;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
+using Azure.Storage.Blobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
+using Persistence.Interfaces.Azure.ServicesBus;
 using Persistence.Microservices.Configurations;
 using Persistence.Repositories;
+using Persistence.Wrappers.azure.BlobStorage;
 using Persistence.Wrappers.azure.ServicesBus;
 using Shared.Configurations;
 
@@ -43,9 +45,15 @@ public static class ServiceExtensions
             throw new ArgumentException("AzureServiceBus connection string is missing");
         }
 
+        services.AddSingleton<AzureBlobStorage>(sp =>
+        { // Get the connection string from configuration
+            var connectionString = configuration.GetConnectionString("AzureBlobStorage");
+            var blobClient = new BlobServiceClient(connectionString);
+            return new AzureBlobStorage(blobClient ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
+        });
+        
         services.AddScoped(typeof(IMessageSender), typeof(AzureServiceBusSender));
         services.AddScoped(typeof(IMessageReceiver), typeof(AzureServiceBusReceiver));
-        services.AddScoped(typeof(IMessageRetryPolicy), typeof(AzureServiceBusRetryPolicy));
         services.AddScoped(typeof(IConfigurationMicroServices), typeof(ConfigurationMicroServices));
         services.AddScoped(typeof(IMessage), typeof(AzureServiceBusMessage));
         services.AddScoped(typeof(IServiceBusQueueManager),typeof(ServiceBusQueueManager));

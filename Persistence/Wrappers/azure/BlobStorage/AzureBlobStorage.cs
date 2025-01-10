@@ -1,13 +1,13 @@
-using Application.Interfaces.Azure.BlobStorage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Persistence.Interfaces.Azure.BlobStorage;
 using Shared.Helpers;
 
-namespace Application.Wrappers.Azure.BlobStorage;
+namespace Persistence.Wrappers.azure.BlobStorage;
 
 public class AzureBlobStorage : IAzureBlobStorage
 {
-     private readonly BlobServiceClient _blobServiceClient;
+      private readonly BlobServiceClient _blobServiceClient;
 
     public AzureBlobStorage(BlobServiceClient blobServiceClient)
     {

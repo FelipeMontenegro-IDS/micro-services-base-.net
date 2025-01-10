@@ -32,4 +32,9 @@ public static class TimeSpanFormatProvider
 
         throw new ArgumentOutOfRangeException(nameof(timeSpanFormat), "formato timeSpan no soportado.");
     }
+    
+    public static IEnumerable<string> GetAllTimeSpanFormats()
+    {
+        return TimeSpanFormats.Values;
+    }
 }

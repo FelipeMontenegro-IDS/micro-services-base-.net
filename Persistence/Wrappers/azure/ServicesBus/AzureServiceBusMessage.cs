@@ -1,8 +1,9 @@
-using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
+using Persistence.Interfaces.Azure.ServicesBus;
 using Shared.Helpers;
 using Shared.Enums;
+using Shared.Interfaces.RetryPolicy;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 
@@ -10,11 +11,11 @@ public class AzureServiceBusMessage : IMessage
 {
     private readonly IMessageSender _messageSender;
     private readonly IMessageReceiver _messageReceiver;
-    private readonly IMessageRetryPolicy _retryPolicy;
+    private readonly IRetryPolicy _retryPolicy;
     private readonly ILogger<AzureServiceBusMessage> _receiverLogger;
 
     public AzureServiceBusMessage(IMessageSender messageSender, IMessageReceiver messageReceiver,
-        IMessageRetryPolicy retryPolicy, ILogger<AzureServiceBusMessage> receiverLogger)
+        IRetryPolicy retryPolicy, ILogger<AzureServiceBusMessage> receiverLogger)
     {
         _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
         _messageReceiver = messageReceiver ?? throw new ArgumentNullException(nameof(messageReceiver));

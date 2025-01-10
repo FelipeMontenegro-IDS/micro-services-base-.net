@@ -1,6 +1,6 @@
-using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.Extensions.Logging;
+using Persistence.Interfaces.Azure.ServicesBus;
 using Shared.Converters;
 using Shared.Enums;
 using Shared.Helpers;
@@ -19,13 +19,7 @@ public class ServiceBusQueueManager : IServiceBusQueueManager
         _adminClient = adminClient;
         _logger = logger;
     }
-
     
-    /// <summary>
-    /// Crea una cola en Azure Service Bus si no existe, con opciones personalizadas.
-    /// </summary>
-    /// <param name="queueName">El nombre de la cola a crear.</param>
-    /// <returns>Una tarea vacía que representa la operación asincrónica.</returns>
     public async Task CreateQueueIfNotExists(string queueName, CancellationToken cancellationToken = default)
     {
         if (!IsValidQueueName(queueName))
@@ -46,7 +40,7 @@ public class ServiceBusQueueManager : IServiceBusQueueManager
                 EnableBatchedOperations = true,
                 DuplicateDetectionHistoryTimeWindow = TimeSpanHelper.CreateTimeSpanFromDays(15),
                 MaxDeliveryCount = 1000,
-                MaxSizeInMegabytes = FileSizeConverter.Convert(FileSizeProvider.GetFileSize(FileSize.GB1),
+                MaxSizeInMegabytes = FileSizeConverter.Convert(FileSizeProvider.GetFileSize(FileSize.Gb1),
                     FileSizeUnit.Bytes, FileSizeUnit.Megabytes)
             };
 

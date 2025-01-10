@@ -12,19 +12,19 @@ public enum TimeZoneOption
     AmericaSaoPaulo,
     AmericaArgentinaBuenosAires,
     AmericaLima,
-    AmericaLosAngeles,    // "America/Los_Angeles"
-    AmericaNewYork,       // "America/New_York"
-    AmericaChicago,        // "America/Chicago"
-    Utc,                    // "UTC"
+    AmericaLosAngeles,    
+    AmericaNewYork,       
+    AmericaChicago,       
+    Utc,                    
     EuropeStockholm,
     EuropeZurich,
     EuropeRome,
     EuropeAmsterdam,
     EuropeParis,
     EuropeMadrid,
-    EuropeLondon,          // "Europe/London"
-    EuropeBerlin,          // "Europe/Berlin"
-    EuropeMoscow,          // "Europe/Moscow"
+    EuropeLondon,          
+    EuropeBerlin,          
+    EuropeMoscow,          
     AsiaJakarta,
     AsiaKualaLumpur,
     AsiaHongKong,
@@ -33,14 +33,14 @@ public enum TimeZoneOption
     AsiaSingapore,
     AsiaShanghai,
     AsiaSeoul,
-    AsiaKolkata,           // "Asia/Kolkata"
-    AsiaTokyo,             // "Asia/Tokyo"
+    AsiaKolkata,           
+    AsiaTokyo,             
     AustraliaPerth,
     AustraliaBrisbane,
     AustraliaMelbourne,
-    AustraliaSydney,       // "Australia/Sydney"
-    AmericaDenver,         // "America/Denver"
-    AmericaHalifax,         // "America/Halifax"
+    AustraliaSydney,       
+    AmericaDenver,         
+    AmericaHalifax,        
     PacificAuckland,
     PacificFiji
 }

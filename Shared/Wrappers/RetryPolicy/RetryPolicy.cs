@@ -1,18 +1,16 @@
-using Application.Interfaces.Azure.ServicesBus;
-using Shared.Helpers;
 using Shared.Enums;
+using Shared.Helpers;
+using Shared.Interfaces.RetryPolicy;
 
-namespace Persistence.Wrappers.azure.ServicesBus;
+namespace Shared.Wrappers.RetryPolicy;
 
-public class AzureServiceBusRetryPolicy : IMessageRetryPolicy
+public class RetryPolicy : IRetryPolicy
 {
-    public async Task RetryPolicyAsync(Func<Task> operation,
-        RetryPolicyDefaults retryPolicyDefaults,
+    public async Task RetryPolicyAsync(Func<Task> operation, RetryPolicyDefaults retryPolicyDefaults,
         CancellationToken cancellationToken = default)
     {
-
         if (ValidationHelper.IsNull(operation)) throw new ArgumentNullException(nameof(operation));
-        
+
         (int maxRetryAttempts, TimeSpan delay) = retryPolicyDefaults switch
         {
             RetryPolicyDefaults.LowRetries => (2, TimeSpan.FromSeconds(1)),
@@ -23,11 +21,11 @@ public class AzureServiceBusRetryPolicy : IMessageRetryPolicy
             RetryPolicyDefaults.NoRetries => (1, TimeSpan.Zero), // Solo un intento
             _ => throw new ArgumentOutOfRangeException(nameof(retryPolicyDefaults))
         };
-        
+
         if (maxRetryAttempts <= 0) throw new ArgumentOutOfRangeException(nameof(maxRetryAttempts));
         if (delay < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(delay));
 
-        
+
         int attempt = 0;
         do
         {

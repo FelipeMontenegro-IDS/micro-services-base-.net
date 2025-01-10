@@ -1,11 +1,11 @@
-using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
+using Persistence.Interfaces.Azure.ServicesBus;
 using Shared.Helpers;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 
-public class AzureServiceBusReceiver : IMessageReceiver
+public class AzureServiceBusReceiver : IMessageReceiver 
 {
     private readonly ServiceBusClient _client;
     private readonly ILogger<AzureServiceBusReceiver> _receiverLogger;
