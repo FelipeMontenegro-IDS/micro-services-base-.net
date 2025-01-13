@@ -80,7 +80,7 @@ public class AzureBlobStorage : IAzureBlobStorage
     /// <param name="subFolders">Sub-carpetas opcionales dentro del contenedor.</param>
     /// <param name="cancellationToken">Token de cancelación para la operación.</param>
     /// <returns>
-    /// Un flujo que representa el archivo descargado.
+    /// Un flujo que representa el archivo descargado y el content-type del mismo.
     /// </returns>
     public async Task<(Stream Content, string ContentType)> DownloadFileAsync(
         string containerName,

@@ -49,4 +49,39 @@ public static class ContentTypeConstants
     /// Representa el tipo de contenido para archivos PDF.
     /// </summary>
     public const string Pdf = "application/pdf";
+    
+    /// <summary>
+    /// Representa el tipo de contenido para archivos ZIP.
+    /// </summary>
+    public const string Zip = "application/zip";
+        
+    /// <summary>
+    /// Representa el tipo de contenido para archivos GZip.
+    /// </summary>
+    public const string GZip = "application/gzip";
+    
+    /// <summary>
+    /// Representa el tipo MIME para imágenes JPEG.
+    /// </summary>
+    public const string Jpg = "image/jpeg";
+
+    /// <summary>
+    /// Representa el tipo MIME para imágenes GIF.
+    /// </summary>
+    public const string Gif = "image/gif";
+
+    /// <summary>
+    /// Representa el tipo MIME para imágenes PNG.
+    /// </summary>
+    public const string Png = "image/png";
+
+    /// <summary>
+    /// Representa el tipo MIME para imágenes TIFF.
+    /// </summary>
+    public const string Tiff = "image/tiff";
+
+    /// <summary>
+    /// Representa el tipo MIME para imágenes BMP.
+    /// </summary>
+    public const string Bmp = "image/bmp";
 }

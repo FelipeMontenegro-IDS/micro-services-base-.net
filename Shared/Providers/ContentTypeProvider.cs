@@ -19,8 +19,15 @@ public class ContentTypeProvider : BaseLookupProvider<ContentType, string>, ICon
             { ContentType.MultipartFormData, ContentTypeConstants.MultipartFormData },
             { ContentType.ApplicationXWwwFormUrlencoded, ContentTypeConstants.FormUrlEncoded },
             { ContentType.ApplicationOctetStream, ContentTypeConstants.OctetStream },
-            { ContentType.ApplicationPdf, ContentTypeConstants.Pdf }
-        },validationHelper)
+            { ContentType.ApplicationPdf, ContentTypeConstants.Pdf },
+            { ContentType.ApplicationZip, ContentTypeConstants.Zip },
+            { ContentType.ApplicationGzip, ContentTypeConstants.GZip },
+            { ContentType.Jpg, ContentTypeConstants.Jpg },
+            { ContentType.Png, ContentTypeConstants.Png },
+            { ContentType.Gif, ContentTypeConstants.Gif },
+            { ContentType.Tiff, ContentTypeConstants.Tiff },
+            { ContentType.Bmp, ContentTypeConstants.Bmp }
+        }, validationHelper)
     {
     }
 }
