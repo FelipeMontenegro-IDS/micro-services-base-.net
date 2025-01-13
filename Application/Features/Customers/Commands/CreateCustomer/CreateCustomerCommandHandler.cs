@@ -1,11 +1,10 @@
 ﻿using Application.Interfaces.Ardalis;
-using Application.Interfaces.Azure.ServicesBus;
-using Application.Interfaces.Common;
 using AutoMapper;
 using Domain.Entities;
 using MediatR;
 using Shared.DTOs.Responses.Generals;
 using Shared.Helpers;
+using Shared.Interfaces.Helpers;
 
 namespace Application.Features.Customers.Commands.CreateCustomer;
 
@@ -13,17 +12,18 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
 {
     private readonly IWriteRepositoryAsync<Customer> _repository;
     private readonly IMapper _mapper;
-    private readonly IMessage _messageService;
+    private readonly IValidationHelper _validationHelper;
     // private readonly IConfigurationMicroServices _configurationMicroServices;
     // private readonly IMessageReceiver _messageReceiver;
-    private readonly IMessageSender _messageSender;
-    public CreateCustomerCommandHandler(IWriteRepositoryAsync<Customer> repository, IMapper mapper,IMessage messageService,IMessageSender messageSender)
+    // private readonly IMessageSender  _messageSender;
+    public CreateCustomerCommandHandler(IWriteRepositoryAsync<Customer> repository, IMapper mapper, IValidationHelper validationHelper)
     {
         _repository = repository;
         _mapper = mapper;
+        _validationHelper = validationHelper;
         // _configurationMicroServices = configurationMicroServices;
-        _messageSender = messageSender;
-        _messageService = messageService; 
+        // _messageSender = messageSender;
+        // _messageService = messageService; 
     }
 
     public async Task<ResponseDto<int>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
@@ -37,7 +37,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             //     Console.WriteLine(message);
             // },new ServiceBusProcessorOptions{ AutoCompleteMessages = false},cancellationToken);
             
-            await _messageSender.SendMessageAsync(new ObjectTestRequest(){ PersonId = Guid.NewGuid() },"req_prueba_request",cancellationToken);
+            // await _messageSender.SendMessageAsync(new ObjectTestRequest(){ PersonId = Guid.NewGuid() },"req_prueba_request",cancellationToken);
 
             // var res = await _messageService.ProcessRequestAsync<ObjectTestRequest, ObjectTestResponse>(
             //     new ObjectTestRequest { PersonId = Guid.NewGuid() },
@@ -49,7 +49,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             
             var data = await _repository.AddAsync(newCustomer, cancellationToken);
 
-            if (ValidationHelper.IsNull(data)) return null!;
+            if (_validationHelper.IsNull(data)) return null!;
 
             return new ResponseDto<int>(1, "correct.");
 

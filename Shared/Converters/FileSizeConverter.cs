@@ -5,7 +5,7 @@ namespace Shared.Converters;
 /// <summary>
 /// Clase de ayuda para convertir tamaños de archivos entre diferentes unidades.
 /// </summary>
-public static class FileSizeConverter
+public  class FileSizeConverter
 {
     /// <summary>
     /// Representa el número de bytes en un kilobyte.
@@ -32,7 +32,7 @@ public static class FileSizeConverter
     /// <param name="toUnit">La unidad de destino a la que se convertirá el tamaño.</param>
     /// <returns>El tamaño convertido en la unidad de destino.</returns>
     /// <exception cref="NotSupportedException">Se lanza si se proporciona una unidad no soportada.</exception>
-    public static long Convert(long size, FileSizeUnit fromUnit, FileSizeUnit toUnit)
+    public long Convert(long size, FileSizeUnit fromUnit, FileSizeUnit toUnit)
     {
         long sizeInBytes = fromUnit switch
         {
@@ -58,7 +58,7 @@ public static class FileSizeConverter
     /// </summary>
     /// <param name="bytes">El tamaño en bytes a convertir.</param>
     /// <returns>El tamaño en kilobytes.</returns>
-    private static long BytesToKilobytes(long bytes)
+    private long BytesToKilobytes(long bytes)
     {
         return bytes / BytesInKilobyte;
     }
@@ -69,7 +69,7 @@ public static class FileSizeConverter
     /// </summary>
     /// <param name="bytes">El tamaño en bytes a convertir.</param>
     /// <returns>El tamaño en megabytes.</returns>
-    private static long BytesToMegabytes(long bytes)
+    private long BytesToMegabytes(long bytes)
     {
         return bytes / BytesInMegabyte;
     }
@@ -80,7 +80,7 @@ public static class FileSizeConverter
     /// </summary>
     /// <param name="bytes">El tamaño en bytes a convertir.</param>
     /// <returns>El tamaño en gigabytes.</returns>
-    private static long BytesToGigabytes(long bytes)
+    private long BytesToGigabytes(long bytes)
     {
         return bytes / BytesInGigabyte;
     }
@@ -91,7 +91,7 @@ public static class FileSizeConverter
     /// </summary>
     /// <param name="kilobytes">El tamaño en kilobytes a convertir.</param>
     /// <returns>El tamaño en bytes.</returns>
-    private static long KilobytesToBytes(long kilobytes)
+    private long KilobytesToBytes(long kilobytes)
     {
         return kilobytes * BytesInKilobyte;
     }
@@ -101,7 +101,7 @@ public static class FileSizeConverter
     /// </summary>
     /// <param name="megabytes">El tamaño en megabytes a convertir.</param>
     /// <returns>El tamaño en bytes.</returns>
-    private static long MegabytesToBytes(long megabytes)
+    private long MegabytesToBytes(long megabytes)
     {
         return megabytes * BytesInMegabyte;
     }
@@ -111,7 +111,7 @@ public static class FileSizeConverter
     /// </summary>
     /// <param name="gigabytes">El tamaño en gigabytes a convertir.</param>
     /// <returns>El tamaño en bytes.</returns>
-    private static long GigabytesToBytes(long gigabytes)
+    private long GigabytesToBytes(long gigabytes)
     {
         return gigabytes * BytesInGigabyte;
     }

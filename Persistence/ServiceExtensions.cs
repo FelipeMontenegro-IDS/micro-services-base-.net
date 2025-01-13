@@ -1,4 +1,6 @@
 using Application.Interfaces.Ardalis;
+using Application.Interfaces.Azure.BlobStorage;
+using Application.Interfaces.Azure.ServicesBus;
 using Application.Interfaces.Microservices;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
@@ -7,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
-using Persistence.Interfaces.Azure.ServicesBus;
 using Persistence.Microservices.Configurations;
 using Persistence.Repositories;
 using Persistence.Wrappers.azure.BlobStorage;
@@ -45,13 +46,13 @@ public static class ServiceExtensions
             throw new ArgumentException("AzureServiceBus connection string is missing");
         }
 
-        services.AddSingleton<AzureBlobStorage>(sp =>
-        { // Get the connection string from configuration
+        services.AddSingleton<BlobServiceClient>(sp =>
+        {
             var connectionString = configuration.GetConnectionString("AzureBlobStorage");
-            var blobClient = new BlobServiceClient(connectionString);
-            return new AzureBlobStorage(blobClient ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
+            return new BlobServiceClient(connectionString ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
         });
-        
+
+        services.AddScoped(typeof(IAzureBlobStorage), typeof(AzureBlobStorage));
         services.AddScoped(typeof(IMessageSender), typeof(AzureServiceBusSender));
         services.AddScoped(typeof(IMessageReceiver), typeof(AzureServiceBusReceiver));
         services.AddScoped(typeof(IConfigurationMicroServices), typeof(ConfigurationMicroServices));

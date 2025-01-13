@@ -1,37 +1,42 @@
+using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
-using Persistence.Interfaces.Azure.ServicesBus;
 using Shared.Helpers;
+using Shared.Interfaces.Helpers;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 
-public class AzureServiceBusReceiver : IMessageReceiver 
+public class AzureServiceBusReceiver : IMessageReceiver
 {
     private readonly ServiceBusClient _client;
-    private readonly ILogger<AzureServiceBusReceiver> _receiverLogger;
     private readonly ILoggerFactory _loggerFactory;
-    public AzureServiceBusReceiver(ServiceBusClient client, ILogger<AzureServiceBusReceiver> receiverLogger, ILoggerFactory loggerFactoryr)
+    private readonly IValidationHelper _validationHelper;
+
+    public AzureServiceBusReceiver(
+        ServiceBusClient client,
+        ILoggerFactory loggerFactory,
+        IValidationHelper validationHelper)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
-        _receiverLogger = receiverLogger ?? throw new ArgumentNullException(nameof(receiverLogger));
-        _loggerFactory = loggerFactoryr ?? throw new ArgumentNullException(nameof(loggerFactoryr));
+        _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+        _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
     }
 
     public async Task RegisterMessageHandler<T>(string queue,
-        Func<T, CancellationToken, Task> processMessageAsync, 
+        Func<T, CancellationToken, Task> processMessageAsync,
         ServiceBusProcessorOptions options,
         CancellationToken cancellationToken = default) where T : class
     {
         var processor = _client.CreateProcessor(queue, options);
-        
+
         processor.ProcessMessageAsync += async (args) =>
         {
             var messageId = args.Message.MessageId;
             var loggerForContext = _loggerFactory.CreateLogger<ProcessedMessageContext<T>>();
-            var consumeContext = new ProcessedMessageContext<T>(args,loggerForContext);
+            var consumeContext = new ProcessedMessageContext<T>(args, loggerForContext);
             var message = consumeContext.Message;
 
-            if (ValidationHelper.IsNotNull(message))
+            if (_validationHelper.IsNotNull(message))
                 try
                 {
                     await processMessageAsync(message, cancellationToken);
@@ -45,11 +50,7 @@ public class AzureServiceBusReceiver : IMessageReceiver
             await args.CompleteMessageAsync(args.Message, cancellationToken);
         };
 
-        processor.ProcessErrorAsync += (args) =>
-        {
-            // Manejar errores aquí
-            return Task.CompletedTask;
-        };
+        processor.ProcessErrorAsync += (args) => Task.CompletedTask;
 
         await processor.StartProcessingAsync(cancellationToken);
     }

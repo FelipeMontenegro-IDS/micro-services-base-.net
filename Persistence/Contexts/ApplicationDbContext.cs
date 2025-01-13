@@ -3,16 +3,20 @@ using Domain.Bases;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Shared.Helpers;
+using Shared.Interfaces.Helpers;
 
 namespace Persistence.Contexts;
 
 public class ApplicationDbContext : DbContext
 {
+    private readonly IDateTimeHelper _dateTimeHelper;
+    
     public DbSet<Customer> Customers { get; set; }
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IDateTimeHelper dateTimeHelper) : base(options)
     {
         ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        _dateTimeHelper = dateTimeHelper;
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
@@ -22,11 +26,11 @@ public class ApplicationDbContext : DbContext
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.Created = DateTimeHelper.GetCurrentUtcDateTime();
-                    entry.Entity.Modified = DateTimeHelper.GetCurrentUtcDateTime();
+                    entry.Entity.Created =  _dateTimeHelper.GetCurrentUtcDateTime();
+                    entry.Entity.Modified = _dateTimeHelper.GetCurrentUtcDateTime();
                     break;
                 case EntityState.Modified:
-                    entry.Entity.Modified = DateTimeHelper.GetCurrentUtcDateTime();
+                    entry.Entity.Modified = _dateTimeHelper.GetCurrentUtcDateTime();
                     break;
                 case EntityState.Deleted:
                     entry.Entity.Deleted = null;

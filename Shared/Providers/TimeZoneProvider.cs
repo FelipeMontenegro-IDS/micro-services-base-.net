@@ -1,13 +1,14 @@
 using Shared.Bases.LookupProvider;
 using Shared.Constants;
 using Shared.Enums;
+using Shared.Interfaces.Helpers;
 using Shared.Interfaces.Providers;
 
 namespace Shared.Providers;
 
 public class TimeZoneProvider : BaseLookupProvider<TimeZoneOption, string>, ITimeZoneProvider
 {
-    protected TimeZoneProvider() : base(new()
+    public TimeZoneProvider(IValidationHelper validationHelper) : base(new()
     {
         { TimeZoneOption.AmericaLima, TimeZoneConstants.AmericaLima },
         { TimeZoneOption.AmericaLosAngeles, TimeZoneConstants.AmericaLosAngeles },
@@ -50,7 +51,13 @@ public class TimeZoneProvider : BaseLookupProvider<TimeZoneOption, string>, ITim
         { TimeZoneOption.AustraliaPerth, TimeZoneConstants.AustraliaPerth },
         { TimeZoneOption.PacificAuckland, TimeZoneConstants.PacificAuckland },
         { TimeZoneOption.PacificFiji, TimeZoneConstants.PacificFiji }
-    })
+    },validationHelper)
     {
+    }
+
+    public TimeZoneInfo GetTimeZoneInfo(TimeZoneOption timeZoneOption)
+    {
+        string timeZoneId = GetValue(timeZoneOption, TimeZoneConstants.Utc);
+        return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
     }
 }

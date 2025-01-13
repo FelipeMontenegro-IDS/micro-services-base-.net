@@ -1,25 +1,52 @@
+using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.Extensions.Logging;
-using Persistence.Interfaces.Azure.ServicesBus;
+using Shared.Constants;
 using Shared.Converters;
 using Shared.Enums;
-using Shared.Helpers;
-using Shared.Providers;
+using Shared.Interfaces.Helpers;
+using Shared.Interfaces.Providers;
 using Shared.RegularExpressions;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 
+/// <summary>
+/// Clase que gestiona la creación y validación de colas en Azure Service Bus.
+/// </summary>
+/// <remarks>
+/// La clase <c>ServiceBusQueueManager</c> proporciona métodos para crear colas en Azure Service Bus
+/// y validar los nombres de las colas. Utiliza el cliente de administración de Service Bus para
+/// interactuar con el servicio y asegura que las colas se configuren correctamente según las
+/// especificaciones dadas.
+/// </remarks>
 public class ServiceBusQueueManager : IServiceBusQueueManager
 {
     private readonly ServiceBusAdministrationClient _adminClient;
     private readonly ILogger<ServiceBusQueueManager> _logger;
-
-    public ServiceBusQueueManager(ServiceBusAdministrationClient adminClient, ILogger<ServiceBusQueueManager> logger)
-    {
-        _adminClient = adminClient;
-        _logger = logger;
-    }
+    private readonly ITimeSpanHelper _timeSpanHelper;
+    private readonly IFileSizeProvider _fileSizeProvider;
+    private readonly FileSizeConverter _fileSizeConverter;
     
+    public ServiceBusQueueManager(
+        ServiceBusAdministrationClient adminClient,
+        ILogger<ServiceBusQueueManager> logger,
+        ITimeSpanHelper timeSpanHelper,
+        IFileSizeProvider fileSizeProvider,
+        FileSizeConverter fileSizeConverter)
+    {
+        _adminClient = adminClient ?? throw new ArgumentNullException(nameof(adminClient));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _timeSpanHelper = timeSpanHelper ?? throw new ArgumentNullException(nameof(timeSpanHelper));
+        _fileSizeProvider = fileSizeProvider ?? throw new ArgumentNullException(nameof(fileSizeProvider));
+        _fileSizeConverter = fileSizeConverter ?? throw new ArgumentNullException(nameof(fileSizeConverter));
+    }
+
+    /// <summary>
+    /// Crea una cola en Azure Service Bus si no existe, con opciones personalizadas.
+    /// </summary>
+    /// <param name="queueName">El nombre de la cola a crear.</param>
+    /// <param name="cancellationToken">cancelar</param>
+    /// <returns>Una tarea vacía que representa la operación asincrónica.</returns>
     public async Task CreateQueueIfNotExists(string queueName, CancellationToken cancellationToken = default)
     {
         if (!IsValidQueueName(queueName))
@@ -35,13 +62,14 @@ public class ServiceBusQueueManager : IServiceBusQueueManager
             var options = new CreateQueueOptions(queueName)
             {
                 Name = queueName,
-                DefaultMessageTimeToLive = TimeSpanHelper.CreateTimeSpanFromDays(15),
+                DefaultMessageTimeToLive = _timeSpanHelper.CreateTimeSpanFromDays(15),
                 RequiresDuplicateDetection = true,
                 EnableBatchedOperations = true,
-                DuplicateDetectionHistoryTimeWindow = TimeSpanHelper.CreateTimeSpanFromDays(15),
+                DuplicateDetectionHistoryTimeWindow = _timeSpanHelper.CreateTimeSpanFromDays(15),
                 MaxDeliveryCount = 1000,
-                //MaxSizeInMegabytes = FileSizeConverter.Convert(FileSizeProvider.GetFileSize(FileSize.Gb1),
-                    //FileSizeUnit.Bytes, FileSizeUnit.Megabytes)
+                MaxSizeInMegabytes = _fileSizeConverter.Convert(
+                    _fileSizeProvider.GetValue(FileSize.Gb1, FileSizeConstants.Gb1),
+                    FileSizeUnit.Bytes, FileSizeUnit.Megabytes)
             };
 
             await _adminClient.CreateQueueAsync(options, cancellationToken);
@@ -64,7 +92,7 @@ public class ServiceBusQueueManager : IServiceBusQueueManager
     /// Este método utiliza una expresión regular para validar el formato del nombre de la cola.
     /// Asegúrese de que el nombre de la cola cumpla con los requisitos establecidos por la expresión regular.
     /// </remarks>
-    private bool IsValidQueueName(string queueName)
+    public bool IsValidQueueName(string queueName)
     {
         if (string.IsNullOrWhiteSpace(queueName))
             throw new ArgumentException("The queue name cannot be null or empty.");

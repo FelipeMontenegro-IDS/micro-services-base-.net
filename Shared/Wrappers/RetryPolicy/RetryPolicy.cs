@@ -1,15 +1,23 @@
 using Shared.Enums;
 using Shared.Helpers;
+using Shared.Interfaces.Helpers;
 using Shared.Interfaces.RetryPolicy;
 
 namespace Shared.Wrappers.RetryPolicy;
 
 public class RetryPolicy : IRetryPolicy
 {
+    private readonly IValidationHelper _validationHelper;
+
+    public RetryPolicy(IValidationHelper validationHelper)
+    {
+        _validationHelper = validationHelper;
+    }
+    
     public async Task RetryPolicyAsync(Func<Task> operation, RetryPolicyDefaults retryPolicyDefaults,
         CancellationToken cancellationToken = default)
     {
-        if (ValidationHelper.IsNull(operation)) throw new ArgumentNullException(nameof(operation));
+        if (_validationHelper.IsNull(operation)) throw new ArgumentNullException(nameof(operation));
 
         (int maxRetryAttempts, TimeSpan delay) = retryPolicyDefaults switch
         {

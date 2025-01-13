@@ -2,13 +2,14 @@ using Shared.Bases.LookupProvider;
 using Shared.Constants;
 using Shared.Enums;
 using Shared.Helpers;
+using Shared.Interfaces.Helpers;
 using Shared.Interfaces.Providers;
 
 namespace Shared.Providers;
 
 public class FileSizeProvider : BaseLookupProvider<FileSize, long>, IFileSizeProvider
 {
-    protected FileSizeProvider() : base(new Dictionary<FileSize, long>()
+    public FileSizeProvider(IValidationHelper validationHelper) : base(new Dictionary<FileSize, long>
     {
         { FileSize.Mb1, FileSizeConstants.Mb1 },
         { FileSize.Mb2, FileSizeConstants.Mb2 },
@@ -21,7 +22,7 @@ public class FileSizeProvider : BaseLookupProvider<FileSize, long>, IFileSizePro
         { FileSize.Gb1, FileSizeConstants.Gb1 },
         { FileSize.Gb2, FileSizeConstants.Gb2 },
         { FileSize.Gb3, FileSizeConstants.Gb3 }
-    })
+    },validationHelper)
     {
     }
 }

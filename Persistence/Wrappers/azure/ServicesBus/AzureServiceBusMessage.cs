@@ -1,8 +1,8 @@
+using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
-using Persistence.Interfaces.Azure.ServicesBus;
-using Shared.Helpers;
 using Shared.Enums;
+using Shared.Interfaces.Helpers;
 using Shared.Interfaces.RetryPolicy;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
@@ -13,14 +13,20 @@ public class AzureServiceBusMessage : IMessage
     private readonly IMessageReceiver _messageReceiver;
     private readonly IRetryPolicy _retryPolicy;
     private readonly ILogger<AzureServiceBusMessage> _receiverLogger;
+    private readonly IValidationHelper _validationHelper; 
 
-    public AzureServiceBusMessage(IMessageSender messageSender, IMessageReceiver messageReceiver,
-        IRetryPolicy retryPolicy, ILogger<AzureServiceBusMessage> receiverLogger)
+    public AzureServiceBusMessage(
+        IMessageSender messageSender, 
+        IMessageReceiver messageReceiver,
+        IRetryPolicy retryPolicy, 
+        ILogger<AzureServiceBusMessage> receiverLogger,
+        IValidationHelper validationHelper)
     {
         _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
         _messageReceiver = messageReceiver ?? throw new ArgumentNullException(nameof(messageReceiver));
         _retryPolicy = retryPolicy ?? throw new ArgumentNullException(nameof(retryPolicy));
         _receiverLogger = receiverLogger ?? throw new ArgumentNullException(nameof(receiverLogger));
+        _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
     }
 
 
@@ -34,7 +40,7 @@ public class AzureServiceBusMessage : IMessage
         RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries)
         where TRequest : class where TResponse : class
     {
-        if (ValidationHelper.IsNull(request)) throw new InvalidOperationException("The Request is null.");
+        if (_validationHelper.IsNull(request)) throw new InvalidOperationException("The Request is null.");
         // Enviar solicitud
 
         await RetryAndSendMessageAsync(request, queueRequest, retryPolicyDefaults, cancellationToken);
@@ -46,7 +52,7 @@ public class AzureServiceBusMessage : IMessage
         {
             try
             {
-                if (ValidationHelper.IsNull(request))
+                if (_validationHelper.IsNull(request))
                     throw new InvalidOperationException("Error occurred while processing the message.");
                 tcs.SetResult(message);
             }
@@ -81,7 +87,7 @@ public class AzureServiceBusMessage : IMessage
         {
             try
             {
-                if (ValidationHelper.IsNull(message))
+                if (_validationHelper.IsNull(message))
                     throw new InvalidOperationException("Error occurred while processing the request.");
 
                 TResponse responseMessage = await processResponseToSend(message, token);
@@ -104,7 +110,7 @@ public class AzureServiceBusMessage : IMessage
         RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries
     ) where T : class
     {
-        if (ValidationHelper.IsNull(message)) throw new InvalidOperationException("The message is null.");
+        if (_validationHelper.IsNull(message)) throw new InvalidOperationException("The message is null.");
 
         await RetryAndSendMessageAsync(message, queue, retryPolicyDefaults, cancellationToken);
     }
@@ -119,7 +125,7 @@ public class AzureServiceBusMessage : IMessage
 
         await _messageReceiver.RegisterMessageHandler<T>(queue, async (message, token) =>
         {
-            if (ValidationHelper.IsNull(message))
+            if (_validationHelper.IsNull(message))
             {
                 tcs.TrySetException(new InvalidOperationException("Error occurred while processing the message."));
                 return;
@@ -144,21 +150,21 @@ public class AzureServiceBusMessage : IMessage
 
     #region Private Method's
 
-    private async Task RetryAndSendMessageAsync<T>(T message, string queue, RetryPolicyDefaults retryPolicyDefaults,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            await _retryPolicy.RetryPolicyAsync(
-                async () => await _messageSender.SendMessageAsync(message, queue, cancellationToken),
-                retryPolicyDefaults, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            // Aquí puedes registrar el error o tomar alguna otra acción
-            throw new InvalidOperationException("Failed to send message after retries.", ex);
-        }
-    }
+     private async Task RetryAndSendMessageAsync<T>(T message, string queue, RetryPolicyDefaults retryPolicyDefaults,
+         CancellationToken cancellationToken)
+     {
+         try
+         {
+             await _retryPolicy.RetryPolicyAsync(
+                 async () => await _messageSender.SendMessageAsync(message, queue, cancellationToken),
+                 retryPolicyDefaults, cancellationToken);
+         }
+         catch (Exception ex)
+         {
+             // Aquí puedes registrar el error o tomar alguna otra acción
+             throw new InvalidOperationException("Failed to send message after retries.", ex);
+         }
+     }
 
     #endregion
 }

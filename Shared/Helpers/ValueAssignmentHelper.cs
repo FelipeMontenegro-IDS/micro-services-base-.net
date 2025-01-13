@@ -1,25 +1,38 @@
-﻿namespace Shared.Helpers;
+﻿using Shared.Interfaces.Helpers;
 
-public static class ValueAssignmentHelper
+namespace Shared.Helpers;
+
+/// <summary>
+/// Proporciona métodos para asignar valores a acciones de manera segura, 
+/// validando que los valores no sean nulos o vacíos.
+/// </summary>
+public class ValueAssignmentHelper : IValueAssignmentHelper
 {
+    private readonly IValidationHelper _validationHelper;
+
+    public ValueAssignmentHelper(IValidationHelper validationHelper)
+    {
+        _validationHelper = validationHelper;
+    }
+
     /// <summary>
     /// Asigna un valor a una acción si no es null ni una cadena vacía.
     /// </summary>
     /// <param name="assignAction">Acción para asignar el valor.</param>
     /// <param name="value">Valor a validar y asignar.</param>
     /// <example>
-    /// Ejemplo de uso:
     /// <code>
-    /// ValueAssignmentHelper.SetIfNotNullOrEmpty(value => someObject.Property = value, "Hola mundo");
+    /// helper.SetIfNotNullOrEmpty(value => someObject.Property = value, "Hola mundo");
     /// </code>
     /// </example>
-    public static void SetIfNotNullOrEmpty(Action<string> assignAction, string? value)
+    public void SetIfNotNullOrEmpty(Action<string> assignAction, string? value)
     {
         if (!string.IsNullOrEmpty(value))
         {
             assignAction(value);
         }
     }
+
 
     /// <summary>
     /// Asigna un valor a una acción si no es null.
@@ -28,27 +41,33 @@ public static class ValueAssignmentHelper
     /// <param name="assignAction">Acción para asignar el valor.</param>
     /// <param name="value">Valor a validar y asignar.</param>
     /// <example>
-    /// Ejemplo de uso:
     /// <code>
-    /// ValueAssignmentHelper.SetIfNotNull(obj => obj.DoSomething(), myObject);
+    /// helper.SetIfNotNull(obj => obj.DoSomething(), myObject);
     /// </code>
     /// </example>
-    public static void SetIfNotNull<T>(Action<T> assignAction, T? value) where T : class
+    public void SetIfNotNull<T>(Action<T> assignAction, T? value)
     {
-        if (ValidationHelper.IsNotNull(value))
+        if (_validationHelper.IsNotNull(value))
         {
             assignAction(value);
         }
     }
 
 
-    public static void SetIfNotNull<T>(Action<T?> assignAction, T? value) where T : struct
+    /// <summary>
+    /// Asigna un valor a una acción si no es null para tipos de valor.
+    /// </summary>
+    /// <typeparam name="T">Tipo del valor (struct).</typeparam>
+    /// <param name="assignAction">Acción para asignar el valor.</param>
+    /// <param name="value">Valor a validar y asignar.</param>
+    public void SetIfNotNull<T>(Action<T?> assignAction, T? value) where T : struct
     {
-        if (ValidationHelper.IsNotNull(value)) // Para tipo valor
+        if (_validationHelper.IsNotNull(value)) // Para tipo valor
         {
             assignAction(value);
         }
     }
+
 
     /// <summary>
     /// Asigna un valor a una acción si no es null y cumple con una condición.
@@ -58,40 +77,39 @@ public static class ValueAssignmentHelper
     /// <param name="value">Valor a validar y asignar.</param>
     /// <param name="predicate">Condición que debe cumplir el valor.</param>
     /// <example>
-    /// Ejemplo de uso:
     /// <code>
-    /// ValueAssignmentHelper.SetIf(value => someObject.Value = value, someValue, v => v > 10);
+    /// helper.SetIf(value => someObject.Value = value, someValue, v => v > 10);
     /// </code>
     /// </example>
-    public static void SetIf<T>(Action<T> assignAction, T? value, Func<T, bool> predicate) where T : class
+    public void SetIf<T>(Action<T> assignAction, T? value, Func<T, bool> predicate)
     {
-        if (ValidationHelper.IsNotNull(value) && predicate(value))
+        if (_validationHelper.IsNotNull(value) && predicate(value))
         {
             assignAction(value);
         }
     }
 
     /// <summary>
-    /// Asigna un valor a una acción si no es null y cumple con una condición.
+    /// Asigna un valor a una acción si no es null y cumple con una condición para tipos de valor.
     /// </summary>
-    /// <typeparam name="T">Tipo del valor.</typeparam>
+    /// <typeparam name="T">Tipo del valor (struct).</typeparam>
     /// <param name="assignAction">Acción para asignar el valor.</param>
     /// <param name="value">Valor a validar y asignar.</param>
     /// <param name="predicate">Condición que debe cumplir el valor.</param>
     /// <example>
-    /// Ejemplo de uso:
     /// <code>
-    /// ValueAssignmentHelper.SetIf(value => someObject.Value = value, someValue, v => v > 10);
+    /// helper.SetIf(value => someObject.Value = value, someValue, v => v > 10);
     /// </code>
     /// </example>
-    public static void SetIf<T>(Action<T> assignAction, T? value, Func<T, bool> predicate)
+    public void SetIf<T>(Action<T> assignAction, T? value, Func<T, bool> predicate)
         where T : struct // Esto permite tipos de valor
     {
         if (value.HasValue && predicate(value.Value)) // Para tipos de valor, verificamos si tiene valor
         {
-            assignAction(value.Value); 
+            assignAction(value.Value);
         }
     }
+
 
     /// <summary>
     /// Convierte un valor a su representación de cadena y lo asigna si no es null ni vacío.
@@ -100,14 +118,13 @@ public static class ValueAssignmentHelper
     /// <param name="assignAction">Acción para asignar el valor.</param>
     /// <param name="value">Valor a convertir y asignar.</param>
     /// <example>
-    /// Ejemplo de uso:
     /// <code>
-    /// ValueAssignmentHelper.SetToStringIfNotNull(value => someObject.StringValue = value, someIntValue);
+    /// helper.SetToStringIfNotNull(value => someObject.StringValue = value, someIntValue);
     /// </code>
-    /// </example>  
-    public static void SetToStringIfNotNull<T>(Action<string> assignAction, T? value) where T : class
+    /// </example>
+    public void SetToStringIfNotNull<T>(Action<string> assignAction, T? value) where T : class
     {
-        if (ValidationHelper.IsNotNull(value))
+        if (_validationHelper.IsNotNull(value))
         {
             var stringValue = value.ToString();
             if (!string.IsNullOrEmpty(stringValue))
@@ -125,12 +142,11 @@ public static class ValueAssignmentHelper
     /// <param name="value">Valor original.</param>
     /// <param name="defaultValue">Valor por defecto.</param>
     /// <example>
-    /// Ejemplo de uso:
     /// <code>
-    /// ValueAssignmentHelper.SetDefaultIfNull(value => someObject.Property = value, null, "Valor por defecto");
+    /// helper.SetDefaultIfNull(value => someObject.Property = value, null, "Valor por defecto");
     /// </code>
     /// </example>
-    public static void SetDefaultIfNull<T>(Action<T> assignAction, T? value, T defaultValue)
+    public void SetDefaultIfNull<T>(Action<T> assignAction, T? value, T defaultValue)
     {
         assignAction(value ?? defaultValue);
     }
