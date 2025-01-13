@@ -65,7 +65,8 @@ public static class TimeSpanHelper
     /// </remarks>
     public static string FormatTimeSpan(TimeSpan timeSpan, TimeSpanFormat format)
     {
-       return timeSpan.ToString(TimeSpanFormatProvider.GetTimeSpanFormat(format),new CultureInfo("en-US"));
+        return "";
+        // return timeSpan.ToString(TimeSpanFormatProvider.GetTimeSpanFormat(format),new CultureInfo("en-US"));
     }
     
     /// <summary>

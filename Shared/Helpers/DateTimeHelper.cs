@@ -16,32 +16,35 @@ public static class DateTimeHelper
     public static DateTime ConvertToUtc(DateTime localDateTime,
         string timeZoneOption)
     {
-        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
-        TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
-        return TimeZoneInfo.ConvertTimeToUtc(localDateTime, timeZoneInfo);
+        //TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
+        //TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
+        return TimeZoneInfo.ConvertTimeToUtc(localDateTime /*,timeZoneInfo*/);
     }
 
     // Convierte una fecha y hora UTC a la hora local de un usuario
     public static DateTime ConvertToLocal(DateTime utcDateTime,
         string timeZoneOption)
     {
-        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
-        TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
-        return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timeZoneInfo);
+        //TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
+        //TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
+        //return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timeZoneInfo);
+        return new DateTime();
     }
 
     // Obtiene la fecha y hora actual en una zona horaria específica
     public static DateTime GetCurrentDateTimeInTimeZone(string timeZoneOption)
     {
-        TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
-        TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
-        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfo);
+        //TimeZoneOption timeZone = TimeZoneProvider.GetTimeZone(timeZoneOption);
+        //TimeZoneInfo timeZoneInfo = TimeZoneProvider.GetTimeZoneInfo(timeZone);
+        //return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfo);
+        return new DateTime();
     }
 
     // Formatea una fecha en un formato específico
     public static string FormatDate(DateTime dateTime, DateFormat format)
     {
-        return dateTime.ToString(DateFormatProvider.GetDateFormat(format), new CultureInfo("en-US"));
+        //return dateTime.ToString(DateFormatProvider.GetDateFormat(format), new CultureInfo("en-US"));
+        return "yyyy-MM-dd HH:mm:ss";
     }
 
     // Calcula la diferencia en días entre dos fechas

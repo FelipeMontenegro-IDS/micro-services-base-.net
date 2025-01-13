@@ -40,8 +40,8 @@ public class ServiceBusQueueManager : IServiceBusQueueManager
                 EnableBatchedOperations = true,
                 DuplicateDetectionHistoryTimeWindow = TimeSpanHelper.CreateTimeSpanFromDays(15),
                 MaxDeliveryCount = 1000,
-                MaxSizeInMegabytes = FileSizeConverter.Convert(FileSizeProvider.GetFileSize(FileSize.Gb1),
-                    FileSizeUnit.Bytes, FileSizeUnit.Megabytes)
+                //MaxSizeInMegabytes = FileSizeConverter.Convert(FileSizeProvider.GetFileSize(FileSize.Gb1),
+                    //FileSizeUnit.Bytes, FileSizeUnit.Megabytes)
             };
 
             await _adminClient.CreateQueueAsync(options, cancellationToken);

@@ -39,7 +39,7 @@ public class AzureServiceBusSender : IMessageSender
             ValueAssignmentHelper.SetIfNotNullOrEmpty(val => serviceBusMessage.TransactionPartitionKey = val, properties.TransactionPartitionKey);
             ValueAssignmentHelper.SetIf(val => serviceBusMessage.TimeToLive = val, properties.TimeToLive, ttl => ttl > TimeSpan.Zero);
             ValueAssignmentHelper.SetIf(val => serviceBusMessage.ScheduledEnqueueTime = val, properties.ScheduledEnqueueTimeUtc, dt => dt > DateTimeHelper.GetCurrentUtcDateTime());
-            ValueAssignmentHelper.SetDefaultIfNull(val => serviceBusMessage.ContentType = val, null, ContentTypeProvider.GetContentType(ContentType.ApplicationJson));
+            //ValueAssignmentHelper.SetDefaultIfNull(val => serviceBusMessage.ContentType = val, null, ContentTypeProvider.GetContentType(ContentType.ApplicationJson));
         }
 
         await sender.SendMessageAsync(serviceBusMessage, cancellationToken);

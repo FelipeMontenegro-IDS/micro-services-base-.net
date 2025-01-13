@@ -1,11 +1,13 @@
+using Shared.Bases.LookupProvider;
 using Shared.Constants;
 using Shared.Enums;
+using Shared.Interfaces.Providers;
 
 namespace Shared.Providers;
 
-public static class TimeZoneProvider
+public class TimeZoneProvider : BaseLookupProvider<TimeZoneOption, string>, ITimeZoneProvider
 {
-    private static readonly Dictionary<TimeZoneOption, string> TimeZones = new()
+    protected TimeZoneProvider() : base(new()
     {
         { TimeZoneOption.AmericaLima, TimeZoneConstants.AmericaLima },
         { TimeZoneOption.AmericaLosAngeles, TimeZoneConstants.AmericaLosAngeles },
@@ -48,28 +50,7 @@ public static class TimeZoneProvider
         { TimeZoneOption.AustraliaPerth, TimeZoneConstants.AustraliaPerth },
         { TimeZoneOption.PacificAuckland, TimeZoneConstants.PacificAuckland },
         { TimeZoneOption.PacificFiji, TimeZoneConstants.PacificFiji }
-    };
-
-    public static string GetTimeZone(TimeZoneOption timeZoneOption)
+    })
     {
-        return TimeZones.GetValueOrDefault(timeZoneOption, TimeZoneConstants.Utc);
-    }
-
-    public static TimeZoneOption GetTimeZone(string timeZone)
-    {
-        var mapping = TimeZones.FirstOrDefault(kv => kv.Value == timeZone);
-        if (mapping.Key != default) return mapping.Key;
-        return TimeZoneOption.Utc;
-    }
-
-    public static TimeZoneInfo GetTimeZoneInfo(TimeZoneOption timeZoneOption)
-    {
-        var timeZoneId = GetTimeZone(timeZoneOption);
-        return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-    }
-    
-    public static IEnumerable<string> GetAllTimeZoneInfos()
-    {
-        return TimeZones.Values;
     }
 }

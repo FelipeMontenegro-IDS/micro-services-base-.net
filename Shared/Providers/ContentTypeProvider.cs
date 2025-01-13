@@ -1,40 +1,25 @@
+using Shared.Bases.LookupProvider;
 using Shared.Constants;
 using Shared.Enums;
 using Shared.Helpers;
+using Shared.Interfaces.Providers;
 
 namespace Shared.Providers;
 
-public static class ContentTypeProvider
+public class ContentTypeProvider : BaseLookupProvider<ContentType, string>, IContentTypeProvider
 {
-    private static readonly Dictionary<ContentType, string> ContentTypes = new()
+    protected ContentTypeProvider() : base(
+        new Dictionary<ContentType, string>()
+        {
+            { ContentType.ApplicationJson, ContentTypeConstants.Json },
+            { ContentType.ApplicationXml, ContentTypeConstants.Xml },
+            { ContentType.TextPlain, ContentTypeConstants.TextPlain },
+            { ContentType.TextHtml, ContentTypeConstants.Html },
+            { ContentType.MultipartFormData, ContentTypeConstants.MultipartFormData },
+            { ContentType.ApplicationXWwwFormUrlencoded, ContentTypeConstants.FormUrlEncoded },
+            { ContentType.ApplicationOctetStream, ContentTypeConstants.OctetStream },
+            { ContentType.ApplicationPdf, ContentTypeConstants.Pdf }
+        })
     {
-        { ContentType.ApplicationJson, ContentTypeConstants.Json },
-        { ContentType.ApplicationXml, ContentTypeConstants.Xml },
-        { ContentType.TextPlain, ContentTypeConstants.TextPlain },
-        { ContentType.TextHtml, ContentTypeConstants.Html },
-        { ContentType.MultipartFormData, ContentTypeConstants.MultipartFormData },
-        { ContentType.ApplicationXWwwFormUrlencoded, ContentTypeConstants.FormUrlEncoded },
-        { ContentType.ApplicationOctetStream, ContentTypeConstants.OctetStream },
-        { ContentType.ApplicationPdf, ContentTypeConstants.Pdf }
-    };
-
-    public static string GetContentType(ContentType contentType)
-    {
-        return ContentTypes.GetValueOrDefault(contentType, ContentTypeConstants.Json);
-    }
-
-    public static ContentType GetContentType(string contentType)
-    {
-        var mapping =
-            ContentTypes.FirstOrDefault(kv => kv.Value.Equals(contentType, StringComparison.OrdinalIgnoreCase));
-        if (ValidationHelper.IsNotNull<ContentType>(mapping.Key) && ValidationHelper.IsNotNull(mapping.Value))
-            return mapping.Key;
-
-        return ContentType.ApplicationJson;
-    }
-
-    public static IEnumerable<string> GetAllContentTypes()
-    {
-        return ContentTypes.Values;
     }
 }
