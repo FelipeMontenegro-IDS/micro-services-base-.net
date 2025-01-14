@@ -5,8 +5,8 @@ namespace Shared.Interfaces.Helpers;
 public interface IDateTimeHelper
 {
     DateTime GetCurrentUtcDateTime();
-    DateTime ConvertToUtc(DateTime localDateTime, TimeZoneOption timeZoneOption);
-    DateTime ConvertToLocal(DateTime utcDateTime, TimeZoneOption timeZoneOption);
+    DateTime ConvertTo(DateTime utcDateTime, TimeZoneOption timeZoneOption);
+    DateTimeOffset ConvertTo(DateTimeOffset utcDateTime, TimeZoneOption timeZoneOption);
     DateTime GetCurrentDateTimeInTimeZone(TimeZoneOption timeZoneOption);
     string FormatDate(DateTime dateTime, DateFormat format);
     int DaysBetween(DateTime startDate, DateTime endDate);
@@ -22,7 +22,6 @@ public interface IDateTimeHelper
     bool IsDateInRange(DateTime dateTime, DateTime startDate, DateTime endDate);
     int GetDaysInMonth(int year, int month);
     DateTime ChangeTimeZone(DateTime dateTime, TimeZoneOption timeZoneOption, TimeZoneInfo newTimeZone);
-    DateTime GetCurrentDateTimeInTimeZone(TimeZoneInfo timeZone);
 
 
 }

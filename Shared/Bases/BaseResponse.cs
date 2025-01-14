@@ -1,4 +1,4 @@
-namespace Shared.Bases;
+namespace Shared.Bases.Responses;
 
 public class BaseResponse<T>
 {

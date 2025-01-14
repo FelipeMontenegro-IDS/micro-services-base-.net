@@ -48,7 +48,19 @@ public static class ServiceExtensions
 
         services.AddSingleton<BlobServiceClient>(sp =>
         {
-            var connectionString = configuration.GetConnectionString("AzureBlobStorage");
+            var azureBlobConfig = new AzureBlobStorageOptions();
+            configuration.GetSection("AzureBlobStorage").Bind(azureBlobConfig);
+
+            if (string.IsNullOrWhiteSpace(azureBlobConfig.AccountName) ||
+                string.IsNullOrWhiteSpace(azureBlobConfig.AccountKey) ||
+                string.IsNullOrWhiteSpace(azureBlobConfig.EndpointSuffix) ||
+                string.IsNullOrWhiteSpace(azureBlobConfig.Protocol))
+            {
+                throw new ArgumentException("Los campos AccountName, AccountKey y EndpointSuffix son obligatorios.");
+            }
+
+            var connectionString = $"DefaultEndpointsProtocol={azureBlobConfig.Protocol};AccountName={azureBlobConfig.AccountName};AccountKey={azureBlobConfig.AccountKey};EndpointSuffix={azureBlobConfig.EndpointSuffix}";
+
             return new BlobServiceClient(connectionString ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
         });
 
@@ -57,7 +69,7 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IMessageReceiver), typeof(AzureServiceBusReceiver));
         services.AddScoped(typeof(IConfigurationMicroServices), typeof(ConfigurationMicroServices));
         services.AddScoped(typeof(IMessage), typeof(AzureServiceBusMessage));
-        services.AddScoped(typeof(IServiceBusQueueManager),typeof(ServiceBusQueueManager));
+        services.AddScoped(typeof(IServiceBusQueueManager), typeof(ServiceBusQueueManager));
 
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),

@@ -1,4 +1,5 @@
 using Shared.Bases;
+using Shared.Bases.Responses;
 
 namespace Shared.DTOs.Responses.Generals;
 

@@ -1,4 +1,6 @@
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
+using Shared.Enums;
 
 namespace Application.Interfaces.Azure.BlobStorage;
 
@@ -70,4 +72,20 @@ public interface IAzureBlobStorage
         string[] sourceSubFolders,
         string[] destinationSubFolders,
         CancellationToken cancellationToken = default);
+
+    public string GenerateBlobSas(
+        string containerName,
+        string blobName,
+        string[] subFolders,
+        TimeSpan expiryDuration,
+        BlobSasPermissions permissions,
+        SasProtocol sasProtocol,
+        TimeZoneOption timeZone = TimeZoneOption.Utc);
+
+    public string GenerateContainerSas(
+        string containerName,
+        TimeSpan expiryDuration,
+        SasProtocol sasProtocol,
+        BlobContainerSasPermissions permissions,
+        TimeZoneOption timeZone = TimeZoneOption.Utc);
 }

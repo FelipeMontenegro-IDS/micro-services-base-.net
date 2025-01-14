@@ -69,7 +69,7 @@ public class ValidationHelper : IValidationHelper
     /// <param name="value">El valor de la enumeración a validar.</param>
     /// <returns>True si el valor es válido; de lo contrario, False.</returns>
     /// <remarks>Este método aplica únicamente a tipos de enumeración.</remarks>
-    public bool IsValidEnum<T>(T? value) where T : Enum
+    public bool IsValidEnum<T>(T? value) where T : struct,Enum
     {
         return IsNotNull(value) && Enum.IsDefined(typeof(T), value);
     }

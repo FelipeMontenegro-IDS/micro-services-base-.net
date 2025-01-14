@@ -31,6 +31,8 @@ public static class ServicesExtensions
         services.AddScoped(typeof(ITimeSpanFormatProvider), typeof(TimeSpanFormatProvider));
         services.AddScoped(typeof(ITimeZoneProvider), typeof(TimeZoneProvider));
         services.AddScoped(typeof(ICacheControlProvider),typeof(CacheControlProvider));
+        services.AddScoped(typeof(IContentDispositionProvider), typeof(ContentDispositionProvider));
+        services.AddScoped(typeof(IContentEncodingProvider), typeof(ContentEncodingProvider));
         
         #endregion
 
@@ -40,7 +42,8 @@ public static class ServicesExtensions
         services.AddScoped(typeof(ITimeSpanHelper), typeof(TimeSpanHelper));
         services.AddScoped(typeof(IValidationHelper), typeof(ValidationHelper));
         services.AddScoped(typeof(IValueAssignmentHelper), typeof(ValueAssignmentHelper));
-
+        services.AddScoped(typeof(IHashHelper), typeof(HashHelper));
+        
         #endregion
 
         #region Converters

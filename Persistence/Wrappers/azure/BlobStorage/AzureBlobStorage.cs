@@ -1,19 +1,32 @@
 using Application.Interfaces.Azure.BlobStorage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
+using Microsoft.Extensions.Options;
+using Shared.Configurations;
+using Shared.Enums;
+using Shared.Helpers;
 using Shared.Interfaces.Helpers;
 
 namespace Persistence.Wrappers.azure.BlobStorage;
 
 public class AzureBlobStorage : IAzureBlobStorage
 {
+    private readonly AzureBlobStorageOptions _config;
     private readonly BlobServiceClient _blobServiceClient;
     private readonly IValidationHelper _validationHelper;
+    private readonly IDateTimeHelper _dateTimeHelper;
 
-    public AzureBlobStorage(BlobServiceClient blobServiceClient, IValidationHelper validationHelper)
+    public AzureBlobStorage(
+        IOptions<AzureBlobStorageOptions> config,
+        BlobServiceClient blobServiceClient,
+        IValidationHelper validationHelper,
+        IDateTimeHelper dateTimeHelper)
     {
-        _blobServiceClient = blobServiceClient;
-        _validationHelper = validationHelper;
+        _config = config.Value ?? throw new ArgumentNullException(nameof(config));
+        _blobServiceClient = blobServiceClient ?? throw new ArgumentNullException(nameof(blobServiceClient));
+        _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
+        _dateTimeHelper = dateTimeHelper ?? throw new ArgumentNullException(nameof(dateTimeHelper));
     }
 
     /// <summary>
@@ -61,7 +74,7 @@ public class AzureBlobStorage : IAzureBlobStorage
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(fullBlobName);
-        
+
         // var uploadOptions = new BlobHttpHeaders { ContentType = contentType, };
 
         await blobClient.UploadAsync(fileStream, true, cancellationToken);
@@ -93,8 +106,14 @@ public class AzureBlobStorage : IAzureBlobStorage
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(fullBlobName);
+
+        if (!await blobClient.ExistsAsync(cancellationToken))
+        {
+            throw new FileNotFoundException($"El blob '{fullBlobName}' no existe en el contenedor '{containerName}'.");
+        }
+
         var downloadInfo = await blobClient.DownloadAsync(cancellationToken);
-        
+
         string contentType = downloadInfo.Value.ContentType;
         return (downloadInfo.Value.Content, contentType);
     }
@@ -277,5 +296,73 @@ public class AzureBlobStorage : IAzureBlobStorage
         await CopyBlobAsync(sourceContainerName, sourceBlobName, destinationContainerName, destinationBlobName,
             sourceSubFolders, destinationSubFolders, cancellationToken);
         await DeleteFileAsync(sourceContainerName, sourceBlobName, sourceSubFolders, cancellationToken);
+    }
+
+    public string GenerateBlobSas(
+        string containerName,
+        string blobName,
+        string[] subFolders,
+        TimeSpan expiryDuration,
+        BlobSasPermissions blobSasPermissions,
+        SasProtocol sasProtocol = SasProtocol.Https,
+        TimeZoneOption timeZone = TimeZoneOption.Utc)
+    {
+        string folderPath = string.Join("/", subFolders);
+        string fullBlobName = string.IsNullOrEmpty(folderPath) ? blobName : $"{folderPath}/{blobName}";
+
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        var blobClient = containerClient.GetBlobClient(fullBlobName);
+
+        if (!blobClient.Exists())
+        {
+            throw new FileNotFoundException($"El blob '{fullBlobName}' no existe en el contenedor '{containerName}'.");
+        }
+
+        DateTimeOffset expirationTime = DateTimeOffset.UtcNow; // Hora actual en UTC
+        DateTimeOffset localExpirationTime = _dateTimeHelper.ConvertTo(expirationTime, timeZone).Add(expiryDuration);
+
+        BlobSasBuilder sasBuilder = new BlobSasBuilder
+        {
+            BlobContainerName = containerName,
+            BlobName = blobName,
+            ExpiresOn = localExpirationTime,
+            Protocol = sasProtocol
+        };
+        sasBuilder.SetPermissions(blobSasPermissions);
+
+        var accountName = _config.AccountName;
+        var accountKey = _config.AccountKey;
+
+        var sasToken = sasBuilder
+            .ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
+        return $"{blobClient.Uri}?{sasToken}";
+    }
+
+    public string GenerateContainerSas(string containerName, TimeSpan expiryDuration, SasProtocol sasProtocol,
+        BlobContainerSasPermissions permissions, TimeZoneOption timeZone = TimeZoneOption.Utc)
+    {
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+
+        if (!containerClient.Exists())
+        {
+            throw new DirectoryNotFoundException($"El contenedor '{containerName}' no existe.");
+        }
+
+        DateTimeOffset expirationTime = DateTimeOffset.UtcNow; // Hora actual en UTC
+        DateTimeOffset localExpirationTime = _dateTimeHelper.ConvertTo(expirationTime, timeZone).Add(expiryDuration);
+
+        BlobSasBuilder sasBuilder = new BlobSasBuilder
+        {
+            BlobContainerName = containerName,
+            ExpiresOn = localExpirationTime,
+            Protocol = sasProtocol
+        };
+        sasBuilder.SetPermissions(permissions);
+
+        var accountName = _config.AccountName;
+        var accountKey = _config.AccountKey;
+
+        var sasToken = sasBuilder.ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
+        return $"{containerClient.Uri}?{sasToken}";
     }
 }

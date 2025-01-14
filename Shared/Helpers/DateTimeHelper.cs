@@ -29,31 +29,28 @@ public class DateTimeHelper : IDateTimeHelper
     {
         return DateTime.UtcNow;
     }
-
     /// <summary>
-    /// Convierte una fecha y hora local a UTC utilizando una opción de zona horaria específica.
-    /// </summary>
-    /// <param name="localDateTime">La fecha y hora local a convertir.</param>
-    /// <param name="timeZoneOption">La opción de zona horaria a utilizar para la conversión.</param>
-    /// <returns>La fecha y hora convertida a UTC.</returns>
-    public DateTime ConvertToUtc(DateTime localDateTime,
-        TimeZoneOption timeZoneOption)
-    {
-        TimeZoneInfo timeZoneInfo = _timeZoneProvider.GetTimeZoneInfo(timeZoneOption);
-        return TimeZoneInfo.ConvertTimeToUtc(localDateTime, timeZoneInfo);
-    }
-
-    /// <summary>
-    /// Convierte una fecha y hora en formato UTC a la hora local de un usuario según la opción de zona horaria especificada.
+    /// Convierte una fecha y hora en formato UTC a la hora local según la opción de zona horaria especificada.
     /// </summary>
     /// <param name="utcDateTime">La fecha y hora en formato UTC que se desea convertir.</param>
     /// <param name="timeZoneOption">La opción de zona horaria que se utilizará para la conversión.</param>
     /// <returns>La fecha y hora convertida a la hora local del usuario.</returns>
-    public DateTime ConvertToLocal(DateTime utcDateTime,
-        TimeZoneOption timeZoneOption)
+    public DateTime ConvertTo(DateTime utcDateTime, TimeZoneOption timeZoneOption)
     {
         TimeZoneInfo timeZoneInfo = _timeZoneProvider.GetTimeZoneInfo(timeZoneOption);
         return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timeZoneInfo);
+    }
+
+    public DateTimeOffset ConvertTo(DateTimeOffset utcDateTime, TimeZoneOption timeZoneOption)
+        {
+        DateTime utcTime = utcDateTime.UtcDateTime;
+        
+        TimeZoneInfo timeZoneInfo = _timeZoneProvider.GetTimeZoneInfo(timeZoneOption);
+
+        DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZoneInfo);
+        
+        return new DateTimeOffset(localTime, timeZoneInfo.GetUtcOffset(localTime));
+
     }
 
     /// <summary>
@@ -64,7 +61,7 @@ public class DateTimeHelper : IDateTimeHelper
     public DateTime GetCurrentDateTimeInTimeZone(TimeZoneOption timeZoneOption)
     {
         TimeZoneInfo timeZoneInfo = _timeZoneProvider.GetTimeZoneInfo(timeZoneOption);
-        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfo);
+        return TimeZoneInfo.ConvertTimeFromUtc(GetCurrentUtcDateTime(), timeZoneInfo);
     }
 
     /// <summary>
@@ -188,10 +185,15 @@ public class DateTimeHelper : IDateTimeHelper
     }
 
     /// <summary>
-    /// Obtiene la fecha de fin de la semana (domingo) para una fecha dada.
+    /// Verifica si una fecha dada se encuentra dentro de un rango de fechas especificado.
     /// </summary>
-    /// <param name="dateTime">La fecha de la que se desea obtener el fin de la semana.</param>
-    /// <returns>Una nueva fecha que representa el último día de la semana (domingo) de la fecha original.</returns>
+    /// <param name="dateTime">La fecha que se va a verificar.</param>
+    /// <param name="startDate">La fecha de inicio del rango.</param>
+    /// <param name="endDate">La fecha de finalización del rango.</param>
+    /// <returns>Devuelve true si la fecha está dentro del rango, de lo contrario, false.</returns>
+    /// <remarks>
+    /// Esta función considera que las fechas de inicio y final son inclusivas.
+    /// </remarks>
     public bool IsDateInRange(DateTime dateTime, DateTime startDate, DateTime endDate)
     {
         return dateTime >= startDate && dateTime <= endDate;
@@ -219,17 +221,7 @@ public class DateTimeHelper : IDateTimeHelper
     public DateTime ChangeTimeZone(DateTime dateTime, TimeZoneOption timeZoneOption,
         TimeZoneInfo newTimeZone)
     {
-        DateTime utcDateTime = ConvertToUtc(dateTime, timeZoneOption);
+        DateTime utcDateTime = ConvertTo(dateTime, timeZoneOption);
         return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, newTimeZone);
-    }
-
-    /// <summary>
-    /// Obtiene la fecha y hora actual en una zona horaria específica.
-    /// </summary>
-    /// <param name="timeZone">La zona horaria en la que se desea obtener la fecha y hora actual.</param>
-    /// <returns>La fecha y hora actual en la zona horaria especificada.</returns>
-    public DateTime GetCurrentDateTimeInTimeZone(TimeZoneInfo timeZone)
-    {
-        return TimeZoneInfo.ConvertTimeFromUtc(GetCurrentUtcDateTime(), timeZone);
     }
 }
