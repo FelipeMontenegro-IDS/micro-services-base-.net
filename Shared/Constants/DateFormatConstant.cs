@@ -8,7 +8,7 @@ namespace Shared.Constants;
 /// Estas constantes pueden ser utilizadas para formatear fechas y horas de manera consistente,
 /// asegurando que se utilicen los valores correctos y evitando errores tipográficos.
 /// </remarks>
-public static class DateFormatConstants
+public static class DateFormatConstant
 {
     /// <summary>
     /// Representa el formato corto de fecha (MM/dd/yyyy).

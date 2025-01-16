@@ -24,7 +24,7 @@ public static class ServiceExtensions
     {
         #region DbContext and Azure Services Bus
 
-        var serviceBusOptions = new AzureServiceBusOptions();
+        var serviceBusOptions = new AzureServiceBusOption();
 
         IConfiguration configurationSection = configuration.GetSection("AzureServiceBus");
         serviceBusOptions.ConnectionString = configurationSection["ConnectionString"];
@@ -32,7 +32,7 @@ public static class ServiceExtensions
         services.AddSingleton(new ServiceBusAdministrationClient(configurationSection["ConnectionString"]));
 
 
-        services.AddOptions<AzureServiceBusOptions>()
+        services.AddOptions<AzureServiceBusOption>()
             .Bind(configuration.GetSection("AzureServiceBus"))
             .Validate(options => !string.IsNullOrEmpty(options.ConnectionString),
                 "ConnectionString cannot be null or empty");
@@ -47,10 +47,10 @@ public static class ServiceExtensions
             throw new ArgumentException("AzureServiceBus connection string is missing");
         }
         
-        services.Configure<AzureBlobStorageOptions>(configuration.GetSection("AzureBlobStorage"));
+        services.Configure<AzureBlobStorageOption>(configuration.GetSection("AzureBlobStorage"));
         services.AddSingleton<BlobServiceClient>(sp =>
         {
-            var azureBlobConfig = new AzureBlobStorageOptions();
+            var azureBlobConfig = new AzureBlobStorageOption();
             configuration.GetSection("AzureBlobStorage").Bind(azureBlobConfig);
 
 
@@ -61,11 +61,6 @@ public static class ServiceExtensions
             {
                 throw new ArgumentException("Los campos AccountName, AccountKey y EndpointSuffix son obligatorios.");
             }
-
-            Console.WriteLine($"AccountName: {azureBlobConfig.AccountName}");
-            Console.WriteLine($"AccountKey: {azureBlobConfig.AccountKey}");
-            Console.WriteLine($"EndpointSuffix: {azureBlobConfig.EndpointSuffix}");
-            Console.WriteLine($"Protocol: {azureBlobConfig.Protocol}");
             
             var connectionString = $"DefaultEndpointsProtocol={azureBlobConfig.Protocol};AccountName={azureBlobConfig.AccountName};AccountKey={azureBlobConfig.AccountKey};EndpointSuffix={azureBlobConfig.EndpointSuffix}";
 

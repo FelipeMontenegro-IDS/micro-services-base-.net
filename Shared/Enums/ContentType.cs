@@ -84,6 +84,11 @@ public enum ContentType
     /// <summary>
     /// Este tipo MIME se utiliza para imágenes en formato BMP, que es un formato de imagen sin compresión utilizado principalmente en sistemas Windows.
     /// </summary>
-    Bmp
+    Bmp,
+    
+    /// <summary>
+    /// Este tipo MIME se utiliza para Excels, que es un formato de hojas de cálculo.
+    /// </summary>
+    Excel
     
 }

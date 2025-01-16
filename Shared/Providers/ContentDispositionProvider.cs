@@ -1,4 +1,4 @@
-using Shared.Bases.LookupProvider;
+using Shared.Bases.Lookup;
 using Shared.Constants;
 using Shared.Enums;
 using Shared.Interfaces.Helpers;
@@ -10,9 +10,9 @@ namespace Shared.Providers;
 /// Proporciona métodos para gestionar y obtener valores de disposición de contenido.
 /// </summary>
 /// <remarks>
-/// La clase <see cref="ContentDispositionProvider"/> hereda de <see cref="BaseLookupProvider{TKey, TValue}"/>
+/// La clase <see cref="ContentDispositionProvider"/> hereda de <see cref="BaseLookupProvider{TEnum,TValue}"/>
 /// y se encarga de mapear los tipos de disposición de contenido a sus representaciones en cadena.
-/// Utiliza un diccionario para asociar cada valor del enum <see cref="ContentDisposition"/> con su
+/// Utiliza un diccionario para asociar cada valor del enum <see cref="Enums.ContentDisposition"/> con su
 /// correspondiente constante de disposición de contenido.
 /// </remarks>
 public class ContentDispositionProvider : BaseLookupProvider<ContentDisposition, string>, IContentDispositionProvider
@@ -20,8 +20,8 @@ public class ContentDispositionProvider : BaseLookupProvider<ContentDisposition,
     public ContentDispositionProvider(IValidationHelper validationHelper) : base(
         new Dictionary<ContentDisposition, string>
         {
-            { ContentDisposition.Inline, ContentDispositionConstants.Inline },
-            { ContentDisposition.Attachment, ContentDispositionConstants.Attachment }
+            { ContentDisposition.Inline, ContentDispositionConstant.Inline },
+            { ContentDisposition.Attachment, ContentDispositionConstant.Attachment }
         }, validationHelper)
     {
     }
@@ -34,13 +34,13 @@ public class ContentDispositionProvider : BaseLookupProvider<ContentDisposition,
     /// <returns>
     /// Un string que representa el encabezado de disposición de contenido, incluyendo el nombre del archivo.
     /// </returns>
-    public string GetValueContentDisposition(ContentDisposition contentDisposition, string fileName)
+    public string GetValueContentDisposition(Enums.ContentDisposition contentDisposition, string fileName)
     {
-        string value = GetValue(contentDisposition, ContentDispositionConstants.Attachment);
+        string value = GetValue(contentDisposition, ContentDispositionConstant.Attachment);
         return value switch
         {
-            ContentDispositionConstants.Inline => $"{value}; filename=\"{fileName}\"",
-            ContentDispositionConstants.Attachment => $"{value}; filename=\"{fileName}\"",
+            ContentDispositionConstant.Inline => $"{value}; filename=\"{fileName}\"",
+            ContentDispositionConstant.Attachment => $"{value}; filename=\"{fileName}\"",
             _ => value
         };
     }

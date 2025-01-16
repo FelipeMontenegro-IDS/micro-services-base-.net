@@ -1,9 +1,8 @@
 ﻿using Shared.Enums;
-using Shared.Interfaces.LookupProvider;
 
 namespace Shared.Interfaces.Providers;
 
-public interface IContentTypeProvider : ILookupProvider<ContentType, string> 
+public interface IContentTypeProvider : Lookup.ILookupProvider<ContentType, string> 
 {
     
 }

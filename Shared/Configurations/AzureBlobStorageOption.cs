@@ -1,6 +1,6 @@
 namespace Shared.Configurations;
 
-public class AzureBlobStorageOptions
+public class AzureBlobStorageOption
 {
     public string Protocol { get; set; }
     public string AccountName { get; set; }

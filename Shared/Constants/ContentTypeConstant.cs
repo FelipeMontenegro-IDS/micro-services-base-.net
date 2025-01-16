@@ -8,7 +8,7 @@ namespace Shared.Constants;
 /// Estas constantes pueden ser utilizadas para establecer encabezados de contenido en solicitudes HTTP,
 /// asegurando que se utilicen los valores correctos y evitando errores tipográficos.
 /// </remarks>
-public static class ContentTypeConstants
+public static class ContentTypeConstant
 {
     /// <summary>
     /// Representa el tipo de contenido para JSON.
@@ -84,4 +84,9 @@ public static class ContentTypeConstants
     /// Representa el tipo MIME para imágenes BMP.
     /// </summary>
     public const string Bmp = "image/bmp";
+    
+    /// <summary>
+    /// Representa el tipo MIME para Excel.
+    /// </summary>
+    public const string Excel = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 }

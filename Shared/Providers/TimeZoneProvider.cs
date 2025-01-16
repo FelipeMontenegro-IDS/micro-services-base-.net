@@ -1,4 +1,4 @@
-using Shared.Bases.LookupProvider;
+using Shared.Bases.Lookup;
 using Shared.Constants;
 using Shared.Enums;
 using Shared.Interfaces.Helpers;
@@ -10,54 +10,54 @@ public class TimeZoneProvider : BaseLookupProvider<TimeZoneOption, string>, ITim
 {
     public TimeZoneProvider(IValidationHelper validationHelper) : base(new()
     {
-        { TimeZoneOption.AmericaLima, TimeZoneConstants.AmericaLima },
-        { TimeZoneOption.AmericaLosAngeles, TimeZoneConstants.AmericaLosAngeles },
-        { TimeZoneOption.AmericaNewYork, TimeZoneConstants.AmericaNewYork },
-        { TimeZoneOption.AmericaChicago, TimeZoneConstants.AmericaChicago },
-        { TimeZoneOption.Utc, TimeZoneConstants.Utc },
-        { TimeZoneOption.EuropeLondon, TimeZoneConstants.EuropeLondon },
-        { TimeZoneOption.EuropeBerlin, TimeZoneConstants.EuropeBerlin },
-        { TimeZoneOption.EuropeMoscow, TimeZoneConstants.EuropeMoscow },
-        { TimeZoneOption.AsiaKolkata, TimeZoneConstants.AsiaKolkata },
-        { TimeZoneOption.AsiaTokyo, TimeZoneConstants.AsiaTokyo },
-        { TimeZoneOption.AustraliaSydney, TimeZoneConstants.AustraliaSydney },
-        { TimeZoneOption.AmericaDenver, TimeZoneConstants.AmericaDenver },
-        { TimeZoneOption.AmericaHalifax, TimeZoneConstants.AmericaHalifax },
-        { TimeZoneOption.AmericaArgentinaBuenosAires, TimeZoneConstants.AmericaArgentinaBuenosAires },
-        { TimeZoneOption.AmericaSaoPaulo, TimeZoneConstants.AmericaSaoPaulo },
-        { TimeZoneOption.AmericaMexicoCity, TimeZoneConstants.AmericaMexicoCity },
-        { TimeZoneOption.AmericaCaracas, TimeZoneConstants.AmericaCaracas },
-        { TimeZoneOption.AmericaBogota, TimeZoneConstants.AmericaBogota },
-        { TimeZoneOption.AmericaMontevideo, TimeZoneConstants.AmericaMontevideo },
-        { TimeZoneOption.AmericaGuayaquil, TimeZoneConstants.AmericaGuayaquil },
-        { TimeZoneOption.AmericaPanama, TimeZoneConstants.AmericaPanama },
-        { TimeZoneOption.AmericaToronto, TimeZoneConstants.AmericaToronto },
-        { TimeZoneOption.EuropeMadrid, TimeZoneConstants.EuropeMadrid },
-        { TimeZoneOption.EuropeParis, TimeZoneConstants.EuropeParis },
-        { TimeZoneOption.EuropeAmsterdam, TimeZoneConstants.EuropeAmsterdam },
-        { TimeZoneOption.EuropeRome, TimeZoneConstants.EuropeRome },
-        { TimeZoneOption.EuropeZurich, TimeZoneConstants.EuropeZurich },
-        { TimeZoneOption.EuropeStockholm, TimeZoneConstants.EuropeStockholm },
-        { TimeZoneOption.AsiaSeoul, TimeZoneConstants.AsiaSeoul },
-        { TimeZoneOption.AsiaShanghai, TimeZoneConstants.AsiaShanghai },
-        { TimeZoneOption.AsiaSingapore, TimeZoneConstants.AsiaSingapore },
-        { TimeZoneOption.AsiaManila, TimeZoneConstants.AsiaManila },
-        { TimeZoneOption.AsiaDubai, TimeZoneConstants.AsiaDubai },
-        { TimeZoneOption.AsiaHongKong, TimeZoneConstants.AsiaHongKong },
-        { TimeZoneOption.AsiaKualaLumpur, TimeZoneConstants.AsiaKualaLumpur },
-        { TimeZoneOption.AsiaJakarta, TimeZoneConstants.AsiaJakarta },
-        { TimeZoneOption.AustraliaBrisbane, TimeZoneConstants.AustraliaBrisbane },
-        { TimeZoneOption.AustraliaMelbourne, TimeZoneConstants.AustraliaMelbourne },
-        { TimeZoneOption.AustraliaPerth, TimeZoneConstants.AustraliaPerth },
-        { TimeZoneOption.PacificAuckland, TimeZoneConstants.PacificAuckland },
-        { TimeZoneOption.PacificFiji, TimeZoneConstants.PacificFiji }
+        { TimeZoneOption.AmericaLima, TimeZoneConstant.AmericaLima },
+        { TimeZoneOption.AmericaLosAngeles, TimeZoneConstant.AmericaLosAngeles },
+        { TimeZoneOption.AmericaNewYork, TimeZoneConstant.AmericaNewYork },
+        { TimeZoneOption.AmericaChicago, TimeZoneConstant.AmericaChicago },
+        { TimeZoneOption.Utc, TimeZoneConstant.Utc },
+        { TimeZoneOption.EuropeLondon, TimeZoneConstant.EuropeLondon },
+        { TimeZoneOption.EuropeBerlin, TimeZoneConstant.EuropeBerlin },
+        { TimeZoneOption.EuropeMoscow, TimeZoneConstant.EuropeMoscow },
+        { TimeZoneOption.AsiaKolkata, TimeZoneConstant.AsiaKolkata },
+        { TimeZoneOption.AsiaTokyo, TimeZoneConstant.AsiaTokyo },
+        { TimeZoneOption.AustraliaSydney, TimeZoneConstant.AustraliaSydney },
+        { TimeZoneOption.AmericaDenver, TimeZoneConstant.AmericaDenver },
+        { TimeZoneOption.AmericaHalifax, TimeZoneConstant.AmericaHalifax },
+        { TimeZoneOption.AmericaArgentinaBuenosAires, TimeZoneConstant.AmericaArgentinaBuenosAires },
+        { TimeZoneOption.AmericaSaoPaulo, TimeZoneConstant.AmericaSaoPaulo },
+        { TimeZoneOption.AmericaMexicoCity, TimeZoneConstant.AmericaMexicoCity },
+        { TimeZoneOption.AmericaCaracas, TimeZoneConstant.AmericaCaracas },
+        { TimeZoneOption.AmericaBogota, TimeZoneConstant.AmericaBogota },
+        { TimeZoneOption.AmericaMontevideo, TimeZoneConstant.AmericaMontevideo },
+        { TimeZoneOption.AmericaGuayaquil, TimeZoneConstant.AmericaGuayaquil },
+        { TimeZoneOption.AmericaPanama, TimeZoneConstant.AmericaPanama },
+        { TimeZoneOption.AmericaToronto, TimeZoneConstant.AmericaToronto },
+        { TimeZoneOption.EuropeMadrid, TimeZoneConstant.EuropeMadrid },
+        { TimeZoneOption.EuropeParis, TimeZoneConstant.EuropeParis },
+        { TimeZoneOption.EuropeAmsterdam, TimeZoneConstant.EuropeAmsterdam },
+        { TimeZoneOption.EuropeRome, TimeZoneConstant.EuropeRome },
+        { TimeZoneOption.EuropeZurich, TimeZoneConstant.EuropeZurich },
+        { TimeZoneOption.EuropeStockholm, TimeZoneConstant.EuropeStockholm },
+        { TimeZoneOption.AsiaSeoul, TimeZoneConstant.AsiaSeoul },
+        { TimeZoneOption.AsiaShanghai, TimeZoneConstant.AsiaShanghai },
+        { TimeZoneOption.AsiaSingapore, TimeZoneConstant.AsiaSingapore },
+        { TimeZoneOption.AsiaManila, TimeZoneConstant.AsiaManila },
+        { TimeZoneOption.AsiaDubai, TimeZoneConstant.AsiaDubai },
+        { TimeZoneOption.AsiaHongKong, TimeZoneConstant.AsiaHongKong },
+        { TimeZoneOption.AsiaKualaLumpur, TimeZoneConstant.AsiaKualaLumpur },
+        { TimeZoneOption.AsiaJakarta, TimeZoneConstant.AsiaJakarta },
+        { TimeZoneOption.AustraliaBrisbane, TimeZoneConstant.AustraliaBrisbane },
+        { TimeZoneOption.AustraliaMelbourne, TimeZoneConstant.AustraliaMelbourne },
+        { TimeZoneOption.AustraliaPerth, TimeZoneConstant.AustraliaPerth },
+        { TimeZoneOption.PacificAuckland, TimeZoneConstant.PacificAuckland },
+        { TimeZoneOption.PacificFiji, TimeZoneConstant.PacificFiji }
     },validationHelper)
     {
     }
 
     public TimeZoneInfo GetTimeZoneInfo(TimeZoneOption timeZoneOption)
     {
-        string timeZoneId = GetValue(timeZoneOption, TimeZoneConstants.Utc);
+        string timeZoneId = GetValue(timeZoneOption, TimeZoneConstant.Utc);
         return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
     }
 }

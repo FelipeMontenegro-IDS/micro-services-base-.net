@@ -8,7 +8,7 @@ namespace Shared.Constants;
 /// Estas constantes pueden ser utilizadas para comparar y validar tamaños de archivo,
 /// asegurando que se utilicen los valores correctos y evitando errores de cálculo.
 /// </remarks>
-public static class FileSizeConstants
+public static class FileSizeConstant
 {
     
     /// <summary>

@@ -14,7 +14,7 @@ namespace Persistence.Wrappers.azure.BlobStorage;
 
 public class AzureBlobStorage : IAzureBlobStorage
 {
-    private readonly AzureBlobStorageOptions _config;
+    private readonly AzureBlobStorageOption _config;
     private readonly BlobServiceClient _blobServiceClient;
     private readonly IValidationHelper _validationHelper;
     private readonly IDateTimeHelper _dateTimeHelper;
@@ -22,7 +22,7 @@ public class AzureBlobStorage : IAzureBlobStorage
     private readonly IPathHelper _pathHelper;
 
     public AzureBlobStorage(
-        IOptions<AzureBlobStorageOptions> config,
+        IOptions<AzureBlobStorageOption> config,
         BlobServiceClient blobServiceClient,
         IValidationHelper validationHelper,
         IDateTimeHelper dateTimeHelper,
@@ -109,7 +109,7 @@ public class AzureBlobStorage : IAzureBlobStorage
         var blobClient = containerClient.GetBlockBlobClient(fullBlobName);
 
         var blockIds = new List<string>();
-        int blobSize = (int)_fileSizeProvider.GetValue(fileSize, FileSizeConstants.Mb50);
+        int blobSize = (int)_fileSizeProvider.GetValue(fileSize, FileSizeConstant.Mb50);
         byte[] buffer = new byte[blobSize];
 
         int bytesRead;

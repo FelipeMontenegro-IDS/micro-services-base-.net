@@ -8,7 +8,7 @@ namespace Shared.Constants;
 /// Estas constantes pueden ser utilizadas para establecer configuraciones de zona horaria,
 /// asegurando que se utilicen los valores correctos y evitando errores tipográficos.
 /// </remarks>
-public static class TimeZoneConstants
+public static class TimeZoneConstant
 {
      /// <summary>
     /// Representa la zona horaria de Toronto, Canadá.

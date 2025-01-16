@@ -4,7 +4,7 @@ namespace Shared.Constants;
 /// Clase estática que contiene constantes para el control de caché HTTP.
 /// Estas constantes se utilizan para definir directivas de caché en las respuestas HTTP.
 /// </summary>
-public static  class CacheControlConstants
+public static  class CacheControlConstant
 {
     /// <summary>
     /// Directiva que indica que el recurso no debe ser almacenado en caché.

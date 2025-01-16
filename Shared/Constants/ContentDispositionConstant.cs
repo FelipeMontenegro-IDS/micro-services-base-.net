@@ -9,7 +9,7 @@ namespace Shared.Constants;
 /// Los tipos de disposición de contenido son importantes para determinar si el contenido debe ser mostrado en línea
 /// o descargado como un archivo adjunto.
 /// </remarks>
-public static class ContentDispositionConstants
+public static class ContentDispositionConstant
 {
     /// <summary>
     /// Representa la disposición de contenido para mostrar el contenido en línea.

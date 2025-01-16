@@ -4,7 +4,6 @@ public class ErrorApiResponseDto
 {
     public int StatusCode { get; set; }
     public string httpMethod { get; set; }
-
     public string Timestamp { get; set; }
     public string Message { get; set; }
     public object Data { get; set; }

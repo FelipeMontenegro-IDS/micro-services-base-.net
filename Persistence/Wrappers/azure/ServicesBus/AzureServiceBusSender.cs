@@ -34,7 +34,7 @@ public class AzureServiceBusSender : IMessageSender
 
     public async Task SendMessageAsync<T>(T message, string queue,
         CancellationToken cancellationToken = default,
-        AzureProperties? properties = null)
+        AzureProperty? properties = null)
     {
         var sender = _client.CreateSender(queue);
         var serializedMessage = JsonSerializer.Serialize(message);
@@ -54,7 +54,7 @@ public class AzureServiceBusSender : IMessageSender
             _valueAssignmentHelper.SetIfNotNullOrEmpty(val => serviceBusMessage.TransactionPartitionKey = val, properties.TransactionPartitionKey);
             _valueAssignmentHelper.SetIf(val => serviceBusMessage.TimeToLive = val, properties.TimeToLive, ttl => ttl > TimeSpan.Zero);
             _valueAssignmentHelper.SetIf(val => serviceBusMessage.ScheduledEnqueueTime = val, properties.ScheduledEnqueueTimeUtc, dt => dt > _dateTimeHelper.GetCurrentUtcDateTime());
-            _valueAssignmentHelper.SetDefaultIfNull(val => serviceBusMessage.ContentType = val, null, _contentTypeProvider.GetValue(ContentType.ApplicationJson, ContentTypeConstants.Json));
+            _valueAssignmentHelper.SetDefaultIfNull(val => serviceBusMessage.ContentType = val, null, _contentTypeProvider.GetValue(ContentType.ApplicationJson, ContentTypeConstant.Json));
         }
 
         await sender.SendMessageAsync(serviceBusMessage, cancellationToken);

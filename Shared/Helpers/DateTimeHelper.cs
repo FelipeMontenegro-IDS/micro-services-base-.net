@@ -72,7 +72,7 @@ public class DateTimeHelper : IDateTimeHelper
     /// <returns>Una cadena que representa la fecha formateada según el formato especificado.</returns>
     public string FormatDate(DateTime dateTime, DateFormat format)
     {
-        return dateTime.ToString(_dateFormatProvider.GetValue(format, DateFormatConstants.IsoDate),
+        return dateTime.ToString(_dateFormatProvider.GetValue(format, DateFormatConstant.IsoDate),
             new CultureInfo("en-US"));
     }
 

@@ -3,7 +3,7 @@ using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Shared.Enums;
 using Shared.Interfaces.Helpers;
-using Shared.Interfaces.RetryPolicy;
+using Shared.Interfaces.Wrappers;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 

@@ -1,7 +1,7 @@
 using Shared.Enums;
 using Shared.Helpers;
 using Shared.Interfaces.Helpers;
-using Shared.Interfaces.RetryPolicy;
+using Shared.Interfaces.Wrappers;
 
 namespace Shared.Wrappers.RetryPolicy;
 

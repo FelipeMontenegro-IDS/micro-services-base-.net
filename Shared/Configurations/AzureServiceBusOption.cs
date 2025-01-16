@@ -1,6 +1,6 @@
 namespace Shared.Configurations;
 
-public class AzureServiceBusOptions
+public class AzureServiceBusOption
 {
     public string? ConnectionString { get; set; }
 }

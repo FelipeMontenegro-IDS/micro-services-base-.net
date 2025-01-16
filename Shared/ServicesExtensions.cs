@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Bases.LookupProvider;
+using Shared.Bases.Lookup;
+using Shared.Configurations;
 using Shared.Converters;
 using Shared.Helpers;
 using Shared.Interfaces.Helpers;
-using Shared.Interfaces.LookupProvider;
 using Shared.Interfaces.Providers;
-using Shared.Interfaces.RetryPolicy;
+using Shared.Interfaces.Wrappers;
 using Shared.Providers;
 using Shared.Wrappers.RetryPolicy;
 
@@ -16,7 +16,7 @@ public static class ServicesExtensions
 {
     public static void AddApplicationShared(this IServiceCollection services, IConfiguration configuration)
     {
-        #region RetryPolicy
+        #region Wrappers
 
         services.AddScoped(typeof(IRetryPolicy), typeof(RetryPolicy));
 
@@ -24,16 +24,17 @@ public static class ServicesExtensions
 
         #region Providers
 
-        services.AddScoped(typeof(ILookupProvider<,>), typeof(BaseLookupProvider<,>));
+        services.AddScoped(typeof(ILookup<,>), typeof(BaseLookupProvider<,>));
         services.AddScoped(typeof(IContentTypeProvider), typeof(ContentTypeProvider));
         services.AddScoped(typeof(IDateFormatProvider), typeof(DateFormatProvider));
         services.AddScoped(typeof(IFileSizeProvider), typeof(FileSizeProvider));
         services.AddScoped(typeof(ITimeSpanFormatProvider), typeof(TimeSpanFormatProvider));
         services.AddScoped(typeof(ITimeZoneProvider), typeof(TimeZoneProvider));
-        services.AddScoped(typeof(ICacheControlProvider),typeof(CacheControlProvider));
+        services.AddScoped(typeof(ICacheControlProvider), typeof(CacheControlProvider));
         services.AddScoped(typeof(IContentDispositionProvider), typeof(ContentDispositionProvider));
         services.AddScoped(typeof(IContentEncodingProvider), typeof(ContentEncodingProvider));
-        
+        services.AddScoped(typeof(ISecretKeyProvider), typeof(SecretKeyProvider));
+
         #endregion
 
         #region Helpers
@@ -44,13 +45,23 @@ public static class ServicesExtensions
         services.AddScoped(typeof(IValueAssignmentHelper), typeof(ValueAssignmentHelper));
         services.AddScoped(typeof(IHashHelper), typeof(HashHelper));
         services.AddScoped(typeof(IPathHelper), typeof(PathHelper));
-        
+        services.AddScoped(typeof(IEncryptionHelper), typeof(EncryptionHelper));
+
         #endregion
 
         #region Converters
 
         services.AddScoped<FileSizeConverter>();
         services.AddScoped<TimeConverter>();
+
+        #endregion
+
+        #region Configurations
+
+        EncryptionKey encryptionConfig = new EncryptionKey();
+        configuration.GetSection("EncryptionKey").Bind(encryptionConfig);
+
+        services.AddSingleton(encryptionConfig);
 
         #endregion
     }

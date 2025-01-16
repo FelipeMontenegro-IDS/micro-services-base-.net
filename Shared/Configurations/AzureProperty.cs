@@ -3,7 +3,7 @@ using Shared.Enums;
 
 namespace Shared.Configurations;
 
-public class AzureProperties
+public class AzureProperty
 {
     /// <summary>
     /// El identificador único del mensaje.

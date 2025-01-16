@@ -68,7 +68,7 @@ public class ServiceBusQueueManager : IServiceBusQueueManager
                 DuplicateDetectionHistoryTimeWindow = _timeSpanHelper.CreateTimeSpanFromDays(15),
                 MaxDeliveryCount = 1000,
                 MaxSizeInMegabytes = _fileSizeConverter.Convert(
-                    _fileSizeProvider.GetValue(FileSize.Gb1, FileSizeConstants.Gb1),
+                    _fileSizeProvider.GetValue(FileSize.Gb1, FileSizeConstant.Gb1),
                     FileSizeUnit.Bytes, FileSizeUnit.Megabytes)
             };
 

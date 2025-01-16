@@ -1,9 +1,9 @@
 using Shared.Enums;
-using Shared.Interfaces.LookupProvider;
+using Shared.Interfaces.Lookup;
 
 namespace Shared.Interfaces.Providers;
 
-public interface ICacheControlProvider :  ILookupProvider<CacheControl, string> 
+public interface ICacheControlProvider : ILookupProvider<CacheControl, string> 
 {
     string GetValueCacheControl(CacheControl cacheControl);
 }

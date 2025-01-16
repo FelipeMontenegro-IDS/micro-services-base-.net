@@ -1,6 +1,6 @@
 namespace Shared.Constants;
 
-public static class ContentEncodingConstants
+public static class ContentEncodingConstant
 {
     public const string GZip = "zip";
     public const string Compress = "compress";

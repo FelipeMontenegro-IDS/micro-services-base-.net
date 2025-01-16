@@ -4,6 +4,7 @@ using Shared.Enums;
 using Shared.Interfaces.Helpers;
 using Shared.Interfaces.Providers;
 using Shared.Providers;
+using TimeSpanFormat = Shared.Enums.TimeSpanFormat;
 
 namespace Shared.Helpers;
 
@@ -74,7 +75,7 @@ public class TimeSpanHelper : ITimeSpanHelper
     /// Formatea un <see cref="TimeSpan"/> en una cadena personalizada según el formato especificado.
     /// </summary>
     /// <param name="timeSpan">El <see cref="TimeSpan"/> que se desea formatear.</param>
-    /// <param name="format">El formato de <see cref="TimeSpanFormat"/> que se utilizará para la conversión.</param>
+    /// <param name="format">El formato de <see cref="Enums.TimeSpanFormat"/> que se utilizará para la conversión.</param>
     /// <returns>Una cadena que representa el <see cref="TimeSpan"/> formateado según el formato especificado.</returns>
     /// <remarks>
     /// Este método utiliza la cultura "en-US" para el formateo de la cadena resultante.
@@ -82,7 +83,7 @@ public class TimeSpanHelper : ITimeSpanHelper
     /// </remarks>
     public string FormatTimeSpan(TimeSpan timeSpan, TimeSpanFormat format)
     {
-        return timeSpan.ToString(_timeSpanFormatProvider.GetValue(format,TimeSpanFormatConstants.Standard), new CultureInfo("en-US"));
+        return timeSpan.ToString(_timeSpanFormatProvider.GetValue(format,TimeSpanFormatConstant.Standard), new CultureInfo("en-US"));
     }
 
     /// <summary>

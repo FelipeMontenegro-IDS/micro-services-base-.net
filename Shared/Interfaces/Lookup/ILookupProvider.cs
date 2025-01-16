@@ -1,4 +1,4 @@
-﻿namespace Shared.Interfaces.LookupProvider;
+﻿namespace Shared.Interfaces.Lookup;
 
 public interface ILookupProvider<TEnum, TValue> where TEnum : Enum
 {

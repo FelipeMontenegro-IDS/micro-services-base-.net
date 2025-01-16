@@ -1,4 +1,4 @@
-using Shared.Bases.LookupProvider;
+using Shared.Bases.Lookup;
 using Shared.Constants;
 using Shared.Enums;
 using Shared.Interfaces.Helpers;
@@ -10,11 +10,11 @@ public class ContentEncodingProvider : BaseLookupProvider<ContentEncoding, strin
 {
     public ContentEncodingProvider(IValidationHelper validationHelper) : base(new Dictionary<ContentEncoding, string>
     {
-        { ContentEncoding.Identity, ContentEncodingConstants.Identity },
-        { ContentEncoding.Br, ContentEncodingConstants.Br },
-        { ContentEncoding.GZip, ContentEncodingConstants.GZip },
-        { ContentEncoding.Compress, ContentEncodingConstants.Compress },
-        { ContentEncoding.Deflate, ContentEncodingConstants.Deflate }
+        { ContentEncoding.Identity, ContentEncodingConstant.Identity },
+        { ContentEncoding.GZip, ContentEncodingConstant.GZip },
+        { ContentEncoding.Br, ContentEncodingConstant.Br },
+        { ContentEncoding.Compress, ContentEncodingConstant.Compress },
+        { ContentEncoding.Deflate, ContentEncodingConstant.Deflate }
     }, validationHelper)
     {
         

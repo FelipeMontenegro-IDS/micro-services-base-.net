@@ -8,7 +8,7 @@ namespace Shared.Constants;
 /// Estas constantes pueden ser utilizadas para formatear intervalos de tiempo de manera consistente,
 /// asegurando que se utilicen los valores correctos y evitando errores tipográficos.
 /// </remarks>
-public static class TimeSpanFormatConstants
+public static class TimeSpanFormatConstant
 {
     /// <summary>
     /// Representa el formato estándar de tiempo (hh:mm:ss).

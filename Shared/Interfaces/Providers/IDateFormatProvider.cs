@@ -1,8 +1,7 @@
 ﻿using Shared.Enums;
-using Shared.Interfaces.LookupProvider;
 
 namespace Shared.Interfaces.Providers;
 
-public interface IDateFormatProvider :  ILookupProvider<DateFormat, string>
+public interface IDateFormatProvider : Lookup.ILookupProvider<DateFormat, string>
 {
 }

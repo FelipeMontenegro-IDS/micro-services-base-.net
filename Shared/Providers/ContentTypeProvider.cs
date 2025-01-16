@@ -1,7 +1,6 @@
-using Shared.Bases.LookupProvider;
+using Shared.Bases.Lookup;
 using Shared.Constants;
 using Shared.Enums;
-using Shared.Helpers;
 using Shared.Interfaces.Helpers;
 using Shared.Interfaces.Providers;
 
@@ -10,23 +9,24 @@ namespace Shared.Providers;
 public class ContentTypeProvider : BaseLookupProvider<ContentType, string>, IContentTypeProvider
 {
     public ContentTypeProvider(IValidationHelper validationHelper) : base(
-        new Dictionary<ContentType, string>
+        new Dictionary<Enums.ContentType, string>
         {
-            { ContentType.ApplicationJson, ContentTypeConstants.Json },
-            { ContentType.ApplicationXml, ContentTypeConstants.Xml },
-            { ContentType.TextPlain, ContentTypeConstants.TextPlain },
-            { ContentType.TextHtml, ContentTypeConstants.Html },
-            { ContentType.MultipartFormData, ContentTypeConstants.MultipartFormData },
-            { ContentType.ApplicationXWwwFormUrlencoded, ContentTypeConstants.FormUrlEncoded },
-            { ContentType.ApplicationOctetStream, ContentTypeConstants.OctetStream },
-            { ContentType.ApplicationPdf, ContentTypeConstants.Pdf },
-            { ContentType.ApplicationZip, ContentTypeConstants.Zip },
-            { ContentType.ApplicationGzip, ContentTypeConstants.GZip },
-            { ContentType.Jpg, ContentTypeConstants.Jpg },
-            { ContentType.Png, ContentTypeConstants.Png },
-            { ContentType.Gif, ContentTypeConstants.Gif },
-            { ContentType.Tiff, ContentTypeConstants.Tiff },
-            { ContentType.Bmp, ContentTypeConstants.Bmp }
+            { ContentType.ApplicationJson, ContentTypeConstant.Json },
+            { ContentType.ApplicationXml, ContentTypeConstant.Xml },
+            { ContentType.TextPlain, ContentTypeConstant.TextPlain },
+            { ContentType.TextHtml, ContentTypeConstant.Html },
+            { ContentType.MultipartFormData, ContentTypeConstant.MultipartFormData },
+            { ContentType.ApplicationXWwwFormUrlencoded, ContentTypeConstant.FormUrlEncoded },
+            { ContentType.ApplicationOctetStream, ContentTypeConstant.OctetStream },
+            { ContentType.ApplicationPdf, ContentTypeConstant.Pdf },
+            { ContentType.ApplicationZip, ContentTypeConstant.Zip },
+            { ContentType.ApplicationGzip, ContentTypeConstant.GZip },
+            { ContentType.Jpg, ContentTypeConstant.Jpg },
+            { ContentType.Png, ContentTypeConstant.Png },
+            { ContentType.Gif, ContentTypeConstant.Gif },
+            { ContentType.Tiff, ContentTypeConstant.Tiff },
+            { ContentType.Bmp, ContentTypeConstant.Bmp },
+            { ContentType.Excel, ContentTypeConstant.Excel }
         }, validationHelper)
     {
     }

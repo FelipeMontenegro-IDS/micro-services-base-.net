@@ -1,6 +1,6 @@
 using Shared.Enums;
 
-namespace Shared.Interfaces.RetryPolicy;
+namespace Shared.Interfaces.Wrappers;
 
 public interface IRetryPolicy 
 {

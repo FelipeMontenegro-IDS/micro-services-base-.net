@@ -1,4 +1,4 @@
-using Shared.Bases.LookupProvider;
+using Shared.Bases.Lookup;
 using Shared.Constants;
 using Shared.Converters;
 using Shared.Enums;
@@ -18,12 +18,12 @@ public class CacheControlProvider : BaseLookupProvider<CacheControl, string>, IC
     public CacheControlProvider(IValidationHelper validationHelper, TimeConverter timeConverter) : base(
         new Dictionary<CacheControl, string>
         {
-            { CacheControl.NoCache, CacheControlConstants.NoCache },
-            { CacheControl.NoStore, CacheControlConstants.NoStore },
-            { CacheControl.Private, CacheControlConstants.Private },
-            { CacheControl.Public, CacheControlConstants.Public },
-            { CacheControl.MaxAge, CacheControlConstants.MaxAge },
-            { CacheControl.SMaxAge, CacheControlConstants.SMaxAge }
+            { CacheControl.NoCache, CacheControlConstant.NoCache },
+            { CacheControl.NoStore, CacheControlConstant.NoStore },
+            { CacheControl.Private, CacheControlConstant.Private },
+            { CacheControl.Public, CacheControlConstant.Public },
+            { CacheControl.MaxAge, CacheControlConstant.MaxAge },
+            { CacheControl.SMaxAge, CacheControlConstant.SMaxAge }
         }, validationHelper)
     {
         _timeConverter = timeConverter;
@@ -36,14 +36,14 @@ public class CacheControlProvider : BaseLookupProvider<CacheControl, string>, IC
     /// <returns>El valor de control de caché como una cadena.</returns>
     public string GetValueCacheControl(CacheControl cacheControl)
     {
-        string value = GetValue(cacheControl, CacheControlConstants.NoCache);
+        string value = GetValue(cacheControl, CacheControlConstant.NoCache);
 
         return value switch
         {
-            CacheControlConstants.SMaxAge =>
-                $"{CacheControlConstants.SMaxAge}{(int)_timeConverter.Convert(24, TimeUnit.Hours, TimeUnit.Seconds)}",
-            CacheControlConstants.MaxAge =>
-                $"{CacheControlConstants.MaxAge}{_timeConverter.Convert(1, TimeUnit.Hours, TimeUnit.Seconds)}",
+            CacheControlConstant.SMaxAge =>
+                $"{CacheControlConstant.SMaxAge}{(int)_timeConverter.Convert(24, TimeUnit.Hours, TimeUnit.Seconds)}",
+            CacheControlConstant.MaxAge =>
+                $"{CacheControlConstant.MaxAge}{_timeConverter.Convert(1, TimeUnit.Hours, TimeUnit.Seconds)}",
             _ => value
         };
     }
