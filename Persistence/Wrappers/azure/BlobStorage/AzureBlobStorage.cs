@@ -1,12 +1,14 @@
 using Application.Interfaces.Azure.BlobStorage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Sas;
 using Microsoft.Extensions.Options;
 using Shared.Configurations;
+using Shared.Constants;
 using Shared.Enums;
-using Shared.Helpers;
 using Shared.Interfaces.Helpers;
+using Shared.Interfaces.Providers;
 
 namespace Persistence.Wrappers.azure.BlobStorage;
 
@@ -16,17 +18,23 @@ public class AzureBlobStorage : IAzureBlobStorage
     private readonly BlobServiceClient _blobServiceClient;
     private readonly IValidationHelper _validationHelper;
     private readonly IDateTimeHelper _dateTimeHelper;
+    private readonly IFileSizeProvider _fileSizeProvider;
+    private readonly IPathHelper _pathHelper;
 
     public AzureBlobStorage(
         IOptions<AzureBlobStorageOptions> config,
         BlobServiceClient blobServiceClient,
         IValidationHelper validationHelper,
-        IDateTimeHelper dateTimeHelper)
+        IDateTimeHelper dateTimeHelper,
+        IFileSizeProvider fileSizeProvider,
+        IPathHelper pathHelper)
     {
         _config = config.Value ?? throw new ArgumentNullException(nameof(config));
         _blobServiceClient = blobServiceClient ?? throw new ArgumentNullException(nameof(blobServiceClient));
         _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
         _dateTimeHelper = dateTimeHelper ?? throw new ArgumentNullException(nameof(dateTimeHelper));
+        _fileSizeProvider = fileSizeProvider ?? throw new ArgumentNullException(nameof(fileSizeProvider));
+        _pathHelper = pathHelper ?? throw new ArgumentNullException(nameof(pathHelper));
     }
 
     /// <summary>
@@ -65,12 +73,12 @@ public class AzureBlobStorage : IAzureBlobStorage
         string containerName,
         string blobName,
         Stream fileStream,
-        string[] subFolders,
+        string[]? subFolders = null,
         IDictionary<string, string>? metadata = null,
         CancellationToken cancellationToken = default)
     {
-        string folderPath = string.Join("/", subFolders);
-        string fullBlobName = string.IsNullOrEmpty(folderPath) ? blobName : $"{folderPath}/{blobName}";
+        string folderPath = _pathHelper.BuildFolderPath(subFolders);
+        string fullBlobName = _pathHelper.BuildFullPath(blobName, folderPath);
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(fullBlobName);
@@ -81,7 +89,50 @@ public class AzureBlobStorage : IAzureBlobStorage
 
         if (_validationHelper.IsNotNull(metadata))
         {
-            await blobClient.SetMetadataAsync(metadata, null, cancellationToken);
+            await blobClient.SetMetadataAsync(metadata, cancellationToken: cancellationToken);
+        }
+    }
+
+    public async Task UploadFileInBlocksAsync(
+        string containerName,
+        string blobName,
+        Stream fileStream,
+        FileSize fileSize = FileSize.Mb50,
+        string[]? subFolders = null,
+        IDictionary<string, string>? metadata = null,
+        CancellationToken cancellationToken = default)
+    {
+        string folderPath = _pathHelper.BuildFolderPath(subFolders);
+        string fullBlobName = _pathHelper.BuildFullPath(blobName, folderPath);
+
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        var blobClient = containerClient.GetBlockBlobClient(fullBlobName);
+
+        var blockIds = new List<string>();
+        int blobSize = (int)_fileSizeProvider.GetValue(fileSize, FileSizeConstants.Mb50);
+        byte[] buffer = new byte[blobSize];
+
+        int bytesRead;
+        int blockNumber = 0;
+
+        try
+        {
+            while ((bytesRead = await fileStream.ReadAsync(buffer, 0, blobSize, cancellationToken)) > 0)
+            {
+                var blockId = Convert.ToBase64String(BitConverter.GetBytes(blockNumber));
+
+                using var memoryStream = new MemoryStream(buffer, 0, bytesRead);
+                await blobClient.StageBlockAsync(blockId, memoryStream, cancellationToken: cancellationToken);
+
+                blockIds.Add(blockId);
+                blockNumber++;
+            }
+
+            await blobClient.CommitBlockListAsync(blockIds, metadata: metadata, cancellationToken: cancellationToken);
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException("Error al cargar el archivo en bloques.", e);
         }
     }
 
@@ -98,11 +149,11 @@ public class AzureBlobStorage : IAzureBlobStorage
     public async Task<(Stream Content, string ContentType)> DownloadFileAsync(
         string containerName,
         string blobName,
-        string[] subFolders,
+        string[]? subFolders = null,
         CancellationToken cancellationToken = default)
     {
-        string folderPath = string.Join("/", subFolders);
-        string fullBlobName = string.IsNullOrEmpty(folderPath) ? blobName : $"{folderPath}/{blobName}";
+        string folderPath = _pathHelper.BuildFolderPath(subFolders);
+        string fullBlobName = _pathHelper.BuildFullPath(blobName, folderPath);
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(fullBlobName);
@@ -116,6 +167,29 @@ public class AzureBlobStorage : IAzureBlobStorage
 
         string contentType = downloadInfo.Value.ContentType;
         return (downloadInfo.Value.Content, contentType);
+    }
+
+    public async Task<(Stream Content, string ContentType)> DownloadFileBlockAsync(
+        string containerName,
+        string blobName,
+        string[]? subFolders = null,
+        CancellationToken cancellationToken = default)
+    {
+        string folderPath = _pathHelper.BuildFolderPath(subFolders);
+        string fullBlobName = _pathHelper.BuildFullPath(blobName, folderPath);
+
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        var blobClient = containerClient.GetBlockBlobClient(fullBlobName);
+
+        try
+        {
+            var response = await blobClient.DownloadAsync(cancellationToken: cancellationToken);
+            return (response.Value.Content, response.Value.ContentType);
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException($"Error al descargar el archivo: {e.Message}", e);
+        }
     }
 
     /// <summary>
@@ -133,11 +207,11 @@ public class AzureBlobStorage : IAzureBlobStorage
         string containerName,
         string blobName,
         string localFilePath,
-        string[] subFolders,
+        string[]? subFolders = null,
         CancellationToken cancellationToken = default)
     {
-        string folderPath = string.Join("/", subFolders);
-        string fullBlobName = string.IsNullOrEmpty(folderPath) ? blobName : $"{folderPath}/{blobName}";
+        string folderPath = _pathHelper.BuildFolderPath(subFolders);
+        string fullBlobName = _pathHelper.BuildFullPath(blobName, folderPath);
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(fullBlobName);
@@ -172,15 +246,15 @@ public class AzureBlobStorage : IAzureBlobStorage
     public async Task DeleteFileAsync(
         string containerName,
         string blobName,
-        string[] subFolders,
+        string[]? subFolders = null,
         CancellationToken cancellationToken = default)
     {
-        // Construir la ruta del blob
-        string folderPath = string.Join("/", subFolders);
-        string fullBlobName = string.IsNullOrEmpty(folderPath) ? blobName : $"{folderPath}/{blobName}";
+        string folderPath = _pathHelper.BuildFolderPath(subFolders);
+        string fullBlobName = _pathHelper.BuildFullPath(blobName, folderPath);
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(fullBlobName);
+        
         await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.None, null, cancellationToken);
     }
 
@@ -193,12 +267,14 @@ public class AzureBlobStorage : IAzureBlobStorage
     /// <returns>
     /// Una lista de nombres de blobs en el contenedor.
     /// </returns>
-    public async Task<List<string>> ListBlobsAsync(string containerName, string? prefix = null,
+    public async Task<List<string>> ListBlobsAsync(
+        string containerName,
+        string? prefix = null,
         CancellationToken cancellationToken = default)
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobs = new List<string>();
-
+        
         await foreach (var blobItem in containerClient.GetBlobsAsync(prefix: prefix,
                            cancellationToken: cancellationToken))
         {
@@ -217,13 +293,14 @@ public class AzureBlobStorage : IAzureBlobStorage
     /// <returns>
     /// La URL del blob.
     /// </returns>
-    public string GetBlobUrl(string containerName, string blobName, string[] subFolders)
+    public string GetBlobUrl(string containerName, string blobName, string[]? subFolders = null)
     {
-        string folderPath = string.Join("/", subFolders);
-        string fullBlobName = string.IsNullOrEmpty(folderPath) ? blobName : $"{folderPath}/{blobName}";
+        string folderPath = _pathHelper.BuildFolderPath(subFolders);
+        string fullBlobName = _pathHelper.BuildFullPath(blobName, folderPath);
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(fullBlobName);
+
         return blobClient.Uri.ToString();
     }
 
@@ -245,15 +322,12 @@ public class AzureBlobStorage : IAzureBlobStorage
         string sourceBlobName,
         string destinationContainerName,
         string destinationBlobName,
-        string[] sourceSubFolders,
-        string[] destinationSubFolders,
+        string[]? sourceSubFolders = null,
+        string[]? destinationSubFolders = null,
         CancellationToken cancellationToken = default)
     {
-        // Construir la ruta del blob de origen
-        string sourceFolderPath = string.Join("/", sourceSubFolders);
-        string fullSourceBlobName = string.IsNullOrEmpty(sourceFolderPath)
-            ? sourceBlobName
-            : $"{sourceFolderPath}/{sourceBlobName}";
+        string sourceFolderPath = _pathHelper.BuildFolderPath(sourceSubFolders);
+        string fullSourceBlobName =_pathHelper.BuildFullPath(sourceBlobName, sourceFolderPath);
 
         var sourceContainerClient = _blobServiceClient.GetBlobContainerClient(sourceContainerName);
         var sourceBlobClient = sourceContainerClient.GetBlobClient(fullSourceBlobName);
@@ -261,13 +335,11 @@ public class AzureBlobStorage : IAzureBlobStorage
 
         await destinationContainerClient.CreateIfNotExistsAsync(PublicAccessType.None, null, null, cancellationToken);
 
-        // Construir la ruta del blob de destino
-        string destinationFolderPath = string.Join("/", destinationSubFolders);
-        string fullDestinationBlobName = string.IsNullOrEmpty(destinationFolderPath)
-            ? destinationBlobName
-            : $"{destinationFolderPath}/{destinationBlobName}";
+        string destinationFolderPath = _pathHelper.BuildFolderPath(destinationSubFolders);
+        string fullDestinationBlobName = _pathHelper.BuildFullPath(destinationBlobName, destinationFolderPath);
 
-        var destinationBlobClient = destinationContainerClient.GetBlobClient(fullDestinationBlobName);
+        BlobClient destinationBlobClient = destinationContainerClient.GetBlobClient(fullDestinationBlobName);
+
         await destinationBlobClient.StartCopyFromUriAsync(sourceBlobClient.Uri, null, cancellationToken);
     }
 
@@ -289,26 +361,33 @@ public class AzureBlobStorage : IAzureBlobStorage
         string sourceBlobName,
         string destinationContainerName,
         string destinationBlobName,
-        string[] sourceSubFolders,
-        string[] destinationSubFolders,
+        string[]? sourceSubFolders = null,
+        string[]? destinationSubFolders = null,
         CancellationToken cancellationToken = default)
     {
-        await CopyBlobAsync(sourceContainerName, sourceBlobName, destinationContainerName, destinationBlobName,
-            sourceSubFolders, destinationSubFolders, cancellationToken);
+        await CopyBlobAsync(
+            sourceContainerName,
+            sourceBlobName,
+            destinationContainerName,
+            destinationBlobName,
+            sourceSubFolders,
+            destinationSubFolders,
+            cancellationToken);
+
         await DeleteFileAsync(sourceContainerName, sourceBlobName, sourceSubFolders, cancellationToken);
     }
 
     public string GenerateBlobSas(
         string containerName,
         string blobName,
-        string[] subFolders,
         TimeSpan expiryDuration,
-        BlobSasPermissions blobSasPermissions,
+        BlobSasPermissions permissions,
+        string[]? subFolders = null,
         SasProtocol sasProtocol = SasProtocol.Https,
         TimeZoneOption timeZone = TimeZoneOption.Utc)
     {
-        string folderPath = string.Join("/", subFolders);
-        string fullBlobName = string.IsNullOrEmpty(folderPath) ? blobName : $"{folderPath}/{blobName}";
+        string folderPath = _pathHelper.BuildFolderPath(subFolders);
+        string fullBlobName = _pathHelper.BuildFullPath(blobName, folderPath);
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(fullBlobName);
@@ -328,18 +407,23 @@ public class AzureBlobStorage : IAzureBlobStorage
             ExpiresOn = localExpirationTime,
             Protocol = sasProtocol
         };
-        sasBuilder.SetPermissions(blobSasPermissions);
+        sasBuilder.SetPermissions(permissions);
 
         var accountName = _config.AccountName;
         var accountKey = _config.AccountKey;
 
         var sasToken = sasBuilder
             .ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
+
         return $"{blobClient.Uri}?{sasToken}";
     }
 
-    public string GenerateContainerSas(string containerName, TimeSpan expiryDuration, SasProtocol sasProtocol,
-        BlobContainerSasPermissions permissions, TimeZoneOption timeZone = TimeZoneOption.Utc)
+    public string GenerateContainerSas(
+        string containerName,
+        TimeSpan expiryDuration,
+        BlobContainerSasPermissions permissions,
+        SasProtocol sasProtocol = SasProtocol.Https,
+        TimeZoneOption timeZone = TimeZoneOption.Utc)
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
@@ -348,7 +432,7 @@ public class AzureBlobStorage : IAzureBlobStorage
             throw new DirectoryNotFoundException($"El contenedor '{containerName}' no existe.");
         }
 
-        DateTimeOffset expirationTime = DateTimeOffset.UtcNow; // Hora actual en UTC
+        DateTimeOffset expirationTime = DateTimeOffset.UtcNow;
         DateTimeOffset localExpirationTime = _dateTimeHelper.ConvertTo(expirationTime, timeZone).Add(expiryDuration);
 
         BlobSasBuilder sasBuilder = new BlobSasBuilder
@@ -362,7 +446,9 @@ public class AzureBlobStorage : IAzureBlobStorage
         var accountName = _config.AccountName;
         var accountKey = _config.AccountKey;
 
-        var sasToken = sasBuilder.ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
+        var sasToken = sasBuilder
+            .ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
+
         return $"{containerClient.Uri}?{sasToken}";
     }
 }

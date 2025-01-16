@@ -19,11 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Customers\Queries\GetAllCustomers\" />
-      <Folder Include="Features\Customers\Queries\GetCustomerById\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
       <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>

@@ -43,6 +43,7 @@ public static class ServicesExtensions
         services.AddScoped(typeof(IValidationHelper), typeof(ValidationHelper));
         services.AddScoped(typeof(IValueAssignmentHelper), typeof(ValueAssignmentHelper));
         services.AddScoped(typeof(IHashHelper), typeof(HashHelper));
+        services.AddScoped(typeof(IPathHelper), typeof(PathHelper));
         
         #endregion
 

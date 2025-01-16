@@ -1,3 +1,4 @@
+using System.Configuration;
 using Application.Interfaces.Ardalis;
 using Application.Interfaces.Azure.BlobStorage;
 using Application.Interfaces.Azure.ServicesBus;
@@ -45,11 +46,13 @@ public static class ServiceExtensions
         {
             throw new ArgumentException("AzureServiceBus connection string is missing");
         }
-
+        
+        services.Configure<AzureBlobStorageOptions>(configuration.GetSection("AzureBlobStorage"));
         services.AddSingleton<BlobServiceClient>(sp =>
         {
             var azureBlobConfig = new AzureBlobStorageOptions();
             configuration.GetSection("AzureBlobStorage").Bind(azureBlobConfig);
+
 
             if (string.IsNullOrWhiteSpace(azureBlobConfig.AccountName) ||
                 string.IsNullOrWhiteSpace(azureBlobConfig.AccountKey) ||
@@ -59,6 +62,11 @@ public static class ServiceExtensions
                 throw new ArgumentException("Los campos AccountName, AccountKey y EndpointSuffix son obligatorios.");
             }
 
+            Console.WriteLine($"AccountName: {azureBlobConfig.AccountName}");
+            Console.WriteLine($"AccountKey: {azureBlobConfig.AccountKey}");
+            Console.WriteLine($"EndpointSuffix: {azureBlobConfig.EndpointSuffix}");
+            Console.WriteLine($"Protocol: {azureBlobConfig.Protocol}");
+            
             var connectionString = $"DefaultEndpointsProtocol={azureBlobConfig.Protocol};AccountName={azureBlobConfig.AccountName};AccountKey={azureBlobConfig.AccountKey};EndpointSuffix={azureBlobConfig.EndpointSuffix}";
 
             return new BlobServiceClient(connectionString ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
