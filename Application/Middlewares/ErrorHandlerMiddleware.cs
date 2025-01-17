@@ -27,7 +27,7 @@ public class ErrorHandlerMiddleware
             response.ContentType = "application/json";
 
             var httpMethod = context.Request.Method;
-            var responseModel = new ErrorApiResponseDto() { Message = error.Message };
+            ErrorApiResponseDto responseModel = new ErrorApiResponseDto { Message = error.Message };
 
 
             var fullRequestUri = GetUri(context);
@@ -114,7 +114,7 @@ public class ErrorHandlerMiddleware
                 {
                     { "error", new List<string> { exception.Message } }
                 },
-            additionalDetails = new AdditionalDetailsDto()
+            additionalDetails = new AdditionalDetailsDto
             {
                 FullRequestUri = fullRequestUri,
                 File = offendingFile,

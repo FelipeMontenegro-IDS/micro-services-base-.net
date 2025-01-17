@@ -5,10 +5,11 @@ using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Sas;
 using Microsoft.Extensions.Options;
 using Shared.Configurations;
-using Shared.Constants;
-using Shared.Enums;
+using Shared.Constants.Data;
+using Shared.Enums.Data;
+using Shared.Enums.Time;
 using Shared.Interfaces.Helpers;
-using Shared.Interfaces.Providers;
+using Shared.Interfaces.Providers.Data;
 
 namespace Persistence.Wrappers.azure.BlobStorage;
 

@@ -5,9 +5,13 @@ using Shared.Configurations;
 using Shared.Converters;
 using Shared.Helpers;
 using Shared.Interfaces.Helpers;
-using Shared.Interfaces.Providers;
+using Shared.Interfaces.Providers.Data;
+using Shared.Interfaces.Providers.Metadata;
+using Shared.Interfaces.Providers.Time;
 using Shared.Interfaces.Wrappers;
-using Shared.Providers;
+using Shared.Providers.Data;
+using Shared.Providers.Metadata;
+using Shared.Providers.Time;
 using Shared.Wrappers.RetryPolicy;
 
 namespace Shared;
@@ -34,7 +38,7 @@ public static class ServicesExtensions
         services.AddScoped(typeof(IContentDispositionProvider), typeof(ContentDispositionProvider));
         services.AddScoped(typeof(IContentEncodingProvider), typeof(ContentEncodingProvider));
         services.AddScoped(typeof(ISecretKeyProvider), typeof(SecretKeyProvider));
-
+        
         #endregion
 
         #region Helpers
@@ -58,11 +62,9 @@ public static class ServicesExtensions
 
         #region Configurations
 
-        EncryptionKey encryptionConfig = new EncryptionKey();
-        configuration.GetSection("EncryptionKey").Bind(encryptionConfig);
-
-        services.AddSingleton(encryptionConfig);
-
+        services.Configure<EncryptionKey>(configuration.GetSection("EncryptionKey"));
+        
+        
         #endregion
     }
 }

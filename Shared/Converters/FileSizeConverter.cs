@@ -1,4 +1,5 @@
-using Shared.Enums;
+
+using Shared.Enums.Data;
 
 namespace Shared.Converters;
 

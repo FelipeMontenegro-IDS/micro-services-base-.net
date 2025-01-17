@@ -8,7 +8,6 @@ public class ApiResponseFilter : IActionFilter
 {
     public void OnActionExecuting(ActionExecutingContext context)
     {
-        
     }
 
     public void OnActionExecuted(ActionExecutedContext context)
@@ -16,9 +15,9 @@ public class ApiResponseFilter : IActionFilter
         if (context.Result is ObjectResult objectResult)
         {
             var httpMethod = context.HttpContext.Request.Method; // Tipo de método HTTP (GET, POST, PUT, DELETE)
-            var data = objectResult.Value; 
+            var data = objectResult.Value;
             ApiResponseDto<object> apiResponse;
-            
+
             switch (httpMethod)
             {
                 case "GET":
@@ -62,10 +61,9 @@ public class ApiResponseFilter : IActionFilter
             {
                 StatusCode = objectResult.StatusCode
             };
-
         }
     }
-    
+
     private ApiResponseDto<object> HandleGetResponse(object data)
     {
         // Si `data` es nulo (por ejemplo, un recurso no encontrado)
@@ -87,7 +85,8 @@ public class ApiResponseFilter : IActionFilter
                 pagedResult
             );
         }
-        else if (data is IEnumerable<object> list) // Manejo de listas
+
+        if (data is IEnumerable<object> list) // Manejo de listas
         {
             return new ApiResponseDto<object>(
                 200,
@@ -95,13 +94,11 @@ public class ApiResponseFilter : IActionFilter
                 list
             );
         }
-        else // Manejo de objetos únicos
-        {
-            return new ApiResponseDto<object>(
-                200,
-                "Resource retrieved successfully.",
-                data
-            );
-        }
+
+        return new ApiResponseDto<object>(
+            200,
+            "Resource retrieved successfully.",
+            data
+        );
     }
 }

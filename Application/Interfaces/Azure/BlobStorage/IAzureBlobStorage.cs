@@ -1,6 +1,7 @@
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
-using Shared.Enums;
+using Shared.Enums.Data;
+using Shared.Enums.Time;
 
 namespace Application.Interfaces.Azure.BlobStorage;
 

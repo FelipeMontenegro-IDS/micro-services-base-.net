@@ -2,11 +2,10 @@ using System.Text.Json;
 using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus;
 using Shared.Configurations;
-using Shared.Constants;
-using Shared.Helpers;
-using Shared.Enums;
+using Shared.Constants.Metadata;
+using Shared.Enums.Metadata;
 using Shared.Interfaces.Helpers;
-using Shared.Interfaces.Providers;
+using Shared.Interfaces.Providers.Metadata;
 
 namespace Persistence.Wrappers.azure.ServicesBus;
 

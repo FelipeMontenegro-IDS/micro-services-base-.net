@@ -1,9 +1,9 @@
-using Shared.Enums;
+using Shared.Enums.Data;
 
 namespace Shared.Interfaces.Wrappers;
 
 public interface IRetryPolicy 
 {
-    Task RetryPolicyAsync(Func<Task> operation, RetryPolicyDefaults retryPolicyDefaults,
+    Task RetryPolicyAsync(Func<Task> operation, RetryPolicyDefault retryPolicyDefault,
         CancellationToken cancellationToken = default);
 }

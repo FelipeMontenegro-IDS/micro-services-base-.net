@@ -1,8 +1,8 @@
 using System.Globalization;
-using Shared.Constants;
-using Shared.Enums;
+using Shared.Constants.Time;
+using Shared.Enums.Time;
 using Shared.Interfaces.Helpers;
-using Shared.Interfaces.Providers;
+using Shared.Interfaces.Providers.Time;
 
 namespace Shared.Helpers;
 

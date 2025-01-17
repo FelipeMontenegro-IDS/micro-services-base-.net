@@ -1,5 +1,5 @@
 using Azure.Messaging.ServiceBus;
-using Shared.Enums;
+using Shared.Enums.Data;
 
 namespace Application.Interfaces.Azure.ServicesBus;
 
@@ -12,7 +12,7 @@ public interface IMessage
         ServiceBusProcessorOptions options,
         CancellationToken cancellationToken = default,
         IDictionary<string, object>? headers = null,
-        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries) where TRequest : class where TResponse : class;
+        RetryPolicyDefault retryPolicyDefault = RetryPolicyDefault.NoRetries) where TRequest : class where TResponse : class;
 
     Task ReceiveAndResponseAsync<TRequest, TResponse>(
         string queueRequest,
@@ -21,14 +21,14 @@ public interface IMessage
         Func<TRequest, CancellationToken, Task<TResponse>> processResponseToSend,
         CancellationToken cancellationToken = default,
         IDictionary<string, object>? headers = null,
-        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries) where TRequest : class where TResponse : class;
+        RetryPolicyDefault retryPolicyDefault = RetryPolicyDefault.NoRetries) where TRequest : class where TResponse : class;
     
     Task SendAsync<T>(
         T message,
         string queue,
         IDictionary<string, object>? headers = null,
         CancellationToken cancellationToken = default,
-        RetryPolicyDefaults retryPolicyDefaults = RetryPolicyDefaults.NoRetries) where T : class;
+        RetryPolicyDefault retryPolicyDefault = RetryPolicyDefault.NoRetries) where T : class;
 
     public Task<T> ProcessAndReturnMessageAsync<T>(
         string queue,

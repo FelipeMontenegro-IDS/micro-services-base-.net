@@ -1,5 +1,6 @@
 ﻿
-using Shared.Enums;
+
+using Shared.Enums.Metadata;
 
 namespace Shared.Configurations;
 

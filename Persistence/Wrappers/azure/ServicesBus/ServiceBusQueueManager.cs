@@ -1,11 +1,11 @@
 using Application.Interfaces.Azure.ServicesBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.Extensions.Logging;
-using Shared.Constants;
+using Shared.Constants.Data;
 using Shared.Converters;
-using Shared.Enums;
+using Shared.Enums.Data;
 using Shared.Interfaces.Helpers;
-using Shared.Interfaces.Providers;
+using Shared.Interfaces.Providers.Data;
 using Shared.RegularExpressions;
 
 namespace Persistence.Wrappers.azure.ServicesBus;

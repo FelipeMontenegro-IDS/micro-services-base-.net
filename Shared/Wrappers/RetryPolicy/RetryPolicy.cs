@@ -1,5 +1,4 @@
-using Shared.Enums;
-using Shared.Helpers;
+using Shared.Enums.Data;
 using Shared.Interfaces.Helpers;
 using Shared.Interfaces.Wrappers;
 
@@ -14,20 +13,20 @@ public class RetryPolicy : IRetryPolicy
         _validationHelper = validationHelper;
     }
     
-    public async Task RetryPolicyAsync(Func<Task> operation, RetryPolicyDefaults retryPolicyDefaults,
+    public async Task RetryPolicyAsync(Func<Task> operation, RetryPolicyDefault retryPolicyDefault,
         CancellationToken cancellationToken = default)
     {
         if (_validationHelper.IsNull(operation)) throw new ArgumentNullException(nameof(operation));
 
-        (int maxRetryAttempts, TimeSpan delay) = retryPolicyDefaults switch
+        (int maxRetryAttempts, TimeSpan delay) = retryPolicyDefault switch
         {
-            RetryPolicyDefaults.LowRetries => (2, TimeSpan.FromSeconds(1)),
-            RetryPolicyDefaults.MediumRetries => (3, TimeSpan.FromSeconds(2)),
-            RetryPolicyDefaults.HighRetries => (5, TimeSpan.FromSeconds(5)),
-            RetryPolicyDefaults.VeryHighRetries => (7, TimeSpan.FromSeconds(10)),
-            RetryPolicyDefaults.ExtremeRetries => (10, TimeSpan.FromSeconds(15)),
-            RetryPolicyDefaults.NoRetries => (1, TimeSpan.Zero), // Solo un intento
-            _ => throw new ArgumentOutOfRangeException(nameof(retryPolicyDefaults))
+            RetryPolicyDefault.LowRetries => (2, TimeSpan.FromSeconds(1)),
+            RetryPolicyDefault.MediumRetries => (3, TimeSpan.FromSeconds(2)),
+            RetryPolicyDefault.HighRetries => (5, TimeSpan.FromSeconds(5)),
+            RetryPolicyDefault.VeryHighRetries => (7, TimeSpan.FromSeconds(10)),
+            RetryPolicyDefault.ExtremeRetries => (10, TimeSpan.FromSeconds(15)),
+            RetryPolicyDefault.NoRetries => (1, TimeSpan.Zero), // Solo un intento
+            _ => throw new ArgumentOutOfRangeException(nameof(retryPolicyDefault))
         };
 
         if (maxRetryAttempts <= 0) throw new ArgumentOutOfRangeException(nameof(maxRetryAttempts));
