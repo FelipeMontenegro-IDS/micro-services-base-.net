@@ -15,10 +15,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Constants\Queue\" />
       <Folder Include="DTOs\Requests\Microservices\" />
       <Folder Include="DTOs\Responses\Customers\" />
       <Folder Include="DTOs\Responses\Microservices\" />
+      <Folder Include="Factories\" />
       <Folder Include="Queues\Persons\" />
     </ItemGroup>
 

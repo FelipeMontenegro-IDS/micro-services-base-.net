@@ -2,5 +2,6 @@
 
 public enum ConfigurationQueueRequest
 {
-    GetConfigurationByCustomerId
+    GetConfigurationByCustomerId,
+    ConfigurationNotFound
 }

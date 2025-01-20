@@ -3,5 +3,6 @@
 public enum AuditQueueRequest
 {
     GetAuditContractById,
-    GetAuditContractByCustomerId
+    GetAuditContractByCustomerId,
+    AuditNotFound
 }

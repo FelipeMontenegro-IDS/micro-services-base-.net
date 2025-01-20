@@ -4,5 +4,6 @@ public enum PersonQueueRequest
 {
     GetPersonById,
     GetPersonByName,
-    GetPersonByEmail
+    GetPersonByEmail,
+    PersonNotFound
 }

@@ -1,8 +1,9 @@
 ﻿using Shared.Interfaces.Helpers;
+using Shared.Interfaces.Lookup;
 
 namespace Shared.Bases.Lookup;
 
-public class BaseLookupProvider<TEnum, TValue> : Interfaces.Lookup.ILookupProvider<TEnum, TValue> where TEnum : Enum
+public class BaseLookupProvider<TEnum, TValue> : ILookupProvider<TEnum, TValue> where TEnum : Enum
 {
     private readonly IValidationHelper _validationHelper;
     private readonly Dictionary<TEnum, TValue> _dataLookupProviders;

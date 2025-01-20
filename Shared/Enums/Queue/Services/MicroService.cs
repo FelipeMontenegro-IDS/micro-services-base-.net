@@ -4,5 +4,6 @@ public enum MicroService
 {
     Person,
     Configuration,
-    Audit
+    Audit,
+    NotFound
 }

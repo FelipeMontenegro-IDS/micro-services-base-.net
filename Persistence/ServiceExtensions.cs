@@ -1,4 +1,3 @@
-using System.Configuration;
 using Application.Interfaces.Ardalis;
 using Application.Interfaces.Azure.BlobStorage;
 using Application.Interfaces.Azure.ServicesBus;
@@ -73,7 +72,9 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IConfigurationMicroServices), typeof(ConfigurationMicroServices));
         services.AddScoped(typeof(IMessage), typeof(AzureServiceBusMessage));
         services.AddScoped(typeof(IServiceBusQueueManager), typeof(ServiceBusQueueManager));
-
+        services.AddScoped(typeof(IBaseQueue<>), typeof(ResponseQueue<>));
+        services.AddScoped(typeof(IBaseQueue<>), typeof(RequestQueue<>));
+            
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),
             b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
@@ -87,5 +88,7 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IReadRepositoryAsync<>), typeof(DbRepositoryAsync<>));
 
         #endregion
+        
+
     }
 }
