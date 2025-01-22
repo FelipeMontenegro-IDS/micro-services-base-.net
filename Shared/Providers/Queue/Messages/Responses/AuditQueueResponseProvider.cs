@@ -13,7 +13,7 @@ public class AuditQueueResponseProvider : BaseLookupProvider<AuditQueueResponse,
         {
             { AuditQueueResponse.GetAuditContractById, AuditQueueResponseConstant.GetAuditContractById },
             { AuditQueueResponse.GetAuditContractByCustomerId, AuditQueueResponseConstant.GetAuditContractByCustomerId },
-            { AuditQueueResponse.AuditNotFound, AuditQueueResponseConstant.AuditNotFound},
+            { AuditQueueResponse.AuditNotFound, AuditQueueResponseConstant.AuditNotFound}
         }, validationHelper)
     {
     }

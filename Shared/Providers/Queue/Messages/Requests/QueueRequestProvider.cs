@@ -20,17 +20,17 @@ public class QueueRequestProvider : IQueueRequestProvider
         _queueProviders = new Dictionary<Type, (Func<Enum, string>, string)>
         {
             {
-                typeof(AuditQueueResponse),
+                typeof(AuditQueueRequest),
                 (queue => auditQueueRequestProvider.GetValue((AuditQueueRequest)queue, AuditQueueRequestConstant.AuditNotFound),
                     AuditQueueRequestConstant.AuditNotFound)
             },
             {
-                typeof(PersonQueueResponse),
+                typeof(PersonQueueRequest),
                 (queue => personQueueRequestProvider.GetValue((PersonQueueRequest)queue, PersonQueueRequestConstant.PersonNotFound),
                     PersonQueueRequestConstant.PersonNotFound)
             },
             {
-                typeof(ConfigurationQueueResponse),
+                typeof(ConfigurationQueueRequest),
                 (queue => configurationQueueRequestProvider.GetValue((ConfigurationQueueRequest)queue, ConfigurationQueueRequestConstant.ConfigurationNotFound),
                     ConfigurationQueueRequestConstant.ConfigurationNotFound)
             }

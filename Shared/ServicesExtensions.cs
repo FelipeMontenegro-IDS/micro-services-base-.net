@@ -81,7 +81,6 @@ public static class ServicesExtensions
 
         services.Configure<EncryptionKey>(configuration.GetSection("EncryptionKey"));
         
-        
         #endregion
     }
 }

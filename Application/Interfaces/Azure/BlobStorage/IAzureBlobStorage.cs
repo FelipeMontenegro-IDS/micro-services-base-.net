@@ -21,6 +21,14 @@ public interface IAzureBlobStorage
         string[]? subFolders = null,
         IDictionary<string, string>? metadata = null,
         CancellationToken cancellationToken = default);
+
+    public Task UploadFileFromBase64Async(
+        string containerName,
+        string blobName,
+        string base64String,
+        string[]? subFolders = null,
+        IDictionary<string, string>? metadata = null,
+        CancellationToken cancellationToken = default);
     
     public Task UploadFileInBlocksAsync(
         string containerName,
@@ -30,14 +38,22 @@ public interface IAzureBlobStorage
         string[]? subFolders = null,
         IDictionary<string, string>? metadata = null,
         CancellationToken cancellationToken = default);
-
+    
+    public Task UploadFileInBlocksFromBase64Async(
+        string containerName,
+        string blobName,
+        string base64String,
+        FileSize fileSize = FileSize.Mb50,
+        string[]? subFolders = null,
+        IDictionary<string, string>? metadata = null,
+        CancellationToken cancellationToken = default);
 
     public Task<(Stream Content, string ContentType)> DownloadFileAsync(
         string containerName,
         string blobName,
         string[]? subFolders = null,
         CancellationToken cancellationToken = default);
-    
+
     public Task<(Stream Content, string ContentType)> DownloadFileBlockAsync(
         string containerName,
         string blobName,
@@ -61,12 +77,17 @@ public interface IAzureBlobStorage
 
 
     public Task<List<string>> ListBlobsAsync(
-        string containerName, 
+        string containerName,
         string? prefix = null,
         CancellationToken cancellationToken = default);
 
 
     public string GetBlobUrl(
+        string containerName,
+        string blobName,
+        string[]? subFolders = null);
+
+    public string GetBlobUrlBase64(
         string containerName,
         string blobName,
         string[]? subFolders = null);

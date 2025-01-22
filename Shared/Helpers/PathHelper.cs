@@ -8,7 +8,7 @@ public class PathHelper : IPathHelper
 
     public PathHelper(IValidationHelper validationHelper)
     {
-        _validationHelper = validationHelper;
+        _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
     }
 
     public string BuildFolderPath(IEnumerable<string>? subFolders)

@@ -36,7 +36,7 @@ public class EncryptionHelper : IEncryptionHelper
     {
         ValidationParamsEncrypt(cipherText, key);
         
-        var fullCipher = Convert.FromBase64String(cipherText);
+        byte[] fullCipher = Convert.FromBase64String(cipherText);
 
         using Aes aes = Aes.Create();
         aes.Key = Encoding.UTF8.GetBytes(key);

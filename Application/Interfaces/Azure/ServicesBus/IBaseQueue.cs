@@ -8,5 +8,5 @@ public interface IBaseQueue<TQueue> where TQueue : Enum
     public TQueue Queue { get; set; }
     bool IsValidQueue(MicroService microservice, TQueue queue);
     
-    string GetQueueName(MicroService microservice, TQueue queue);
+    string GetQueueName();
 }

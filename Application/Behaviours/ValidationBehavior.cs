@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 
 namespace Application.Behaviours;
@@ -18,8 +19,8 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         if (_validators.Any())
         {
             var context = new ValidationContext<TRequest>(request);
-            var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
-            var failures = validationResults.SelectMany(v => v.Errors).Where(f => f.ErrorCode != null).ToList();
+            ValidationResult[] validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+            List<ValidationFailure> failures = validationResults.SelectMany(v => v.Errors).Where(f => f.ErrorCode != null).ToList();
 
             if (failures.Any())
                 throw new Application.Exceptions.ValidationException(

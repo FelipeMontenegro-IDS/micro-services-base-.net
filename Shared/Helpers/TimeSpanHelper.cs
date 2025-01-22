@@ -19,7 +19,7 @@ public class TimeSpanHelper : ITimeSpanHelper
 
     public TimeSpanHelper(ITimeSpanFormatProvider timeSpanFormatProvider)
     {
-        _timeSpanFormatProvider = timeSpanFormatProvider;  
+        _timeSpanFormatProvider = timeSpanFormatProvider ?? throw new ArgumentNullException(nameof(timeSpanFormatProvider));  
     }
     
     /// <summary>

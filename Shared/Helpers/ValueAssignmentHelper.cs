@@ -12,7 +12,7 @@ public class ValueAssignmentHelper : IValueAssignmentHelper
 
     public ValueAssignmentHelper(IValidationHelper validationHelper)
     {
-        _validationHelper = validationHelper;
+        _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
     }
 
     /// <summary>

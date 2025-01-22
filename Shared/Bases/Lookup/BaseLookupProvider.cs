@@ -21,7 +21,7 @@ public class BaseLookupProvider<TEnum, TValue> : ILookupProvider<TEnum, TValue> 
 
     public TEnum GetKey(TValue value, TEnum defaultValue)
     {
-        var mapping = _dataLookupProviders.FirstOrDefault(kv => _validationHelper.IsNotNull(kv.Value) && kv.Value.Equals(value));
+        KeyValuePair<TEnum, TValue> mapping = _dataLookupProviders.FirstOrDefault(kv => _validationHelper.IsNotNull(kv.Value) && kv.Value.Equals(value));
         return mapping.Key.Equals(default(TEnum)) ? defaultValue : mapping.Key;
     }
 

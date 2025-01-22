@@ -74,6 +74,8 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IServiceBusQueueManager), typeof(ServiceBusQueueManager));
         services.AddScoped(typeof(IBaseQueue<>), typeof(ResponseQueue<>));
         services.AddScoped(typeof(IBaseQueue<>), typeof(RequestQueue<>));
+        services.AddScoped(typeof(IRequestQueueFactory), typeof(RequestQueueFactory));
+        services.AddScoped(typeof(IResponseQueueFactory), typeof(ResponseQueueFactory));
             
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),

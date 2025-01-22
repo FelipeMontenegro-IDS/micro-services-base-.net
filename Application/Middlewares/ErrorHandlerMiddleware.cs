@@ -2,7 +2,13 @@ using System.Net;
 using System.Text.Json;
 using Application.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Shared.Constants.Metadata;
 using Shared.DTOs.Responses.Generals;
+using Shared.Enums.Metadata;
+using Shared.Enums.Time;
+using Shared.Interfaces.Helpers;
+using Shared.Interfaces.Providers.Metadata;
 
 namespace Application.Middlewares;
 
@@ -23,97 +29,55 @@ public class ErrorHandlerMiddleware
         }
         catch (Exception error)
         {
-            var response = context.Response;
-            response.ContentType = "application/json";
-
-            var httpMethod = context.Request.Method;
-            ErrorApiResponseDto responseModel = new ErrorApiResponseDto { Message = error.Message };
-
-
-            var fullRequestUri = GetUri(context);
-            var (offendingFile, offendingLine) = ExtractFileAndLineFromStackTrace(error.StackTrace);
-
-            switch (error)
-            {
-                case ApiExcepcion e:
-                    response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    responseModel = CreateResponse(
-                        e, (int)HttpStatusCode.BadRequest,
-                        httpMethod,
-                        fullRequestUri,
-                        offendingFile,
-                        offendingLine);
-                    break;
-                case Application.Exceptions.ValidationException e:
-                    response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    responseModel = CreateResponse(
-                        e,
-                        (int)HttpStatusCode.BadRequest,
-                        httpMethod,
-                        fullRequestUri,
-                        offendingFile,
-                        offendingLine,
-                        e.Errors.ToDictionary(
-                            k => k.Key,
-                            v => v.Value.ToList()
-                        )
-                    );
-                    break;
-                case KeyNotFoundException e:
-                    response.StatusCode = (int)HttpStatusCode.NotFound;
-                    responseModel = CreateResponse
-                    (e,
-                        (int)HttpStatusCode.NotFound,
-                        httpMethod,
-                        fullRequestUri,
-                        offendingFile,
-                        offendingLine
-                    );
-                    break;
-                default:
-                    response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    responseModel = CreateResponse
-                    (
-                        error,
-                        (int)HttpStatusCode.InternalServerError,
-                        httpMethod,
-                        fullRequestUri,
-                        offendingFile,
-                        offendingLine
-                    );
-                    break;
-            }
-
-            var result = JsonSerializer.Serialize(responseModel, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            });
-            await response.WriteAsync(result);
+            await HandleExceptionAsync(context, error);
         }
     }
 
+    private async Task HandleExceptionAsync(HttpContext context, Exception error)
+    {
+        HttpResponse response = context.Response;
+        
+        IContentTypeProvider contentTypeProvider = context.RequestServices.GetRequiredService<IContentTypeProvider>();
+        IDateTimeHelper dateTimeHelper = context.RequestServices.GetRequiredService<IDateTimeHelper>();
+
+        response.ContentType = contentTypeProvider.GetValue(ContentType.ApplicationJson, ContentTypeConstant.Json);
+        response.StatusCode = GetStatusCode(error);
+        
+        string? httpMethod = context.Request.Method;
+        string fullRequestUri = GetUri(context);
+        
+        var (offendingFile, offendingLine) = ExtractFileAndLineFromStackTrace(error.StackTrace);
+        
+        ErrorApiResponseDto responseModel = CreateResponse(error, response.StatusCode, httpMethod, dateTimeHelper, fullRequestUri, offendingFile, offendingLine);
+        
+        string result = JsonSerializer.Serialize(responseModel, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        });
+        
+        await response.WriteAsync(result);
+    }
     private ErrorApiResponseDto CreateResponse(
         Exception exception,
         int statusCode,
         string httpMethod,
+        IDateTimeHelper dateTimeHelper,
         string fullRequestUri,
         string? offendingFile,
-        string? offendingLine,
-        Dictionary<string, List<string>> errors = null!)
+        string? offendingLine)
     {
+        Dictionary<string, List<string>> errors = exception is ValidationException validationException
+            ? validationException.Errors.ToDictionary(k => k.Key, v => v.Value.ToList())
+            : new Dictionary<string, List<string>> { { "error", new List<string> { exception.Message } } };
+
         return new ErrorApiResponseDto
         {
             StatusCode = statusCode,
             Message = exception.Message,
             httpMethod = httpMethod,
-            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-            Errors = exception is Application.Exceptions.ValidationException
-                ? errors
-                : new Dictionary<string, List<string>>
-                {
-                    { "error", new List<string> { exception.Message } }
-                },
+            Timestamp = dateTimeHelper.FormatDate(dateTimeHelper.GetCurrentUtcDateTime(), DateFormat.ShortDate),
+            Errors = errors,
             additionalDetails = new AdditionalDetailsDto
             {
                 FullRequestUri = fullRequestUri,
@@ -125,28 +89,30 @@ public class ErrorHandlerMiddleware
 
     private string GetUri(HttpContext context)
     {
-        //{context.Request.Scheme}://{context.Request.Host}
         return $"{context.Request.Path}{context.Request.QueryString}";
+    }
+
+    private int GetStatusCode(Exception error)
+    {
+        return error switch
+        {
+            ApiExcepcion _ => (int)HttpStatusCode.BadRequest,
+            ValidationException _ => (int)HttpStatusCode.BadRequest,
+            KeyNotFoundException _ => (int)HttpStatusCode.NotFound,
+            _ => (int)HttpStatusCode.InternalServerError
+        };
     }
 
     private (string? File, string? Line) ExtractFileAndLineFromStackTrace(string? stackTrace)
     {
-        if (string.IsNullOrEmpty(stackTrace))
-        {
-            return (null, null);
-        }
+        if (string.IsNullOrEmpty(stackTrace)) return (null, null);
+        
 
-        var stackLines = stackTrace.Split('\n'); // Dividir por líneas el StackTrace
-        var firstRelevantLine = stackLines.FirstOrDefault(line => line.Contains(".cs"));
-        var fileInfo = firstRelevantLine?.Split(':');
+        string? firstRelevantLine = stackTrace.Split('\n').FirstOrDefault(line => line.Contains(".cs"));
+        string[]? fileInfo = firstRelevantLine?.Split(':');
 
-        if (fileInfo != null && fileInfo.Length >= 2)
-        {
-            var file = fileInfo[0]?.Trim(); // Archivo donde ocurrió la excepción
-            var line = fileInfo[1]?.Trim(); // Línea de código
-            return (file, line);
-        }
-
-        return (null, null);
+        return fileInfo != null && fileInfo.Length >= 2
+            ? (fileInfo[0].Trim(), fileInfo[1].Trim())
+            : (null, null);
     }
 }

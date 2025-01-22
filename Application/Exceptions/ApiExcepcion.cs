@@ -13,7 +13,7 @@ public class ApiExcepcion : Exception
     }
 
     public ApiExcepcion(string message, params Object[] args)
-        : base(string.Format(CultureInfo.CurrentCulture, message, args))
+        : base(string.Format(new CultureInfo("en-US"), message, args))
     {
     }
 }
