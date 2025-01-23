@@ -10,8 +10,8 @@ public abstract class BaseSpecification<T> : Specification<T>, ISpecificationMet
         Expression<Func<T, bool>>? criteria = null,
         Expression<Func<T, object?>>? orderBy = null,
         Expression<Func<T, object?>>? orderByDescending = null,
-        List<Expression<Func<T, object>>>? includes = null,
-        List<(Expression<Func<T, string>> selector, string searchTerm)>? searches = null, // Lista de búsquedas
+        IEnumerable<Expression<Func<T, object>>>? includes = null,
+        IEnumerable<(Expression<Func<T, string>> selector, string searchTerm, int searchGroup)>? searches = null,
         int? skip = null,
         int? take = null)
     {
@@ -24,12 +24,10 @@ public abstract class BaseSpecification<T> : Specification<T>, ISpecificationMet
             foreach (var search in searches)
             {
                 if (!string.IsNullOrEmpty(search.searchTerm))
-                {
-                    Query.Search(search.selector, "%" + search.searchTerm + "%");
-                }
+                    Query.Search(search.selector, $"%{search.searchTerm}%", search.searchGroup);
             }
         }
-        
+
         // Ordenamientos
         if (orderBy != null) Query.OrderBy(orderBy);
         if (orderByDescending != null) Query.OrderByDescending(orderByDescending);
@@ -37,15 +35,17 @@ public abstract class BaseSpecification<T> : Specification<T>, ISpecificationMet
         // Relaciones (Includes)
         if (includes != null)
         {
-            foreach (var include in includes)
+            foreach (Expression<Func<T, object>> include in includes)
+            {
                 Query.Include(include);
+            }
         }
 
         // Paginación
         if (skip.HasValue) Query.Skip(skip.Value);
         if (take.HasValue) Query.Take(take.Value);
     }
-    
+
     public void AddInclude(Expression<Func<T, object>> includeExpression)
     {
         Query.Include(includeExpression);
@@ -66,11 +66,8 @@ public abstract class BaseSpecification<T> : Specification<T>, ISpecificationMet
         Query.Skip(skip).Take(take);
     }
 
-    public void AddSearch(Expression<Func<T, string>> selector, string searchTerm)
+    public void AddSearch(Expression<Func<T, string>> selector, string searchTerm, int searchGroup)
     {
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            Query.Search(selector, "%" + searchTerm + "%");
-        }
+        if (!string.IsNullOrEmpty(searchTerm)) Query.Search(selector, $"%{searchTerm}%", searchGroup);
     }
 }

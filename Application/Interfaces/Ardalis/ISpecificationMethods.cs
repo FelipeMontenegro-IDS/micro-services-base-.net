@@ -38,5 +38,6 @@ public interface ISpecificationMethods<T>
     /// </summary>
     /// <param name="selector">La expresión que define el campo por el cual buscar.</param>
     /// <param name="searchTerm">El término de búsqueda.</param>
-    public void AddSearch(Expression<Func<T, string>> selector, string searchTerm);
+    /// <param name="searchGroup">Orden de prioridad de búsqueda.</param>
+    public void AddSearch(Expression<Func<T, string>> selector, string searchTerm,int searchGroup);
 }

@@ -6,6 +6,7 @@ public interface IMessageReceiver
 {
     Task RegisterMessageHandler<T>(
         string queueOrTopicName,
+        string? subscriptionName,
         Func<T, CancellationToken, Task> processMessageAsync,
         ServiceBusProcessorOptions options,
         CancellationToken cancellationToken = default

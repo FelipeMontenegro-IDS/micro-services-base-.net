@@ -71,7 +71,7 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IMessageReceiver), typeof(AzureServiceBusReceiver));
         services.AddScoped(typeof(IConfigurationMicroServices), typeof(ConfigurationMicroServices));
         services.AddScoped(typeof(IMessage), typeof(AzureServiceBusMessage));
-        services.AddScoped(typeof(IServiceBusQueueManager), typeof(ServiceBusQueueManager));
+        services.AddScoped(typeof(IServiceBusQueueTopicManager), typeof(ServiceBusQueueTopicManager));
         services.AddScoped(typeof(IBaseQueue<>), typeof(ResponseQueue<>));
         services.AddScoped(typeof(IBaseQueue<>), typeof(RequestQueue<>));
         services.AddScoped(typeof(IRequestQueueFactory), typeof(RequestQueueFactory));
