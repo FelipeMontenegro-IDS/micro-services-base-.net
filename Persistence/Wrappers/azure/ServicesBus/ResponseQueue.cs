@@ -19,8 +19,8 @@ public class ResponseQueue<TQueue> : IBaseQueue<TQueue> where TQueue : Enum
         MicroService microservice,
         TQueue queue)
     {
-        _microServicesQueueResponseProvider = microServicesQueueResponseProvider;
-        _queueResponseProvider = queueResponseProvider;
+        _microServicesQueueResponseProvider = microServicesQueueResponseProvider ?? throw new ArgumentNullException(nameof(microServicesQueueResponseProvider));
+        _queueResponseProvider = queueResponseProvider ?? throw new ArgumentNullException(nameof(queueResponseProvider));
         Microservice = microservice;
         Queue = queue;
 
