@@ -4,6 +4,7 @@ using Shared.Bases.Lookup;
 using Shared.Configurations;
 using Shared.Converters;
 using Shared.Helpers;
+using Shared.Interfaces.EntityFramework;
 using Shared.Interfaces.Helpers;
 using Shared.Interfaces.Providers.Data;
 using Shared.Interfaces.Providers.Metadata;
@@ -14,6 +15,7 @@ using Shared.Interfaces.Providers.Queue.Services;
 using Shared.Interfaces.Providers.Time;
 using Shared.Interfaces.Wrappers;
 using Shared.Providers.Data;
+using Shared.Providers.EntityFramework;
 using Shared.Providers.Metadata;
 using Shared.Providers.Queue.Messages.Requests;
 using Shared.Providers.Queue.Messages.Responses;
@@ -45,8 +47,8 @@ public static class ServicesExtensions
         services.AddScoped(typeof(IContentDispositionProvider), typeof(ContentDispositionProvider));
         services.AddScoped(typeof(IContentEncodingProvider), typeof(ContentEncodingProvider));
         services.AddScoped(typeof(ISecretKeyProvider), typeof(SecretKeyProvider));
-        services.AddScoped(typeof(IMicroServicesQueueRequestProvider),typeof(MicroServicesQueueRequestProvider));
-        services.AddScoped(typeof(IMicroServicesQueueResponseProvider),typeof(MicroServicesQueueResponseProvider));
+        services.AddScoped(typeof(IMicroServicesQueueRequestProvider), typeof(MicroServicesQueueRequestProvider));
+        services.AddScoped(typeof(IMicroServicesQueueResponseProvider), typeof(MicroServicesQueueResponseProvider));
         services.AddScoped(typeof(IAuditQueueRequestProvider), typeof(AuditQueueRequestProvider));
         services.AddScoped(typeof(IConfigurationQueueRequestProvider), typeof(ConfigurationQueueRequestProvider));
         services.AddScoped(typeof(IPersonQueueRequestProvider), typeof(PersonQueueRequestProvider));
@@ -55,7 +57,10 @@ public static class ServicesExtensions
         services.AddScoped(typeof(IPersonQueueResponseProvider), typeof(PersonQueueResponseProvider));
         services.AddScoped(typeof(IQueueResponseProvider), typeof(QueueResponseProvider));
         services.AddScoped(typeof(IQueueRequestProvider), typeof(QueueRequestProvider));
-        
+        services.AddScoped(typeof(ITableProvider), typeof(TableProvider));
+        services.AddScoped(typeof(ISchemaProvider), typeof(SchemaProvider));
+        services.AddScoped(typeof(IEntityMetadataProvider), typeof(EntityMetadataProvider));
+
         #endregion
 
         #region Helpers
@@ -80,7 +85,7 @@ public static class ServicesExtensions
         #region Configurations
 
         services.Configure<EncryptionKey>(configuration.GetSection("EncryptionKey"));
-        
+
         #endregion
     }
 }

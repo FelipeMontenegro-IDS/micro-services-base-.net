@@ -9,7 +9,7 @@ namespace Application.Interfaces.Azure.ServicesBus;
 public interface IBaseQueue<TQueue> where TQueue : Enum
 {
     /// <summary>
-    /// Obtiene o establece el microservicio asociado a la cola.
+    /// Obtiene o establece el micro-servicio asociado a la cola.
     /// </summary>
     public MicroService Microservice { get; set; }
     

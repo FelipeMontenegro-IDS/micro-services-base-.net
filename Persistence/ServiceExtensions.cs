@@ -1,3 +1,4 @@
+using System.Reflection;
 using Application.Interfaces.Ardalis;
 using Application.Interfaces.Azure.BlobStorage;
 using Application.Interfaces.Azure.ServicesBus;
@@ -9,10 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
+using Persistence.Interfaces.EntityFramework;
 using Persistence.Microservices.Configurations;
 using Persistence.Repositories;
 using Persistence.Wrappers.azure.BlobStorage;
 using Persistence.Wrappers.azure.ServicesBus;
+using Shared.Builders;
 using Shared.Configurations;
 
 namespace Persistence;
@@ -45,25 +48,32 @@ public static class ServiceExtensions
         {
             throw new ArgumentException("AzureServiceBus connection string is missing");
         }
-        
+
         services.Configure<AzureBlobStorageOption>(configuration.GetSection("AzureBlobStorage"));
         services.AddSingleton<BlobServiceClient>(sp =>
         {
             var azureBlobConfig = new AzureBlobStorageOption();
             configuration.GetSection("AzureBlobStorage").Bind(azureBlobConfig);
 
+            ConditionBuilder<AzureBlobStorageOption> cb = new ConditionBuilder<AzureBlobStorageOption>();
+            cb.Add(option => string.IsNullOrWhiteSpace(option.AccountName))
+                .Or()
+                .Add(option => string.IsNullOrWhiteSpace(option.AccountKey))
+                .Or()
+                .Add(option => string.IsNullOrWhiteSpace(option.EndpointSuffix))
+                .Or()
+                .Add(option => string.IsNullOrWhiteSpace(option.Protocol));
 
-            if (string.IsNullOrWhiteSpace(azureBlobConfig.AccountName) ||
-                string.IsNullOrWhiteSpace(azureBlobConfig.AccountKey) ||
-                string.IsNullOrWhiteSpace(azureBlobConfig.EndpointSuffix) ||
-                string.IsNullOrWhiteSpace(azureBlobConfig.Protocol))
+            if (cb.Build(azureBlobConfig))
             {
                 throw new ArgumentException("Los campos AccountName, AccountKey y EndpointSuffix son obligatorios.");
             }
-            
-            var connectionString = $"DefaultEndpointsProtocol={azureBlobConfig.Protocol};AccountName={azureBlobConfig.AccountName};AccountKey={azureBlobConfig.AccountKey};EndpointSuffix={azureBlobConfig.EndpointSuffix}";
 
-            return new BlobServiceClient(connectionString ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
+            var connectionString =
+                $"DefaultEndpointsProtocol={azureBlobConfig.Protocol};AccountName={azureBlobConfig.AccountName};AccountKey={azureBlobConfig.AccountKey};EndpointSuffix={azureBlobConfig.EndpointSuffix}";
+
+            return new BlobServiceClient(connectionString ??
+                                         throw new InvalidOperationException(nameof(BlobServiceClient)));
         });
 
         services.AddScoped(typeof(IAzureBlobStorage), typeof(AzureBlobStorage));
@@ -76,11 +86,12 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IBaseQueue<>), typeof(RequestQueue<>));
         services.AddScoped(typeof(IRequestQueueFactory), typeof(RequestQueueFactory));
         services.AddScoped(typeof(IResponseQueueFactory), typeof(ResponseQueueFactory));
-            
+
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),
             b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
         ));
+        
 
         #endregion
 
@@ -90,7 +101,5 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IReadRepositoryAsync<>), typeof(DbRepositoryAsync<>));
 
         #endregion
-        
-
     }
 }

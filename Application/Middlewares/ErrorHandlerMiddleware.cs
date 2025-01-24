@@ -107,7 +107,6 @@ public class ErrorHandlerMiddleware
     {
         if (string.IsNullOrEmpty(stackTrace)) return (null, null);
         
-
         string? firstRelevantLine = stackTrace.Split('\n').FirstOrDefault(line => line.Contains(".cs"));
         string[]? fileInfo = firstRelevantLine?.Split(':');
 

@@ -4,4 +4,7 @@ public interface ICondition<out TBuilder, T>
 {
     bool Build(T obj);
     TBuilder Add(Func<T, bool> condition);
+    TBuilder And();
+    TBuilder Or();
+
 }
