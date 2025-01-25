@@ -3,6 +3,7 @@ using Application.Interfaces.Ardalis;
 using Application.Interfaces.Azure.BlobStorage;
 using Application.Interfaces.Azure.ServicesBus;
 using Application.Interfaces.Microservices;
+using Application.Interfaces.services;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Azure.Storage.Blobs;
@@ -13,6 +14,7 @@ using Persistence.Contexts;
 using Persistence.Interfaces.EntityFramework;
 using Persistence.Microservices.Configurations;
 using Persistence.Repositories;
+using Persistence.Services;
 using Persistence.Wrappers.azure.BlobStorage;
 using Persistence.Wrappers.azure.ServicesBus;
 using Shared.Builders;
@@ -26,14 +28,15 @@ public static class ServiceExtensions
     {
         #region DbContext and Azure Services Bus
 
+        services.AddHttpContextAccessor();
+        
         var serviceBusOptions = new AzureServiceBusOption();
 
         IConfiguration configurationSection = configuration.GetSection("AzureServiceBus");
         serviceBusOptions.ConnectionString = configurationSection["ConnectionString"];
 
         services.AddSingleton(new ServiceBusAdministrationClient(configurationSection["ConnectionString"]));
-
-
+        
         services.AddOptions<AzureServiceBusOption>()
             .Bind(configuration.GetSection("AzureServiceBus"))
             .Validate(options => !string.IsNullOrEmpty(options.ConnectionString),
@@ -69,11 +72,9 @@ public static class ServiceExtensions
                 throw new ArgumentException("Los campos AccountName, AccountKey y EndpointSuffix son obligatorios.");
             }
 
-            var connectionString =
-                $"DefaultEndpointsProtocol={azureBlobConfig.Protocol};AccountName={azureBlobConfig.AccountName};AccountKey={azureBlobConfig.AccountKey};EndpointSuffix={azureBlobConfig.EndpointSuffix}";
+            string connectionString = $"DefaultEndpointsProtocol={azureBlobConfig.Protocol};AccountName={azureBlobConfig.AccountName};AccountKey={azureBlobConfig.AccountKey};EndpointSuffix={azureBlobConfig.EndpointSuffix}";
 
-            return new BlobServiceClient(connectionString ??
-                                         throw new InvalidOperationException(nameof(BlobServiceClient)));
+            return new BlobServiceClient(connectionString ?? throw new InvalidOperationException(nameof(BlobServiceClient)));
         });
 
         services.AddScoped(typeof(IAzureBlobStorage), typeof(AzureBlobStorage));
@@ -86,12 +87,12 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IBaseQueue<>), typeof(RequestQueue<>));
         services.AddScoped(typeof(IRequestQueueFactory), typeof(RequestQueueFactory));
         services.AddScoped(typeof(IResponseQueueFactory), typeof(ResponseQueueFactory));
+        services.AddScoped(typeof(ITimezoneService), typeof(TimezoneService));
 
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             configuration.GetConnectionString("DefaultConnection"),
             b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
         ));
-        
 
         #endregion
 

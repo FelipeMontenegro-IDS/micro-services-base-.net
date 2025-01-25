@@ -38,7 +38,6 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             // },new ServiceBusProcessorOptions{ AutoCompleteMessages = false},cancellationToken);
             
             // await _messageSender.SendMessageAsync(new ObjectTestRequest(){ PersonId = Guid.NewGuid() },"req_prueba_request",cancellationToken);
-
             // var res = await _messageService.ProcessRequestAsync<ObjectTestRequest, ObjectTestResponse>(
             //     new ObjectTestRequest { PersonId = Guid.NewGuid() },
             //     QueueRequestConstants.REQ_CONFIGURATION_BLOB_STORAGE,

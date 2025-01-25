@@ -7,4 +7,6 @@ public interface ILookupProvider<TEnum, TValue> where TEnum : notnull where TVal
     public TEnum GetKey(TValue value);
     TEnum GetKey(TValue value, TEnum defaultValue);
     IEnumerable<TValue> GetAllValues();
+    bool ContainsValue(TValue value);
+    bool ContainsKey(TEnum key);
 }

@@ -1,9 +1,7 @@
 using Api.Extensions;
+using Api.Filters.Headers;
 using Application;
 using Application.Filters;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Persistence;
 using Shared;
 
@@ -30,7 +28,10 @@ builder.Services.AddControllers(options => { options.Filters.Add<ApiResponseFilt
 
 builder.Services.AddApiVersioningExtension();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.OperationFilter<TimezoneOperationFilter>();
+});
 
 var app = builder.Build();
 

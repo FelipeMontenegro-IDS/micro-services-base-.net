@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shared.DTOs.Responses.Generals;
@@ -16,12 +17,9 @@ public class ApiResponseFilter : IActionFilter
         {
             string? httpMethod = context.HttpContext.Request.Method; // Tipo de método HTTP (GET, POST, PUT, DELETE)
             Object? data = objectResult.Value;
-            ApiResponseDto<object> apiResponse = CreateApiResponse(httpMethod,objectResult.StatusCode, data);
-            
-            context.Result = new ObjectResult(apiResponse)
-            {
-                StatusCode = objectResult.StatusCode
-            };
+            ApiResponseDto<object> apiResponse = CreateApiResponse(httpMethod, objectResult.StatusCode, data);
+
+            context.Result = new ObjectResult(apiResponse) { StatusCode = objectResult.StatusCode };
         }
     }
 
@@ -32,12 +30,15 @@ public class ApiResponseFilter : IActionFilter
             var method when
                 method == HttpMethod.Get.Method => HandleGetResponse(data),
             var method when
-                method.Equals(HttpMethod.Post.ToString()) => CreateResponse(statusCode ?? 201, "Resource created successfully.", data),
+                method.Equals(HttpMethod.Post.ToString()) => CreateResponse(statusCode ?? StatusCodes.Status201Created,
+                    "Resource created successfully.", data),
             var method when
-                method.Equals(HttpMethod.Put.ToString()) => CreateResponse(statusCode ?? 200, "Resource updated successfully.", data),
+                method.Equals(HttpMethod.Put.ToString()) => CreateResponse(statusCode ?? StatusCodes.Status200OK,
+                    "Resource updated successfully.", data),
             var method when
-                method.Equals(HttpMethod.Delete.ToString()) => CreateResponse(statusCode ?? 200, "Resource deleted successfully.", data),
-            _ => CreateResponse(statusCode ?? 200, "Request handled successfully.", data)
+                method.Equals(HttpMethod.Delete.ToString()) => CreateResponse(statusCode ?? StatusCodes.Status200OK,
+                    "Resource deleted successfully.", data),
+            _ => CreateResponse(statusCode ?? StatusCodes.Status200OK, "Request handled successfully.", data)
         };
     }
 
@@ -50,15 +51,18 @@ public class ApiResponseFilter : IActionFilter
     private ApiResponseDto<object> HandleGetResponse(object? data)
     {
         // Si `data` es nulo (por ejemplo, un recurso no encontrado)
-        if (data == null) return CreateResponse(400,  "Resource not found.");
+        if (data == null) return CreateResponse(StatusCodes.Status400BadRequest, "Resource not found.");
 
         return data switch
         {
-            ResponsePagedDto<object> pagedResult => CreateResponse(200, "Paged data retrieved successfully.", pagedResult),
-            IEnumerable<object> enumerable => CreateResponse(200, "Enumerable retrieved successfully.", new ResponseDto< IEnumerable<object>>(enumerable)),
-            ResponseComboBoxItemDto comboBox => CreateResponse(200, "ComboBox retrieved successfully.", comboBox),
-            _ => CreateResponse(200, "Resource retrieved successfully.", new ResponseDto< object>(data))
+            ResponsePagedDto<object> pagedResult => CreateResponse(StatusCodes.Status200OK,
+                "Paged data retrieved successfully.", pagedResult),
+            IEnumerable<object> enumerable => CreateResponse(StatusCodes.Status200OK,
+                "Enumerable retrieved successfully.", new ResponseDto<IEnumerable<object>>(enumerable)),
+            ResponseComboBoxItemDto comboBox => CreateResponse(StatusCodes.Status200OK,
+                "ComboBox retrieved successfully.", comboBox),
+            _ => CreateResponse(StatusCodes.Status200OK, "Resource retrieved successfully.",
+                new ResponseDto<object>(data))
         };
-        
     }
 }

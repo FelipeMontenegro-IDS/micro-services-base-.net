@@ -2,24 +2,27 @@ using System.Reflection;
 using Domain.Bases;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Shared.Helpers;
 using Shared.Interfaces.Helpers;
 
 namespace Persistence.Contexts;
 
 public class ApplicationDbContext : DbContext
 {
+
     private readonly IDateTimeHelper _dateTimeHelper;
     
     public DbSet<Customer> Customers { get; set; }
     
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IDateTimeHelper dateTimeHelper) : base(options)
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options, 
+        IDateTimeHelper dateTimeHelper) 
+        : base(options)
     {
         ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         _dateTimeHelper = dateTimeHelper;
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
         foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
