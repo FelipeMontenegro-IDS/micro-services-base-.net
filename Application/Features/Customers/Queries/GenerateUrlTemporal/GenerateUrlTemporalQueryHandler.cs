@@ -21,7 +21,7 @@ public class GenerateUrlTemporalQueryHandler : IRequestHandler<GenerateUrlTempor
     {
         UrlTemporal urlTemporal = new UrlTemporal();
         
-        var url = _azureBlobStorage.GenerateBlobSas("images","img.jpg",_timeSpanHelper.CreateTimeSpanFromMinutes(2),BlobSasPermissions.Read);
+        var url = _azureBlobStorage.GenerateBlobSas("images","img.jpg",_timeSpanHelper.CreateTimeSpanFromMinutes(1),BlobSasPermissions.Read);
         
         urlTemporal.Url = url;
         

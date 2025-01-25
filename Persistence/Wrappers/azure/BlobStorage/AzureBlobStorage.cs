@@ -1,6 +1,7 @@
 using System.Text;
 using Application.Interfaces.Azure.BlobStorage;
 using Azure;
+using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
@@ -232,7 +233,7 @@ public class AzureBlobStorage : IAzureBlobStorage
         }
     }
 
- 
+
     public async Task DeleteFileAsync(
         string containerName,
         string blobName,
@@ -286,7 +287,7 @@ public class AzureBlobStorage : IAzureBlobStorage
         return base64Url;
     }
 
- 
+
     public async Task CopyBlobAsync(
         string sourceContainerName,
         string sourceBlobName,
@@ -304,7 +305,8 @@ public class AzureBlobStorage : IAzureBlobStorage
         BlobContainerClient destinationContainerClient =
             _blobServiceClient.GetBlobContainerClient(destinationContainerName);
 
-        await destinationContainerClient.CreateIfNotExistsAsync(publicAccessType: PublicAccessType.None, cancellationToken: cancellationToken);
+        await destinationContainerClient.CreateIfNotExistsAsync(publicAccessType: PublicAccessType.None,
+            cancellationToken: cancellationToken);
 
         string destinationFolderPath = _pathHelper.BuildFolderPath(destinationSubFolders);
         string fullDestinationBlobName = _pathHelper.BuildFullPath(destinationBlobName, destinationFolderPath);
@@ -353,7 +355,8 @@ public class AzureBlobStorage : IAzureBlobStorage
 
         if (!blobClient.Exists())
         {
-            throw new FileNotFoundException($"The blob '{fullBlobName}' does not exist in the container '{containerName}'.");
+            throw new FileNotFoundException(
+                $"The blob '{fullBlobName}' does not exist in the container '{containerName}'.");
         }
 
         DateTimeOffset expirationTime = DateTimeOffset.UtcNow; // Hora actual en UTC
@@ -371,13 +374,8 @@ public class AzureBlobStorage : IAzureBlobStorage
         string accountName = _config.AccountName;
         string accountKey = _config.AccountKey;
 
-        string sasToken = sasBuilder
-            .ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
-
-        StringBuilder sb = new StringBuilder();
-        sb.Append(containerClient.Uri).Append(sasToken);
-
-        return sb.ToString();
+        var sasToken = sasBuilder.ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
+        return $"{blobClient.Uri}?{sasToken}";
     }
 
     public string GenerateContainerSas(
@@ -408,12 +406,8 @@ public class AzureBlobStorage : IAzureBlobStorage
         string accountName = _config.AccountName;
         string accountKey = _config.AccountKey;
 
-        string sasToken = sasBuilder
-            .ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
 
-        StringBuilder sb = new StringBuilder();
-        sb.Append(containerClient.Uri).Append(sasToken);
-
-        return sb.ToString();
+        var sasToken = sasBuilder.ToSasQueryParameters(new Azure.Storage.StorageSharedKeyCredential(accountName, accountKey)).ToString();
+        return $"{containerClient.Uri}?{sasToken}";
     }
 }
