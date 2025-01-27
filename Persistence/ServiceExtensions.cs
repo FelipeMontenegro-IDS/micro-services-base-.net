@@ -67,7 +67,7 @@ public static class ServiceExtensions
                 .Or()
                 .Add(option => string.IsNullOrWhiteSpace(option.Protocol));
 
-            if (cb.Build(azureBlobConfig))
+            if (cb.Evaluate(azureBlobConfig))
             {
                 throw new ArgumentException("Los campos AccountName, AccountKey y EndpointSuffix son obligatorios.");
             }
