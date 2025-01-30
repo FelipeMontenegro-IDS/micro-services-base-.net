@@ -259,20 +259,20 @@ public interface ICondition<out TBuilder, T>
     TBuilder LessThanOrEqualTo(Func<T, int> selector, int value);
 
     /// <summary>
-    /// Verifica que el valor sea igual al valor especificado.
+    /// Agrega una condición para verificar si una propiedad es igual a un valor específico.
     /// </summary>
-    /// <param name="selector">El selector de la propiedad a verificar.</param>
-    /// <param name="value">El valor con el que comparar.</param>
-    /// <returns>El builder actual para permitir el encadenamiento de métodos.</returns>
+    /// <typeparam name="TValue">Tipo de la propiedad a comparar.</typeparam>
+    /// <param name="selector">Función que selecciona la propiedad del objeto.</param>
+    /// <param name="value">El valor con el que se comparará.</param>
+    /// <returns>El mismo builder con la condición añadida.</returns>
     /// <example>
-    /// <code>
-    /// var builder = new ConditionBuilder();
-    /// builder.EqualTo(x => x.Name, "John");
-    /// // Verifica que la propiedad "Name" sea igual a "John"
-    /// </code>
+    /// builder.EqualTo(x => x.Edad, 30);  // Para int
+    /// builder.EqualTo(x => x.Nombre, "Juan");  // Para string
+    /// builder.EqualTo(x => x.Activo, true);  // Para bool
+    /// builder.EqualTo(x => x.FechaRegistro, new DateTime(2024, 1, 1));  // Para DateTime
     /// </example>
-    TBuilder EqualTo(Func<T, string?> selector, string value);
-
+    TBuilder EqualTo<TValue>(Func<T, TValue> selector, TValue value) where TValue : IEquatable<TValue>;
+    
     /// <summary>
     /// Verifica que el valor coincida con una expresión regular.
     /// </summary>
@@ -415,20 +415,19 @@ public interface ICondition<out TBuilder, T>
     TBuilder IsNegative(Func<T, int> selector);
 
     /// <summary>
-    /// Verifica que la propiedad no sea igual a un valor específico.
+    /// Agrega una condición para verificar si una propiedad no es igual a un valor específico.
     /// </summary>
-    /// <param name="selector">El selector de la propiedad a verificar.</param>
-    /// <param name="value">El valor con el que comparar.</param>
-    /// <returns>El builder actual para permitir el encadenamiento de métodos.</returns>
+    /// <typeparam name="TValue">Tipo de la propiedad a comparar.</typeparam>
+    /// <param name="selector">Función que selecciona la propiedad del objeto.</param>
+    /// <param name="value">El valor con el que se comparará.</param>
+    /// <returns>El mismo builder con la condición añadida.</returns>
     /// <example>
-    /// <code>
-    /// var builder = new ConditionBuilder();
-    /// builder.NotEqualTo(x => x.Age, 18);
-    /// // Verifica que la propiedad "Age" no sea igual a 18
-    /// </code>
+    /// builder.NotEqualTo(x => x.Edad, 30);  // Para int
+    /// builder.NotEqualTo(x => x.Nombre, "Juan");  // Para string
+    /// builder.NotEqualTo(x => x.Activo, true);  // Para bool
+    /// builder.NotEqualTo(x => x.FechaRegistro, new DateTime(2024, 1, 1));  // Para DateTime
     /// </example>
-    TBuilder NotEqualTo(Func<T, int> selector, int value);
-
+    public TBuilder NotEqualTo<TValue>(Func<T, TValue> selector, TValue value)  where TValue : IEquatable<TValue>;
 
     /// <summary>
     /// Verifica que el valor de la propiedad sea mayor o igual que un valor mínimo.
@@ -469,9 +468,99 @@ public interface ICondition<out TBuilder, T>
     /// <example>
     /// <code>
     /// var builder = new ConditionBuilder();
-    /// builder.Email(x => x.EmailAddress);
+    /// builder.Email(x => x. EmailAddress);
     /// var expression = builder.Build(); // La expresión resultante validará si el correo electrónico de la entidad es válido.
     /// </code>
     /// </example>
     TBuilder Email(Func<T, string?> selector);
+
+    /// <summary>
+    /// Agrega una condición a la expresión construida para filtrar un valor dentro de un rango.
+    /// La expresión se evalúa como una condición donde el valor seleccionado debe estar 
+    /// dentro de un rango definido por el valor mínimo y máximo.
+    /// </summary>
+    /// <typeparam name="TBuilder">El tipo del constructor utilizado para construir la expresión.</typeparam>
+    /// <param name="selector">Expresión que selecciona la propiedad a filtrar.</param>
+    /// <param name="minSelector">Expresión que define el valor mínimo del rango.</param>
+    /// <param name="maxSelector">Expresión que define el valor máximo del rango.</param>
+    /// <returns>El constructor con la nueva condición agregada.</returns>
+    /// <remarks>
+    /// Este método permite crear un filtro que se aplicará a una colección de objetos, 
+    /// asegurándose de que el valor de la propiedad seleccionada (por ejemplo, la edad) esté
+    /// dentro del rango especificado por los valores mínimo y máximo. 
+    /// </remarks>
+    TBuilder InRange(Expression<Func<T, int>> selector, Expression<Func<T, int>> minSelector, Expression<Func<T, int>> maxSelector);
+
+    /// <summary>
+    /// Filtra los elementos cuya propiedad seleccionada está contenida en el conjunto de valores proporcionado.
+    /// </summary>
+    /// <typeparam name="TValue">El tipo de los valores a comparar.</typeparam>
+    /// <param name="selector">Una expresión que selecciona la propiedad del objeto que se va a comparar.</param>
+    /// <param name="values">Una colección de valores contra los cuales se compara la propiedad seleccionada.</param>
+    /// <returns>El constructor del filtro (TBuilder) para seguir agregando condiciones.</returns>
+    TBuilder In<TValue>(Func<T, TValue> selector, IEnumerable<TValue> values);
+    
+    /// <summary>
+    /// Filtra los elementos cuya propiedad seleccionada no está contenida en el conjunto de valores proporcionado.
+    /// </summary>
+    /// <typeparam name="TValue">El tipo de los valores a comparar.</typeparam>
+    /// <param name="selector">Una expresión que selecciona la propiedad del objeto que se va a comparar.</param>
+    /// <param name="values">Una colección de valores contra los cuales se compara la propiedad seleccionada.</param>
+    /// <returns>El constructor del filtro (TBuilder) para seguir agregando condiciones.</returns>
+    TBuilder NotIn<TValue>(Func<T, TValue> selector, IEnumerable<TValue> values);
+    
+    /// <summary>
+    /// Filtra los elementos cuya propiedad seleccionada está dentro de un rango de fechas determinado.
+    /// </summary>
+    /// <param name="selector">Una expresión que selecciona la propiedad de tipo DateTime del objeto.</param>
+    /// <param name="startDate">La fecha de inicio del rango.</param>
+    /// <param name="endDate">La fecha de fin del rango.</param>
+    /// <returns>El constructor del filtro (TBuilder) para seguir agregando condiciones.</returns>
+    TBuilder BetweenDates(Func<T, DateTime> selector, DateTime startDate, DateTime endDate);
+
+    /// <summary>
+    /// Filtra los elementos cuya propiedad seleccionada está dentro de un rango de fechas determinado por las propiedades de la clase T.
+    /// </summary>
+    /// <param name="selector">Una expresión que selecciona la propiedad de tipo DateTime del objeto.</param>
+    /// <param name="startDateSelector">Una expresión que selecciona la propiedad de tipo DateTime que define la fecha de inicio del rango.</param>
+    /// <param name="endDateSelector">Una expresión que selecciona la propiedad de tipo DateTime que define la fecha de fin del rango.</param>
+    /// <returns>El constructor del filtro (TBuilder) para seguir agregando condiciones.</returns>
+    TBuilder BetweenDates(Func<T, DateTime> selector, Func<T, DateTime> startDateSelector, Func<T, DateTime> endDateSelector);
+    
+    /// <summary>
+    /// Agrega una condición para verificar si una propiedad de tipo string termina con un valor específico.
+    /// </summary>
+    /// <param name="selector">Función que selecciona la propiedad de tipo string del objeto.</param>
+    /// <param name="value">El valor con el que debe terminar la cadena.</param>
+    /// <returns>El mismo builder con la condición añadida.</returns>
+    /// <example>
+    /// builder.EndsWith(x => x.Correo, "@gmail.com");
+    /// // Filtrará los elementos cuyo Correo termine en "@gmail.com".
+    /// </example>
+    TBuilder EndsWith(Func<T, string> selector, string value);
+    
+    /// <summary>
+    /// Agrega una condición para verificar si una propiedad de tipo string comienza con un valor específico.
+    /// </summary>
+    /// <param name="selector">Función que selecciona la propiedad de tipo string del objeto.</param>
+    /// <param name="value">El valor con el que debe comenzar la cadena.</param>
+    /// <returns>El mismo builder con la condición añadida.</returns>
+    /// <example>
+    /// builder.StartsWith(x => x.Nombre, "Pro");
+    /// // Filtrará los elementos cuyo Nombre comience con "Pro".
+    /// </example>
+    TBuilder StartsWith(Func<T, string> selector, string value);
+
+    /// <summary>
+    /// Agrega una condición para verificar si una propiedad de tipo string contiene un valor específico.
+    /// </summary>
+    /// <param name="selector">Función que selecciona la propiedad de tipo string del objeto.</param>
+    /// <param name="value">El valor que debe contener la cadena.</param>
+    /// <returns>El mismo builder con la condición añadida.</returns>
+    /// <example>
+    /// builder.Contains(x => x.Descripcion, "error");
+    /// // Filtrará los elementos cuya Descripcion contenga "error".
+    /// </example>
+    TBuilder Contains(Func<T, string> selector, string value);
+
 }

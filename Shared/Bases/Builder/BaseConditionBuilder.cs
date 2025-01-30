@@ -15,6 +15,7 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
     public TBuilder Add(Expression<Func<T, bool>> condition)
     {
         if (condition == null) throw new ArgumentNullException(nameof(condition));
+        EnsureValidCondition(condition);
 
         if (_isAnd)
         {
@@ -35,6 +36,8 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         if (selector == null) throw new ArgumentNullException(nameof(selector));
         if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
+        EnsureValidCondition(predicate);
+
         var parameter = Expression.Parameter(typeof(T));
         var selectorBody = Expression.Invoke(selector, parameter);
         var predicateBody = Expression.Invoke(predicate, selectorBody);
@@ -53,7 +56,7 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         Expression<Func<T, bool>> groupCondition = groupBuilderInstance.Build();
 
         // Verificar si la condición es trivial (si es null o una constante true)
-        if (groupCondition.Body is ConstantExpression constant && constant.Value is not null)
+        if (groupCondition.Body is ConstantExpression constant && constant.Value is bool value && value)
         {
             return (TBuilder)this; // No agrega condiciones triviales (si la condición es true o null).
         }
@@ -143,9 +146,9 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) <= value);
     }
 
-    public TBuilder EqualTo(Func<T, string?> selector, string value)
+    public TBuilder EqualTo<TValue>(Func<T, TValue> selector, TValue value) where TValue : IEquatable<TValue>
     {
-        return Add(x => selector(x) == value);
+        return Add(x => selector(x).Equals(value));
     }
 
     public TBuilder RegexMatch(Func<T, string?> selector, string pattern)
@@ -198,9 +201,9 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) < 0);
     }
 
-    public TBuilder NotEqualTo(Func<T, int> selector, int value)
+    public TBuilder NotEqualTo<TValue>(Func<T, TValue> selector, TValue value)  where TValue : IEquatable<TValue>
     {
-        return Add(x => selector(x) != value);
+        return Add(x => !selector(x).Equals(value));
     }
 
     public TBuilder MinValue(Func<T, int> selector, int minValue)
@@ -216,6 +219,57 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
     public TBuilder Email(Func<T, string?> selector)
     {
         return Add(x => RegularExpression.FormatEmail.IsMatch(selector(x) ?? string.Empty));
+    }
+
+    public TBuilder InRange(Expression<Func<T, int>> selector, Expression<Func<T, int>> minSelector,
+        Expression<Func<T, int>> maxSelector)
+    {
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
+            Expression.AndAlso(
+                Expression.GreaterThanOrEqual(selector.Body, minSelector.Body),
+                Expression.LessThanOrEqual(selector.Body, maxSelector.Body)
+            ),
+            selector.Parameters
+        );
+        return Add(filter);
+    }
+
+    public TBuilder In<TValue>(Func<T, TValue> selector, IEnumerable<TValue> values)
+    {
+        var valueSet = values.ToHashSet();
+        return Add(x => valueSet.Contains(selector(x)));
+    }
+
+    public TBuilder NotIn<TValue>(Func<T, TValue> selector, IEnumerable<TValue> values)
+    {
+        var valueSet = values.ToHashSet();
+        return Add(x => !valueSet.Contains(selector(x)));
+    }
+
+    public TBuilder BetweenDates(Func<T, DateTime> selector, DateTime startDate, DateTime endDate)
+    {
+        return Add(x => selector(x) >= startDate && selector(x) <= endDate);
+    }
+
+    public TBuilder BetweenDates(Func<T, DateTime> selector, Func<T, DateTime> startDateSelector,
+        Func<T, DateTime> endDateSelector)
+    {
+        return Add(x => selector(x) >= startDateSelector(x) && selector(x) <= endDateSelector(x));
+    }
+
+    public TBuilder EndsWith(Func<T, string> selector, string value)
+    {
+        return Add(x => selector(x).EndsWith(value));
+    }
+
+    public TBuilder StartsWith(Func<T, string> selector, string value)
+    {
+        return Add(x => selector(x).EndsWith(value));
+    }
+
+    public TBuilder Contains(Func<T, string> selector, string value)
+    {
+        return Add(x => selector(x).Contains(value));
     }
 
     /// <summary>
@@ -256,6 +310,48 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         );
 
         return Expression.Lambda<Func<T, bool>>(body, parameter);
+    }
+
+    private void EnsureValidCondition(Expression<Func<T, bool>> condition)
+    {
+        switch (condition.Body)
+        {
+            // Verificar si la condición es una constante que siempre es 'true'
+            case ConstantExpression constant when constant.Value is bool value && value:
+                throw new ArgumentException("The condition provided has no effect because it is always 'true'.");
+            // Verificar si la condición es una constante que siempre es 'false'
+            case ConstantExpression constantFalse when constantFalse.Value is bool valueFalse && !valueFalse:
+                throw new ArgumentException("The condition provided has no effect because it is always 'false'.");
+            // Verificar si la condición es una constante de tipo nulo (como x => null)
+            case ConstantExpression constantNull when constantNull.Value == null:
+                throw new ArgumentException("The condition provided has no effect because it is always 'null'.");
+            // Verificar si la condición está comparando a '0' (ejemplo: x => 0)
+            case BinaryExpression binaryExpression when
+                binaryExpression.Left is ConstantExpression leftConstant &&
+                leftConstant.Value is int leftValue && leftValue == 0:
+                throw new ArgumentException("The condition provided has no effect because it is always '0'.");
+        }
+    }
+
+    private void EnsureValidCondition<TValue>(Expression<Func<TValue, bool>> condition)
+    {
+        switch (condition.Body)
+        {
+            // Verificar si la condición es una constante que siempre es 'true'
+            case ConstantExpression constant when constant.Value is bool value && value:
+                throw new ArgumentException("The condition provided has no effect because it is always 'true'.");
+            // Verificar si la condición es una constante que siempre es 'false'
+            case ConstantExpression constantFalse when constantFalse.Value is bool valueFalse && !valueFalse:
+                throw new ArgumentException("The condition provided has no effect because it is always 'false'.");
+            // Verificar si la condición es una constante de tipo nulo (como x => null)
+            case ConstantExpression constantNull when constantNull.Value == null:
+                throw new ArgumentException("The condition provided has no effect because it is always 'null'.");
+            // Verificar si la condición está comparando a '0' (ejemplo: x => 0)
+            case BinaryExpression binaryExpression when
+                binaryExpression.Left is ConstantExpression leftConstant &&
+                leftConstant.Value is int leftValue && leftValue == 0:
+                throw new ArgumentException("The condition provided has no effect because it is always '0'.");
+        }
     }
 
     public Expression<Func<T, bool>> Build()
