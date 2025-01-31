@@ -38,11 +38,11 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
 
         EnsureValidCondition(predicate);
 
-        var parameter = Expression.Parameter(typeof(T));
-        var selectorBody = Expression.Invoke(selector, parameter);
-        var predicateBody = Expression.Invoke(predicate, selectorBody);
+        ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
+        InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
+        InvocationExpression predicateBody = Expression.Invoke(predicate, selectorBody);
 
-        var combinedCondition = Expression.Lambda<Func<T, bool>>(predicateBody, parameter);
+        Expression<Func<T, bool>> combinedCondition = Expression.Lambda<Func<T, bool>>(predicateBody, parameter);
 
         return Add(combinedCondition);
     }
@@ -101,6 +101,20 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return (TBuilder)this;
     }
 
+    public Expression<Func<T, bool>> Build()
+    {
+        if (!_conditions.Any() && _orCondition is null)
+        {
+            return _ => true; // Devuelve una expresión que siempre es true si no hay condiciones.
+        }
+
+        var andCondition = _conditions
+            .DefaultIfEmpty(_ => true) // Si no hay condiciones, devuelve una que siempre es true.
+            .Aggregate(And);
+
+        return _orCondition is null ? andCondition : Or(andCondition, _orCondition);
+    }
+
     public TBuilder NotNull(Func<T, object?> selector)
     {
         return Add(x => selector(x) != null);
@@ -111,7 +125,42 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) == null);
     }
 
+    public TBuilder NotZero(Func<T, decimal> selector)
+    {
+        return Add(x => selector(x) != 0m);
+    }
+
+    public TBuilder NotZero(Func<T, short> selector)
+    {
+        return Add(x => selector(x) != 0);
+    }
+
     public TBuilder InRange(Func<T, int> selector, int min, int max)
+    {
+        return Add(x => selector(x) >= min && selector(x) <= max);
+    }
+
+    public TBuilder InRange(Func<T, long> selector, long min, long max)
+    {
+        return Add(x => selector(x) >= min && selector(x) <= max);
+    }
+
+    public TBuilder InRange(Func<T, float> selector, float min, float max)
+    {
+        return Add(x => selector(x) >= min && selector(x) <= max);
+    }
+
+    public TBuilder InRange(Func<T, double> selector, double min, double max)
+    {
+        return Add(x => selector(x) >= min && selector(x) <= max);
+    }
+
+    public TBuilder InRange(Func<T, decimal> selector, decimal min, decimal max)
+    {
+        return Add(x => selector(x) >= min && selector(x) <= max);
+    }
+
+    public TBuilder InRange(Func<T, short> selector, short min, short max)
     {
         return Add(x => selector(x) >= min && selector(x) <= max);
     }
@@ -126,7 +175,70 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => (selector(x) ?? string.Empty).Length <= maxLength);
     }
 
+    public TBuilder InRange(Expression<Func<T, decimal>> selector, Expression<Func<T, decimal>> minSelector,
+        Expression<Func<T, decimal>> maxSelector)
+    {
+        ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
+
+        InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
+        InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
+        InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
+            Expression.AndAlso(
+                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
+                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
+            ),
+            parameter
+        );
+        return Add(filter);
+    }
+
+    public TBuilder InRange(Expression<Func<T, short>> selector, Expression<Func<T, short>> minSelector,
+        Expression<Func<T, short>> maxSelector)
+    {
+        ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
+
+        InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
+        InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
+        InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
+            Expression.AndAlso(
+                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
+                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
+            ),
+            parameter
+        );
+        return Add(filter);
+    }
+
     public TBuilder GreaterThan(Func<T, int> selector, int value)
+    {
+        return Add(x => selector(x) > value);
+    }
+
+    public TBuilder GreaterThan(Func<T, long> selector, long value)
+    {
+        return Add(x => selector(x) > value);
+    }
+
+    public TBuilder GreaterThan(Func<T, float> selector, float value)
+    {
+        return Add(x => selector(x) > value);
+    }
+
+    public TBuilder GreaterThan(Func<T, double> selector, double value)
+    {
+        return Add(x => selector(x) > value);
+    }
+
+    public TBuilder GreaterThan(Func<T, decimal> selector, decimal value)
+    {
+        return Add(x => selector(x) > value);
+    }
+
+    public TBuilder GreaterThan(Func<T, short> selector, short value)
     {
         return Add(x => selector(x) > value);
     }
@@ -136,12 +248,87 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) >= value);
     }
 
+    public TBuilder GreaterThanOrEqualTo(Func<T, long> selector, long value)
+    {
+        return Add(x => selector(x) >= value);
+    }
+
+    public TBuilder GreaterThanOrEqualTo(Func<T, float> selector, float value)
+    {
+        return Add(x => selector(x) >= value);
+    }
+
+    public TBuilder GreaterThanOrEqualTo(Func<T, double> selector, double value)
+    {
+        return Add(x => selector(x) >= value);
+    }
+
+    public TBuilder GreaterThanOrEqualTo(Func<T, decimal> selector, decimal value)
+    {
+        return Add(x => selector(x) >= value);
+    }
+
+    public TBuilder GreaterThanOrEqualTo(Func<T, short> selector, short value)
+    {
+        return Add(x => selector(x) >= value);
+    }
+
     public TBuilder LessThan(Func<T, int> selector, int value)
     {
         return Add(x => selector(x) < value);
     }
 
+    public TBuilder LessThan(Func<T, long> selector, long value)
+    {
+        return Add(x => selector(x) < value);
+    }
+
+    public TBuilder LessThan(Func<T, float> selector, float value)
+    {
+        return Add(x => selector(x) < value);
+    }
+
+    public TBuilder LessThan(Func<T, double> selector, double value)
+    {
+        return Add(x => selector(x) < value);
+    }
+
+    public TBuilder LessThan(Func<T, decimal> selector, decimal value)
+    {
+        return Add(x => selector(x) < value);
+    }
+
+    public TBuilder LessThan(Func<T, short> selector, short value)
+    {
+        return Add(x => selector(x) < value);
+    }
+
     public TBuilder LessThanOrEqualTo(Func<T, int> selector, int value)
+    {
+        return Add(x => selector(x) <= value);
+    }
+
+    public TBuilder LessThanOrEqualTo(Func<T, long> selector, long value)
+    {
+        return Add(x => selector(x) <= value);
+    }
+
+    public TBuilder LessThanOrEqualTo(Func<T, float> selector, float value)
+    {
+        return Add(x => selector(x) <= value);
+    }
+
+    public TBuilder LessThanOrEqualTo(Func<T, double> selector, double value)
+    {
+        return Add(x => selector(x) <= value);
+    }
+
+    public TBuilder LessThanOrEqualTo(Func<T, decimal> selector, decimal value)
+    {
+        return Add(x => selector(x) <= value);
+    }
+
+    public TBuilder LessThanOrEqualTo(Func<T, short> selector, short value)
     {
         return Add(x => selector(x) <= value);
     }
@@ -171,37 +358,87 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) == false);
     }
 
-    public TBuilder IsEmpty(Func<T, string?> selector)
+    public TBuilder Empty(Func<T, string?> selector)
     {
         return Add(x => string.IsNullOrEmpty(selector(x)));
     }
 
-    public TBuilder IsNotEmpty(Func<T, string?> selector)
+    public TBuilder NotEmpty(Func<T, string?> selector)
     {
         return Add(x => !string.IsNullOrEmpty(selector(x)));
     }
 
-    public TBuilder IsFutureDate(Func<T, DateTime> selector)
+    public TBuilder FutureDate(Func<T, DateTime> selector)
     {
         return Add(x => selector(x) > DateTime.Now);
     }
 
-    public TBuilder IsPastDate(Func<T, DateTime> selector)
+    public TBuilder PastDate(Func<T, DateTime> selector)
     {
         return Add(x => selector(x) < DateTime.Now);
     }
 
-    public TBuilder IsPositive(Func<T, int> selector)
+    public TBuilder Positive(Func<T, int> selector)
     {
         return Add(x => selector(x) > 0);
     }
 
-    public TBuilder IsNegative(Func<T, int> selector)
+    public TBuilder Positive(Func<T, long> selector)
+    {
+        return Add(x => selector(x) > 0L);
+    }
+
+    public TBuilder Positive(Func<T, float> selector)
+    {
+        return Add(x => selector(x) > 0f);
+    }
+
+    public TBuilder Positive(Func<T, double> selector)
+    {
+        return Add(x => selector(x) > 0.0);
+    }
+
+    public TBuilder Positive(Func<T, decimal> selector, decimal value)
+    {
+        return Add(x => selector(x) > 0m);
+    }
+
+    public TBuilder Positive(Func<T, short> selector, short value)
+    {
+        return Add(x => selector(x) > 0);
+    }
+
+    public TBuilder Negative(Func<T, int> selector)
     {
         return Add(x => selector(x) < 0);
     }
 
-    public TBuilder NotEqualTo<TValue>(Func<T, TValue> selector, TValue value)  where TValue : IEquatable<TValue>
+    public TBuilder Negative(Func<T, long> selector)
+    {
+        return Add(x => selector(x) < 0L);
+    }
+
+    public TBuilder Negative(Func<T, float> selector)
+    {
+        return Add(x => selector(x) < 0f);
+    }
+
+    public TBuilder Negative(Func<T, double> selector)
+    {
+        return Add(x => selector(x) < 0.0);
+    }
+
+    public TBuilder Negative(Func<T, decimal> selector, decimal value)
+    {
+        return Add(x => selector(x) < 0m);
+    }
+
+    public TBuilder Negative(Func<T, short> selector, short value)
+    {
+        return Add(x => selector(x) < 0);
+    }
+
+    public TBuilder NotEqualTo<TValue>(Func<T, TValue> selector, TValue value) where TValue : IEquatable<TValue>
     {
         return Add(x => !selector(x).Equals(value));
     }
@@ -211,7 +448,57 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) >= minValue);
     }
 
+    public TBuilder MinValue(Func<T, long> selector, long minValue)
+    {
+        return Add(x => selector(x) >= minValue);
+    }
+
+    public TBuilder MinValue(Func<T, float> selector, float minValue)
+    {
+        return Add(x => selector(x) >= minValue);
+    }
+
+    public TBuilder MinValue(Func<T, double> selector, double minValue)
+    {
+        return Add(x => selector(x) >= minValue);
+    }
+
+    public TBuilder MinValue(Func<T, decimal> selector, decimal minValue)
+    {
+        return Add(x => selector(x) >= minValue);
+    }
+
+    public TBuilder MinValue(Func<T, short> selector, short minValue)
+    {
+        return Add(x => selector(x) >= minValue);
+    }
+
     public TBuilder MaxValue(Func<T, int> selector, int maxValue)
+    {
+        return Add(x => selector(x) <= maxValue);
+    }
+
+    public TBuilder MaxValue(Func<T, long> selector, long maxValue)
+    {
+        return Add(x => selector(x) <= maxValue);
+    }
+
+    public TBuilder MaxValue(Func<T, float> selector, float maxValue)
+    {
+        return Add(x => selector(x) <= maxValue);
+    }
+
+    public TBuilder MaxValue(Func<T, double> selector, double maxValue)
+    {
+        return Add(x => selector(x) <= maxValue);
+    }
+
+    public TBuilder MaxValue(Func<T, decimal> selector, decimal maxValue)
+    {
+        return Add(x => selector(x) <= maxValue);
+    }
+
+    public TBuilder MaxValue(Func<T, short> selector, short maxValue)
     {
         return Add(x => selector(x) <= maxValue);
     }
@@ -224,12 +511,75 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
     public TBuilder InRange(Expression<Func<T, int>> selector, Expression<Func<T, int>> minSelector,
         Expression<Func<T, int>> maxSelector)
     {
+        ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
+
+        InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
+        InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
+        InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
+
         Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
             Expression.AndAlso(
-                Expression.GreaterThanOrEqual(selector.Body, minSelector.Body),
-                Expression.LessThanOrEqual(selector.Body, maxSelector.Body)
+                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
+                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
             ),
-            selector.Parameters
+            parameter
+        );
+        return Add(filter);
+    }
+
+    public TBuilder InRange(Expression<Func<T, long>> selector, Expression<Func<T, long>> minSelector,
+        Expression<Func<T, long>> maxSelector)
+    {
+        ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
+
+        InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
+        InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
+        InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
+            Expression.AndAlso(
+                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
+                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
+            ),
+            parameter
+        );
+        return Add(filter);
+    }
+
+    public TBuilder InRange(Expression<Func<T, float>> selector, Expression<Func<T, float>> minSelector,
+        Expression<Func<T, float>> maxSelector)
+    {
+        ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
+
+        InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
+        InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
+        InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
+            Expression.AndAlso(
+                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
+                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
+            ),
+            parameter
+        );
+        return Add(filter);
+    }
+
+    public TBuilder InRange(Expression<Func<T, double>> selector, Expression<Func<T, double>> minSelector,
+        Expression<Func<T, double>> maxSelector)
+    {
+        ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
+
+        InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
+        InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
+        InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
+            Expression.AndAlso(
+                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
+                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
+            ),
+            parameter
         );
         return Add(filter);
     }
@@ -270,6 +620,56 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
     public TBuilder Contains(Func<T, string> selector, string value)
     {
         return Add(x => selector(x).Contains(value));
+    }
+
+    public TBuilder Zero(Func<T, int> selector)
+    {
+        return Add(x => selector(x) == 0);
+    }
+
+    public TBuilder Zero(Func<T, long> selector)
+    {
+        return Add(x => selector(x) == 0L);
+    }
+
+    public TBuilder Zero(Func<T, float> selector)
+    {
+        return Add(x => selector(x) == 0f);
+    }
+
+    public TBuilder Zero(Func<T, double> selector)
+    {
+        return Add(x => selector(x) == 0.0);
+    }
+
+    public TBuilder Zero(Func<T, decimal> selector)
+    {
+        return Add(x => selector(x) == 0m);
+    }
+
+    public TBuilder Zero(Func<T, short> selector)
+    {
+        return Add(x => selector(x) == 0);
+    }
+
+    public TBuilder NotZero(Func<T, int> selector)
+    {
+        return Add(x => selector(x) != 0);
+    }
+
+    public TBuilder NotZero(Func<T, long> selector)
+    {
+        return Add(x => selector(x) != 0L);
+    }
+
+    public TBuilder NotZero(Func<T, float> selector)
+    {
+        return Add(x => selector(x) != 0f);
+    }
+
+    public TBuilder NotZero(Func<T, double> selector)
+    {
+        return Add(x => selector(x) != 0.0);
     }
 
     /// <summary>
@@ -352,19 +752,5 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
                 leftConstant.Value is int leftValue && leftValue == 0:
                 throw new ArgumentException("The condition provided has no effect because it is always '0'.");
         }
-    }
-
-    public Expression<Func<T, bool>> Build()
-    {
-        if (!_conditions.Any() && _orCondition is null)
-        {
-            return _ => true; // Devuelve una expresión que siempre es true si no hay condiciones.
-        }
-
-        var andCondition = _conditions
-            .DefaultIfEmpty(_ => true) // Si no hay condiciones, devuelve una que siempre es true.
-            .Aggregate(And);
-
-        return _orCondition is null ? andCondition : Or(andCondition, _orCondition);
     }
 }
