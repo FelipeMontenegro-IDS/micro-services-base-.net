@@ -4,24 +4,23 @@ namespace Shared.Interfaces.Builders;
 
 public interface INumberCondition<out TBuilder, T>
 {
-    TBuilder Zero(Func<T, int> selector);
-    TBuilder Zero(Func<T, long> selector);
-    TBuilder Zero(Func<T, float> selector);
-    TBuilder Zero(Func<T, double> selector);
-    TBuilder Zero(Func<T, decimal> selector);
-    TBuilder Zero(Func<T, short> selector);
+    TBuilder Zero(Expression<Func<T, int>> selector);
+    TBuilder Zero(Expression<Func<T, long>> selector);
+    TBuilder Zero(Expression<Func<T, float>> selector);
+    TBuilder Zero(Expression<Func<T, double>> selector);
+    TBuilder Zero(Expression<Func<T, decimal>> selector);
+    TBuilder Zero(Expression<Func<T, short>> selector);
 
-    TBuilder NotZero(Func<T, int> selector);
-    TBuilder NotZero(Func<T, long> selector);
-    TBuilder NotZero(Func<T, float> selector);
-    TBuilder NotZero(Func<T, double> selector);
-    TBuilder NotZero(Func<T, decimal> selector);
-    TBuilder NotZero(Func<T, short> selector);
+    TBuilder NotZero(Expression<Func<T, int>> selector);
+    TBuilder NotZero(Expression<Func<T, long>> selector);
+    TBuilder NotZero(Expression<Func<T, float>> selector);
+    TBuilder NotZero(Expression<Func<T, double>> selector);
+    TBuilder NotZero(Expression<Func<T, decimal>> selector);
+    TBuilder NotZero(Expression<Func<T, short>> selector);
 
 
     TBuilder InRange(Func<T, int> selector, int min, int max);
     TBuilder InRange(Func<T, long> selector, long min, long max);
-
     TBuilder InRange(Func<T, float> selector, float min, float max);
     TBuilder InRange(Func<T, double> selector, double min, double max);
     TBuilder InRange(Func<T, decimal> selector, decimal min, decimal max);

@@ -43,6 +43,5 @@ public class CustomerConfig : IEntityTypeConfiguration<Customer>, IEntityConfigu
 
     public void ConfigureRelationships(EntityTypeBuilder<Customer> builder)
     {
-      
     }
 }

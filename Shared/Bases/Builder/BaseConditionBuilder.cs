@@ -115,24 +115,28 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return _orCondition is null ? andCondition : Or(andCondition, _orCondition);
     }
 
-    public TBuilder NotNull(Func<T, object?> selector)
+    public TBuilder NotNull(Expression<Func<T, object?>> selector)
     {
-        return Add(x => selector(x) != null);
+        Expression<Func<object?, bool>> predicate = value => value != null;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Null(Func<T, object?> selector)
+    public TBuilder Null(Expression<Func<T, object?>> selector)
     {
-        return Add(x => selector(x) == null);
+        Expression<Func<object?, bool>> predicate = value => value == null;
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotZero(Func<T, decimal> selector)
+    public TBuilder NotZero(Expression<Func<T, decimal>> selector)
     {
-        return Add(x => selector(x) != 0m);
+        Expression<Func<decimal, bool>> predicate = val => val != 0m;
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotZero(Func<T, short> selector)
+    public TBuilder NotZero(Expression<Func<T, short>> selector)
     {
-        return Add(x => selector(x) != 0);
+        Expression<Func<short, bool>> predicate = val => val != 0;
+        return Add(selector, predicate);
     }
 
     public TBuilder InRange(Func<T, int> selector, int min, int max)
@@ -165,51 +169,59 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) >= min && selector(x) <= max);
     }
 
-    public TBuilder MinLength(Func<T, string?> selector, int minLength)
+    public TBuilder MinLength(Expression<Func<T, string?>> selector, int minLength)
     {
-        return Add(x => (selector(x) ?? string.Empty).Length >= minLength);
+        Expression<Func<string?, bool>> predicate = val => !string.IsNullOrEmpty(val) && val.Length >= minLength;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MaxLength(Func<T, string?> selector, int maxLength)
+    public TBuilder MaxLength(Expression<Func<T, string?>> selector, int maxLength)
     {
-        return Add(x => (selector(x) ?? string.Empty).Length <= maxLength);
+        Expression<Func<string?, bool>> predicate = val => !string.IsNullOrEmpty(val) && val.Length <= maxLength;
+        return Add(selector, predicate);
     }
 
     public TBuilder InRange(Expression<Func<T, decimal>> selector, Expression<Func<T, decimal>> minSelector,
         Expression<Func<T, decimal>> maxSelector)
     {
+        if (selector == null) throw new ArgumentNullException(nameof(selector));
+        if (minSelector == null) throw new ArgumentNullException(nameof(minSelector));
+        if (maxSelector == null) throw new ArgumentNullException(nameof(maxSelector));
+
         ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
 
         InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
         InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
         InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
 
-        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
-            Expression.AndAlso(
-                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
-                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
-            ),
-            parameter
-        );
+        Expression greaterThanOrEqual = Expression.GreaterThanOrEqual(selectorBody, minSelectorBody);
+        Expression lessThanOrEqual = Expression.LessThanOrEqual(selectorBody, maxSelectorBody);
+        Expression finalExpression = Expression.AndAlso(greaterThanOrEqual, lessThanOrEqual);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
+
         return Add(filter);
     }
 
     public TBuilder InRange(Expression<Func<T, short>> selector, Expression<Func<T, short>> minSelector,
         Expression<Func<T, short>> maxSelector)
     {
+        if (selector == null) throw new ArgumentNullException(nameof(selector));
+        if (minSelector == null) throw new ArgumentNullException(nameof(minSelector));
+        if (maxSelector == null) throw new ArgumentNullException(nameof(maxSelector));
+
         ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
 
         InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
         InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
         InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
 
-        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
-            Expression.AndAlso(
-                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
-                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
-            ),
-            parameter
-        );
+        Expression greaterThanOrEqual = Expression.GreaterThanOrEqual(selectorBody, minSelectorBody);
+        Expression lessThanOrEqual = Expression.LessThanOrEqual(selectorBody, maxSelectorBody);
+        Expression finalExpression = Expression.AndAlso(greaterThanOrEqual, lessThanOrEqual);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
+
         return Add(filter);
     }
 
@@ -333,19 +345,26 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) <= value);
     }
 
-    public TBuilder EqualTo<TValue>(Func<T, TValue> selector, TValue value) where TValue : IEquatable<TValue>
+    public TBuilder EqualTo<TValue>(Expression<Func<T, TValue>> selector, TValue value)
+        where TValue : IEquatable<TValue>
     {
-        return Add(x => selector(x).Equals(value));
+        Expression<Func<TValue, bool>> predicate = v => v.Equals(value);
+        return Add(selector, predicate);
     }
 
-    public TBuilder RegexMatch(Func<T, string?> selector, string pattern)
+    public TBuilder RegexMatch(Expression<Func<T, string?>> selector, string pattern)
     {
-        return Add(x => Regex.IsMatch(selector(x) ?? string.Empty, pattern));
+        if (string.IsNullOrEmpty(pattern)) throw new ArgumentException("Pattern cannot be empty", nameof(pattern));
+
+        Expression<Func<string?, bool>> predicate = value =>
+            !string.IsNullOrEmpty(value) && Regex.IsMatch(value, pattern);
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotEmpty(Func<T, IEnumerable<object?>> selector)
+    public TBuilder NotEmpty(Expression<Func<T, IEnumerable<object?>>> selector)
     {
-        return Add(x => selector(x).Any() == true);
+        Expression<Func<IEnumerable<object?>, bool>> predicate = val => val.Any() == true;
+        return Add(selector, predicate);
     }
 
     public TBuilder IsTrue(Func<T, bool> selector)
@@ -358,24 +377,28 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) == false);
     }
 
-    public TBuilder Empty(Func<T, string?> selector)
+    public TBuilder Empty(Expression<Func<T, string?>> selector)
     {
-        return Add(x => string.IsNullOrEmpty(selector(x)));
+        Expression<Func<string?, bool>> predicate = val => string.IsNullOrEmpty(val);
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotEmpty(Func<T, string?> selector)
+    public TBuilder NotEmpty(Expression<Func<T, string?>> selector)
     {
-        return Add(x => !string.IsNullOrEmpty(selector(x)));
+        Expression<Func<string?, bool>> predicate = val => !string.IsNullOrEmpty(val);
+        return Add(selector, predicate);
     }
 
-    public TBuilder FutureDate(Func<T, DateTime> selector)
+    public TBuilder FutureDate(Expression<Func<T, DateTime>> selector)
     {
-        return Add(x => selector(x) > DateTime.Now);
+        Expression<Func<DateTime, bool>> predicate = val => val > DateTime.Now;
+        return Add(selector, predicate);
     }
 
-    public TBuilder PastDate(Func<T, DateTime> selector)
+    public TBuilder PastDate(Expression<Func<T, DateTime>> selector)
     {
-        return Add(x => selector(x) < DateTime.Now);
+        Expression<Func<DateTime, bool>> predicate = val => val < DateTime.Now;
+        return Add(selector, predicate);
     }
 
     public TBuilder Positive(Func<T, int> selector)
@@ -438,9 +461,11 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) < 0);
     }
 
-    public TBuilder NotEqualTo<TValue>(Func<T, TValue> selector, TValue value) where TValue : IEquatable<TValue>
+    public TBuilder NotEqualTo<TValue>(Expression<Func<T, TValue>> selector, TValue value)
+        where TValue : IEquatable<TValue>
     {
-        return Add(x => !selector(x).Equals(value));
+        Expression<Func<TValue, bool>> predicate = val => !val.Equals(value);
+        return Add(selector, predicate);
     }
 
     public TBuilder MinValue(Func<T, int> selector, int minValue)
@@ -503,238 +528,313 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) <= maxValue);
     }
 
-    public TBuilder Email(Func<T, string?> selector)
+    public TBuilder Email(Expression<Func<T, string?>> selector)
     {
-        return Add(x => RegularExpression.FormatEmail.IsMatch(selector(x) ?? string.Empty));
+        Expression<Func<string?, bool>> predicate = val =>
+            !string.IsNullOrEmpty(val) && RegularExpression.FormatEmail.IsMatch(val);
+        return Add(selector, predicate);
     }
 
     public TBuilder InRange(Expression<Func<T, int>> selector, Expression<Func<T, int>> minSelector,
         Expression<Func<T, int>> maxSelector)
     {
+        if (selector == null) throw new ArgumentNullException(nameof(selector));
+        if (minSelector == null) throw new ArgumentNullException(nameof(minSelector));
+        if (maxSelector == null) throw new ArgumentNullException(nameof(maxSelector));
+
         ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
 
         InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
         InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
         InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
 
-        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
-            Expression.AndAlso(
-                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
-                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
-            ),
-            parameter
-        );
+        Expression greaterThanOrEqual = Expression.GreaterThanOrEqual(selectorBody, minSelectorBody);
+        Expression lessThanOrEqual = Expression.LessThanOrEqual(selectorBody, maxSelectorBody);
+        Expression finalExpression = Expression.AndAlso(greaterThanOrEqual, lessThanOrEqual);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
+
         return Add(filter);
     }
 
     public TBuilder InRange(Expression<Func<T, long>> selector, Expression<Func<T, long>> minSelector,
         Expression<Func<T, long>> maxSelector)
     {
+        if (selector == null) throw new ArgumentNullException(nameof(selector));
+        if (minSelector == null) throw new ArgumentNullException(nameof(minSelector));
+        if (maxSelector == null) throw new ArgumentNullException(nameof(maxSelector));
+
         ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
 
         InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
         InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
         InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
 
-        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
-            Expression.AndAlso(
-                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
-                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
-            ),
-            parameter
-        );
+        Expression greaterThanOrEqual = Expression.GreaterThanOrEqual(selectorBody, minSelectorBody);
+        Expression lessThanOrEqual = Expression.LessThanOrEqual(selectorBody, maxSelectorBody);
+        Expression finalExpression = Expression.AndAlso(greaterThanOrEqual, lessThanOrEqual);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
+
         return Add(filter);
     }
 
     public TBuilder InRange(Expression<Func<T, float>> selector, Expression<Func<T, float>> minSelector,
         Expression<Func<T, float>> maxSelector)
     {
+        if (selector == null) throw new ArgumentNullException(nameof(selector));
+        if (minSelector == null) throw new ArgumentNullException(nameof(minSelector));
+        if (maxSelector == null) throw new ArgumentNullException(nameof(maxSelector));
+
         ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
 
         InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
         InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
         InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
 
-        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
-            Expression.AndAlso(
-                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
-                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
-            ),
-            parameter
-        );
+        Expression greaterThanOrEqual = Expression.GreaterThanOrEqual(selectorBody, minSelectorBody);
+        Expression lessThanOrEqual = Expression.LessThanOrEqual(selectorBody, maxSelectorBody);
+        Expression finalExpression = Expression.AndAlso(greaterThanOrEqual, lessThanOrEqual);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
+
         return Add(filter);
     }
 
     public TBuilder InRange(Expression<Func<T, double>> selector, Expression<Func<T, double>> minSelector,
         Expression<Func<T, double>> maxSelector)
     {
+        if (selector == null) throw new ArgumentNullException(nameof(selector));
+        if (minSelector == null) throw new ArgumentNullException(nameof(minSelector));
+        if (maxSelector == null) throw new ArgumentNullException(nameof(maxSelector));
+
         ParameterExpression parameter = Expression.Parameter(typeof(T), "Type");
 
         InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
         InvocationExpression minSelectorBody = Expression.Invoke(minSelector, parameter);
         InvocationExpression maxSelectorBody = Expression.Invoke(maxSelector, parameter);
 
-        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
-            Expression.AndAlso(
-                Expression.GreaterThanOrEqual(selectorBody, minSelectorBody),
-                Expression.LessThanOrEqual(selectorBody, maxSelectorBody)
-            ),
-            parameter
-        );
+        Expression greaterThanOrEqual = Expression.GreaterThanOrEqual(selectorBody, minSelectorBody);
+        Expression lessThanOrEqual = Expression.LessThanOrEqual(selectorBody, maxSelectorBody);
+        Expression finalExpression = Expression.AndAlso(greaterThanOrEqual, lessThanOrEqual);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(finalExpression, parameter);
+
         return Add(filter);
     }
 
-    public TBuilder In<TValue>(Func<T, TValue> selector, IEnumerable<TValue> values)
+    public TBuilder In<TValue>(Expression<Func<T, TValue>> selector, IEnumerable<TValue> values)
     {
-        var valueSet = values.ToHashSet();
-        return Add(x => valueSet.Contains(selector(x)));
+        HashSet<TValue> valueSet = values.ToHashSet();
+
+        Expression<Func<TValue, bool>> predicate = val => valueSet.Contains(val);
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotIn<TValue>(Func<T, TValue> selector, IEnumerable<TValue> values)
+    public TBuilder NotIn<TValue>(Expression<Func<T, TValue>> selector, IEnumerable<TValue> values)
     {
-        var valueSet = values.ToHashSet();
-        return Add(x => !valueSet.Contains(selector(x)));
+        HashSet<TValue> valueSet = values.ToHashSet();
+
+        Expression<Func<TValue, bool>> predicate = val => !valueSet.Contains(val);
+        return Add(selector, predicate);
     }
 
-    public TBuilder BetweenDates(Func<T, DateTime> selector, DateTime startDate, DateTime endDate)
+    public TBuilder BetweenDates(Expression<Func<T, DateTime>> selector, DateTime startDate, DateTime endDate)
     {
-        return Add(x => selector(x) >= startDate && selector(x) <= endDate);
+        Expression<Func<DateTime, bool>> predicate = val => val.Date >= startDate && val.Date <= endDate;
+        return Add(selector, predicate);
     }
 
-    public TBuilder BetweenDates(Func<T, DateTime> selector, Func<T, DateTime> startDateSelector,
-        Func<T, DateTime> endDateSelector)
+    public TBuilder BetweenDates(
+        Expression<Func<T, DateTime>> selector,
+        Expression<Func<T, DateTime>> startDateSelector,
+        Expression<Func<T, DateTime>> endDateSelector)
     {
-        return Add(x => selector(x) >= startDateSelector(x) && selector(x) <= endDateSelector(x));
+        if (selector == null) throw new ArgumentNullException(nameof(selector));
+        if (startDateSelector == null) throw new ArgumentNullException(nameof(startDateSelector));
+        if (endDateSelector == null) throw new ArgumentNullException(nameof(endDateSelector));
+
+        ParameterExpression parameter = Expression.Parameter(typeof(T), "x");
+
+        InvocationExpression selectorBody = Expression.Invoke(selector, parameter);
+        InvocationExpression startDateBody = Expression.Invoke(startDateSelector, parameter);
+        InvocationExpression endDateBody = Expression.Invoke(endDateSelector, parameter);
+
+        Expression<Func<T, bool>> filter = Expression.Lambda<Func<T, bool>>(
+            Expression.AndAlso(
+                Expression.GreaterThanOrEqual(selectorBody, startDateBody),
+                Expression.LessThanOrEqual(selectorBody, endDateBody)
+            ),
+            parameter
+        );
+
+        return Add(filter);
     }
 
-    public TBuilder ExactDate(Func<T, DateTime> selector, DateTime date)
+    public TBuilder ExactDate(Expression<Func<T, DateTime>> selector, DateTime date)
     {
-        return Add(x => selector(x).Date == date.Date);
+        Expression<Func<DateTime, bool>> predicate = val => val.Date == date.Date;
+        return Add(selector, predicate);
     }
 
-    public TBuilder BeforeDate(Func<T, DateTime> selector, DateTime date)
+    public TBuilder BeforeDate(Expression<Func<T, DateTime>> selector, DateTime date)
     {
-       return Add(x => selector(x) < date);
+        Expression<Func<DateTime, bool>> predicate = val => val < date;
+        return Add(selector, predicate);
     }
 
-    public TBuilder AfterDate(Func<T, DateTime> selector, DateTime date)
+    public TBuilder AfterDate(Expression<Func<T, DateTime>> selector, DateTime date)
     {
-      return Add(x => selector(x) > date);
+        Expression<Func<DateTime, bool>> predicate = val => val > date;
+        return Add(selector, predicate);
     }
 
-    public TBuilder IsToday(Func<T, DateTime> selector)
+    public TBuilder IsToday(Expression<Func<T, DateTime>> selector)
     {
-      return  Add(x => selector(x).Date == DateTime.Today);
+        Expression<Func<DateTime, bool>> predicate = val => val.Date == DateTime.Today;
+        return Add(selector, predicate);
     }
 
-    public TBuilder IsYesterday(Func<T, DateTime> selector)
+    public TBuilder IsYesterday(Expression<Func<T, DateTime>> selector)
     {
-        return Add(x => selector(x).Date == DateTime.Today.AddDays(-1));
+        Expression<Func<DateTime, bool>> predicate = val => val.Date == DateTime.Today.AddDays(-1);
+        return Add(selector, predicate);
     }
 
-    public TBuilder IsTomorrow(Func<T, DateTime> selector)
+    public TBuilder IsTomorrow(Expression<Func<T, DateTime>> selector)
     {
-        return Add(x => selector(x).Date == DateTime.Today.AddDays(1));
+        Expression<Func<DateTime, bool>> predicate = val => val.Date == DateTime.Today.AddDays(1);
+        return Add(selector, predicate);
     }
 
-    public TBuilder InLastDays(Func<T, DateTime> selector, int days)
+    public TBuilder InLastDays(Expression<Func<T, DateTime>> selector, int days)
     {
-        return Add(x => selector(x) >= DateTime.Today.AddDays(-days));
+        if (days <= 0)
+            throw new ArgumentOutOfRangeException(
+                $"Not Permited days in zero and days necesary in positive {nameof(days)}");
+
+        Expression<Func<DateTime, bool>> predicate = val => val.Date >= DateTime.Today.AddDays(-days);
+        return Add(selector, predicate);
     }
 
-    public TBuilder InNextDays(Func<T, DateTime> selector, int days)
+    public TBuilder InNextDays(Expression<Func<T, DateTime>> selector, int days)
     {
-       return Add(x => selector(x) <= DateTime.Today.AddDays(days));
+        if (days <= 0)
+            throw new ArgumentOutOfRangeException(
+                $"Not Permited days in zero and days necesary in positive {nameof(days)}");
+
+        Expression<Func<DateTime, bool>> predicate = val => val.Date <= DateTime.Today.AddDays(days);
+        return Add(selector, predicate);
     }
 
-    public TBuilder IsWeekend(Func<T, DateTime> selector)
+    public TBuilder IsWeekend(Expression<Func<T, DateTime>> selector)
     {
-        return Add(x => selector(x).DayOfWeek == DayOfWeek.Saturday || selector(x).DayOfWeek == DayOfWeek.Sunday);
+        Expression<Func<DateTime, bool>> predicate = val =>
+            val.DayOfWeek == DayOfWeek.Saturday || val.DayOfWeek == DayOfWeek.Sunday;
+        return Add(selector, predicate);
     }
 
-    public TBuilder IsWeekday(Func<T, DateTime> selector)
+    public TBuilder IsWeekday(Expression<Func<T, DateTime>> selector)
     {
-        return Add(x => selector(x).DayOfWeek >= DayOfWeek.Monday && selector(x).DayOfWeek <= DayOfWeek.Friday);
+        Expression<Func<DateTime, bool>> predicate = val =>
+            val.DayOfWeek >= DayOfWeek.Monday && val.DayOfWeek <= DayOfWeek.Friday;
+        return Add(selector, predicate);
     }
 
-    public TBuilder IsLeapYear(Func<T, DateTime> selector)
+    public TBuilder IsLeapYear(Expression<Func<T, DateTime>> selector)
     {
-        return Add(x => DateTime.IsLeapYear(selector(x).Year));
+        Expression<Func<DateTime, bool>> predicate = val => DateTime.IsLeapYear(val.Year);
+        return Add(selector, predicate);
     }
 
-    public TBuilder SameMonthAs(Func<T, DateTime> selector, DateTime date)
+    public TBuilder SameMonthAs(Expression<Func<T, DateTime>> selector, DateTime date)
     {
-        return Add(x => selector(x).Year == date.Year && selector(x).Month == date.Month);
+        Expression<Func<DateTime, bool>> predicate = val => val.Year == date.Year && val.Month == date.Month;
+        return Add(selector, predicate);
     }
 
-    public TBuilder SameYearAs(Func<T, DateTime> selector, DateTime date)
+    public TBuilder SameYearAs(Expression<Func<T, DateTime>> selector, DateTime date)
     {
-        return Add(x => selector(x).Year == date.Year);
+        Expression<Func<DateTime, bool>> predicate = val => val.Year == date.Year;
+        return Add(selector, predicate);
     }
 
-    public TBuilder EndsWith(Func<T, string> selector, string value)
+    public TBuilder EndsWith(Expression<Func<T, string>> selector, string value)
     {
-        return Add(x => selector(x).EndsWith(value));
+        Expression<Func<string, bool>> predicate = val => val.EndsWith(value);
+        return Add(selector, predicate);
     }
 
-    public TBuilder StartsWith(Func<T, string> selector, string value)
+    public TBuilder StartsWith(Expression<Func<T, string>> selector, string value)
     {
-        return Add(x => selector(x).EndsWith(value));
+        Expression<Func<string, bool>> predicate = val => val.StartsWith(value);
+        return Add(selector, predicate);
     }
 
-    public TBuilder Contains(Func<T, string> selector, string value)
+    public TBuilder Contains(Expression<Func<T, string>> selector, string value)
     {
-        return Add(x => selector(x).Contains(value));
+        Expression<Func<string, bool>> predicate = val => val.Contains(value);
+        return Add(selector, predicate);
     }
 
-    public TBuilder Zero(Func<T, int> selector)
+    public TBuilder Zero(Expression<Func<T, int>> selector)
     {
-        return Add(x => selector(x) == 0);
+        Expression<Func<int, bool>> predicate = val => val == 0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Zero(Func<T, long> selector)
+    public TBuilder Zero(Expression<Func<T, long>> selector)
     {
-        return Add(x => selector(x) == 0L);
+        Expression<Func<long, bool>> predicate = val => val == 0L;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Zero(Func<T, float> selector)
+    public TBuilder Zero(Expression<Func<T, float>> selector)
     {
-        return Add(x => selector(x) == 0f);
+        Expression<Func<float, bool>> predicate = val => val == 0f;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Zero(Func<T, double> selector)
+    public TBuilder Zero(Expression<Func<T, double>> selector)
     {
-        return Add(x => selector(x) == 0.0);
+        Expression<Func<double, bool>> predicate = val => val == 0.0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Zero(Func<T, decimal> selector)
+    public TBuilder Zero(Expression<Func<T, decimal>> selector)
     {
-        return Add(x => selector(x) == 0m);
+        Expression<Func<decimal, bool>> predicate = val => val == 0m;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Zero(Func<T, short> selector)
+    public TBuilder Zero(Expression<Func<T, short>> selector)
     {
-        return Add(x => selector(x) == 0);
+        Expression<Func<short, bool>> predicate = val => val == 0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotZero(Func<T, int> selector)
+    public TBuilder NotZero(Expression<Func<T, int>> selector)
     {
-        return Add(x => selector(x) != 0);
+        Expression<Func<int, bool>> predicate = val => val != 0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotZero(Func<T, long> selector)
+    public TBuilder NotZero(Expression<Func<T, long>> selector)
     {
-        return Add(x => selector(x) != 0L);
+        Expression<Func<long, bool>> predicate = val => val != 0L;
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotZero(Func<T, float> selector)
+    public TBuilder NotZero(Expression<Func<T, float>> selector)
     {
-        return Add(x => selector(x) != 0f);
+        Expression<Func<float, bool>> predicate = val => val != 0f;
+        return Add(selector, predicate);
     }
 
-    public TBuilder NotZero(Func<T, double> selector)
+    public TBuilder NotZero(Expression<Func<T, double>> selector)
     {
-        return Add(x => selector(x) != 0.0);
+        Expression<Func<double, bool>> predicate = val => val != 0.0;
+        return Add(selector, predicate);
     }
 
     /// <summary>
