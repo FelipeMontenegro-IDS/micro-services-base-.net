@@ -607,6 +607,71 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(x => selector(x) >= startDateSelector(x) && selector(x) <= endDateSelector(x));
     }
 
+    public TBuilder ExactDate(Func<T, DateTime> selector, DateTime date)
+    {
+        return Add(x => selector(x).Date == date.Date);
+    }
+
+    public TBuilder BeforeDate(Func<T, DateTime> selector, DateTime date)
+    {
+       return Add(x => selector(x) < date);
+    }
+
+    public TBuilder AfterDate(Func<T, DateTime> selector, DateTime date)
+    {
+      return Add(x => selector(x) > date);
+    }
+
+    public TBuilder IsToday(Func<T, DateTime> selector)
+    {
+      return  Add(x => selector(x).Date == DateTime.Today);
+    }
+
+    public TBuilder IsYesterday(Func<T, DateTime> selector)
+    {
+        return Add(x => selector(x).Date == DateTime.Today.AddDays(-1));
+    }
+
+    public TBuilder IsTomorrow(Func<T, DateTime> selector)
+    {
+        return Add(x => selector(x).Date == DateTime.Today.AddDays(1));
+    }
+
+    public TBuilder InLastDays(Func<T, DateTime> selector, int days)
+    {
+        return Add(x => selector(x) >= DateTime.Today.AddDays(-days));
+    }
+
+    public TBuilder InNextDays(Func<T, DateTime> selector, int days)
+    {
+       return Add(x => selector(x) <= DateTime.Today.AddDays(days));
+    }
+
+    public TBuilder IsWeekend(Func<T, DateTime> selector)
+    {
+        return Add(x => selector(x).DayOfWeek == DayOfWeek.Saturday || selector(x).DayOfWeek == DayOfWeek.Sunday);
+    }
+
+    public TBuilder IsWeekday(Func<T, DateTime> selector)
+    {
+        return Add(x => selector(x).DayOfWeek >= DayOfWeek.Monday && selector(x).DayOfWeek <= DayOfWeek.Friday);
+    }
+
+    public TBuilder IsLeapYear(Func<T, DateTime> selector)
+    {
+        return Add(x => DateTime.IsLeapYear(selector(x).Year));
+    }
+
+    public TBuilder SameMonthAs(Func<T, DateTime> selector, DateTime date)
+    {
+        return Add(x => selector(x).Year == date.Year && selector(x).Month == date.Month);
+    }
+
+    public TBuilder SameYearAs(Func<T, DateTime> selector, DateTime date)
+    {
+        return Add(x => selector(x).Year == date.Year);
+    }
+
     public TBuilder EndsWith(Func<T, string> selector, string value)
     {
         return Add(x => selector(x).EndsWith(value));
