@@ -44,59 +44,59 @@ public interface INumberCondition<out TBuilder, T>
         Expression<Func<T, short>> maxSelector);
 
 
-    TBuilder GreaterThan(Func<T, int> selector, int value);
-    TBuilder GreaterThan(Func<T, long> selector, long value);
-    TBuilder GreaterThan(Func<T, float> selector, float value);
-    TBuilder GreaterThan(Func<T, double> selector, double value);
-    TBuilder GreaterThan(Func<T, decimal> selector, decimal value);
-    TBuilder GreaterThan(Func<T, short> selector, short value);
+    TBuilder GreaterThan(Expression<Func<T, int>> selector, int value);
+    TBuilder GreaterThan(Expression<Func<T, long>> selector, long value);
+    TBuilder GreaterThan(Expression<Func<T, float>> selector, float value);
+    TBuilder GreaterThan(Expression<Func<T, double>> selector, double value);
+    TBuilder GreaterThan(Expression<Func<T, decimal>> selector, decimal value);
+    TBuilder GreaterThan(Expression<Func<T, short>> selector, short value);
 
-    TBuilder GreaterThanOrEqualTo(Func<T, int> selector, int value);
-    TBuilder GreaterThanOrEqualTo(Func<T, long> selector, long value);
-    TBuilder GreaterThanOrEqualTo(Func<T, float> selector, float value);
-    TBuilder GreaterThanOrEqualTo(Func<T, double> selector, double value);
-    TBuilder GreaterThanOrEqualTo(Func<T, decimal> selector, decimal value);
-    TBuilder GreaterThanOrEqualTo(Func<T, short> selector, short value);
+    TBuilder GreaterThanOrEqualTo(Expression<Func<T, int>> selector, int value);
+    TBuilder GreaterThanOrEqualTo(Expression<Func<T, long>> selector, long value);
+    TBuilder GreaterThanOrEqualTo(Expression<Func<T, float>> selector, float value);
+    TBuilder GreaterThanOrEqualTo(Expression<Func<T, double>> selector, double value);
+    TBuilder GreaterThanOrEqualTo(Expression<Func<T, decimal>> selector, decimal value);
+    TBuilder GreaterThanOrEqualTo(Expression<Func<T, short>> selector, short value);
 
-    TBuilder LessThan(Func<T, int> selector, int value);
-    TBuilder LessThan(Func<T, long> selector, long value);
-    TBuilder LessThan(Func<T, float> selector, float value);
-    TBuilder LessThan(Func<T, double> selector, double value);
-    TBuilder LessThan(Func<T, decimal> selector, decimal value);
-    TBuilder LessThan(Func<T, short> selector, short value);
+    TBuilder LessThan(Expression<Func<T, int>> selector, int value);
+    TBuilder LessThan(Expression<Func<T, long>> selector, long value);
+    TBuilder LessThan(Expression<Func<T, float>> selector, float value);
+    TBuilder LessThan(Expression<Func<T, double>> selector, double value);
+    TBuilder LessThan(Expression<Func<T, decimal>> selector, decimal value);
+    TBuilder LessThan(Expression<Func<T, short>> selector, short value);
 
-    TBuilder LessThanOrEqualTo(Func<T, int> selector, int value);
-    TBuilder LessThanOrEqualTo(Func<T, long> selector, long value);
-    TBuilder LessThanOrEqualTo(Func<T, float> selector, float value);
-    TBuilder LessThanOrEqualTo(Func<T, double> selector, double value);
-    TBuilder LessThanOrEqualTo(Func<T, decimal> selector, decimal value);
-    TBuilder LessThanOrEqualTo(Func<T, short> selector, short value);
+    TBuilder LessThanOrEqualTo(Expression<Func<T, int>> selector, int value);
+    TBuilder LessThanOrEqualTo(Expression<Func<T, long>> selector, long value);
+    TBuilder LessThanOrEqualTo(Expression<Func<T, float>> selector, float value);
+    TBuilder LessThanOrEqualTo(Expression<Func<T, double>> selector, double value);
+    TBuilder LessThanOrEqualTo(Expression<Func<T, decimal>> selector, decimal value);
+    TBuilder LessThanOrEqualTo(Expression<Func<T, short>> selector, short value);
 
-    TBuilder Positive(Func<T, int> selector);
-    TBuilder Positive(Func<T, long> selector);
-    TBuilder Positive(Func<T, float> selector);
-    TBuilder Positive(Func<T, double> selector);
-    TBuilder Positive(Func<T, decimal> selector, decimal value);
-    TBuilder Positive(Func<T, short> selector, short value);
+    TBuilder Positive(Expression<Func<T, int>> selector);
+    TBuilder Positive(Expression<Func<T, long>> selector);
+    TBuilder Positive(Expression<Func<T, float>> selector);
+    TBuilder Positive(Expression<Func<T, double>> selector);
+    TBuilder Positive(Expression<Func<T, decimal>> selector);
+    TBuilder Positive(Expression<Func<T, short>> selector);
 
-    TBuilder Negative(Func<T, int> selector);
-    TBuilder Negative(Func<T, long> selector);
-    TBuilder Negative(Func<T, float> selector);
-    TBuilder Negative(Func<T, double> selector);
-    TBuilder Negative(Func<T, decimal> selector, decimal value);
-    TBuilder Negative(Func<T, short> selector, short value);
+    TBuilder Negative(Expression<Func<T, int>> selector);
+    TBuilder Negative(Expression<Func<T, long>> selector);
+    TBuilder Negative(Expression<Func<T, float>> selector);
+    TBuilder Negative(Expression<Func<T, double>> selector);
+    TBuilder Negative(Expression<Func<T, decimal>> selector);
+    TBuilder Negative(Expression<Func<T, short>> selector);
 
-    TBuilder MinValue(Func<T, int> selector, int minValue);
-    TBuilder MinValue(Func<T, long> selector, long minValue);
-    TBuilder MinValue(Func<T, float> selector, float minValue);
-    TBuilder MinValue(Func<T, double> selector, double minValue);
-    TBuilder MinValue(Func<T, decimal> selector, decimal minValue);
-    TBuilder MinValue(Func<T, short> selector, short minValue);
+    TBuilder MinValue(Expression<Func<T, int>> selector, int minValue);
+    TBuilder MinValue(Expression<Func<T, long>> selector, long minValue);
+    TBuilder MinValue(Expression<Func<T, float>> selector, float minValue);
+    TBuilder MinValue(Expression<Func<T, double>> selector, double minValue);
+    TBuilder MinValue(Expression<Func<T, decimal>> selector, decimal minValue);
+    TBuilder MinValue(Expression<Func<T, short>> selector, short minValue);
 
-    TBuilder MaxValue(Func<T, int> selector, int maxValue);
-    TBuilder MaxValue(Func<T, long> selector, long maxValue);
-    TBuilder MaxValue(Func<T, float> selector, float maxValue);
-    TBuilder MaxValue(Func<T, double> selector, double maxValue);
-    TBuilder MaxValue(Func<T, decimal> selector, decimal maxValue);
-    TBuilder MaxValue(Func<T, short> selector, short maxValue);
+    TBuilder MaxValue(Expression<Func<T, int>> selector, int maxValue);
+    TBuilder MaxValue(Expression<Func<T, long>> selector, long maxValue);
+    TBuilder MaxValue(Expression<Func<T, float>> selector, float maxValue);
+    TBuilder MaxValue(Expression<Func<T, double>> selector, double maxValue);
+    TBuilder MaxValue(Expression<Func<T, decimal>> selector, decimal maxValue);
+    TBuilder MaxValue(Expression<Func<T, short>> selector, short maxValue);
 }

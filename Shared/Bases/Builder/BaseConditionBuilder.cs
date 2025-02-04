@@ -225,124 +225,148 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(filter);
     }
 
-    public TBuilder GreaterThan(Func<T, int> selector, int value)
+    public TBuilder GreaterThan(Expression<Func<T, int>> selector, int value)
     {
-        return Add(x => selector(x) > value);
+        Expression<Func<int, bool>> predicate = val => val > value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThan(Func<T, long> selector, long value)
+    public TBuilder GreaterThan(Expression<Func<T, long>> selector, long value)
     {
-        return Add(x => selector(x) > value);
+        Expression<Func<long, bool>> predicate = val => val > value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThan(Func<T, float> selector, float value)
+    public TBuilder GreaterThan(Expression<Func<T, float>> selector, float value)
     {
-        return Add(x => selector(x) > value);
+        Expression<Func<float, bool>> predicate = val => val > value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThan(Func<T, double> selector, double value)
+    public TBuilder GreaterThan(Expression<Func<T, double>> selector, double value)
     {
-        return Add(x => selector(x) > value);
+        Expression<Func<double, bool>> predicate = val => val > value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThan(Func<T, decimal> selector, decimal value)
+    public TBuilder GreaterThan(Expression<Func<T, decimal>> selector, decimal value)
     {
-        return Add(x => selector(x) > value);
+        Expression<Func<decimal, bool>> predicate = val => val > value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThan(Func<T, short> selector, short value)
+    public TBuilder GreaterThan(Expression<Func<T, short>> selector, short value)
     {
-        return Add(x => selector(x) > value);
+        Expression<Func<short, bool>> predicate = val => val > value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThanOrEqualTo(Func<T, int> selector, int value)
+    public TBuilder GreaterThanOrEqualTo(Expression<Func<T, int>> selector, int value)
     {
-        return Add(x => selector(x) >= value);
+        Expression<Func<int, bool>> predicate = val => val >= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThanOrEqualTo(Func<T, long> selector, long value)
+    public TBuilder GreaterThanOrEqualTo(Expression<Func<T, long>> selector, long value)
     {
-        return Add(x => selector(x) >= value);
+        Expression<Func<long, bool>> predicate = val => val >= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThanOrEqualTo(Func<T, float> selector, float value)
+    public TBuilder GreaterThanOrEqualTo(Expression<Func<T, float>> selector, float value)
     {
-        return Add(x => selector(x) >= value);
+        Expression<Func<float, bool>> predicate = val => val >= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThanOrEqualTo(Func<T, double> selector, double value)
+    public TBuilder GreaterThanOrEqualTo(Expression<Func<T, double>> selector, double value)
     {
-        return Add(x => selector(x) >= value);
+        Expression<Func<double, bool>> predicate = val => val >= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThanOrEqualTo(Func<T, decimal> selector, decimal value)
+    public TBuilder GreaterThanOrEqualTo(Expression<Func<T, decimal>> selector, decimal value)
     {
-        return Add(x => selector(x) >= value);
+        Expression<Func<decimal, bool>> predicate = val => val >= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder GreaterThanOrEqualTo(Func<T, short> selector, short value)
+    public TBuilder GreaterThanOrEqualTo(Expression<Func<T, short>> selector, short value)
     {
-        return Add(x => selector(x) >= value);
+        Expression<Func<short, bool>> predicate = val => val >= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThan(Func<T, int> selector, int value)
+    public TBuilder LessThan(Expression<Func<T, int>> selector, int value)
     {
-        return Add(x => selector(x) < value);
+        Expression<Func<int, bool>> predicate = val => val < value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThan(Func<T, long> selector, long value)
+    public TBuilder LessThan(Expression<Func<T, long>> selector, long value)
     {
-        return Add(x => selector(x) < value);
+        Expression<Func<long, bool>> predicate = val => val < value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThan(Func<T, float> selector, float value)
+    public TBuilder LessThan(Expression<Func<T, float>> selector, float value)
     {
-        return Add(x => selector(x) < value);
+        Expression<Func<float, bool>> predicate = val => val < value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThan(Func<T, double> selector, double value)
+    public TBuilder LessThan(Expression<Func<T, double>> selector, double value)
     {
-        return Add(x => selector(x) < value);
+        Expression<Func<double, bool>> predicate = val => val < value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThan(Func<T, decimal> selector, decimal value)
+    public TBuilder LessThan(Expression<Func<T, decimal>> selector, decimal value)
     {
-        return Add(x => selector(x) < value);
+        Expression<Func<decimal, bool>> predicate = val => val < value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThan(Func<T, short> selector, short value)
+    public TBuilder LessThan(Expression<Func<T, short>> selector, short value)
     {
-        return Add(x => selector(x) < value);
+        Expression<Func<short, bool>> predicate = val => val < value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThanOrEqualTo(Func<T, int> selector, int value)
+    public TBuilder LessThanOrEqualTo(Expression<Func<T, int>> selector, int value)
     {
-        return Add(x => selector(x) <= value);
+        Expression<Func<int, bool>> predicate = val => val <= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThanOrEqualTo(Func<T, long> selector, long value)
+    public TBuilder LessThanOrEqualTo(Expression<Func<T, long>> selector, long value)
     {
-        return Add(x => selector(x) <= value);
+        Expression<Func<long, bool>> predicate = val => val <= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThanOrEqualTo(Func<T, float> selector, float value)
+    public TBuilder LessThanOrEqualTo(Expression<Func<T, float>> selector, float value)
     {
-        return Add(x => selector(x) <= value);
+        Expression<Func<float, bool>> predicate = val => val <= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThanOrEqualTo(Func<T, double> selector, double value)
+    public TBuilder LessThanOrEqualTo(Expression<Func<T, double>> selector, double value)
     {
-        return Add(x => selector(x) <= value);
+        Expression<Func<double, bool>> predicate = val => val <= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThanOrEqualTo(Func<T, decimal> selector, decimal value)
+    public TBuilder LessThanOrEqualTo(Expression<Func<T, decimal>> selector, decimal value)
     {
-        return Add(x => selector(x) <= value);
+        Expression<Func<decimal, bool>> predicate = val => val <= value;
+        return Add(selector, predicate);
     }
 
-    public TBuilder LessThanOrEqualTo(Func<T, short> selector, short value)
+    public TBuilder LessThanOrEqualTo(Expression<Func<T, short>> selector, short value)
     {
-        return Add(x => selector(x) <= value);
+        Expression<Func<short, bool>> predicate = val => val <= value;
+        return Add(selector, predicate);
     }
 
     public TBuilder EqualTo<TValue>(Expression<Func<T, TValue>> selector, TValue value)
@@ -401,64 +425,76 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(selector, predicate);
     }
 
-    public TBuilder Positive(Func<T, int> selector)
+    public TBuilder Positive(Expression<Func<T, int>> selector)
     {
-        return Add(x => selector(x) > 0);
+        Expression<Func<int, bool>> predicate = val => val > 0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Positive(Func<T, long> selector)
+    public TBuilder Positive(Expression<Func<T, long>> selector)
     {
-        return Add(x => selector(x) > 0L);
+        Expression<Func<long, bool>> predicate = val => val > 0L;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Positive(Func<T, float> selector)
+    public TBuilder Positive(Expression<Func<T, float>> selector)
     {
-        return Add(x => selector(x) > 0f);
+        Expression<Func<float, bool>> predicate = val => val > 0f;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Positive(Func<T, double> selector)
+    public TBuilder Positive(Expression<Func<T, double>> selector)
     {
-        return Add(x => selector(x) > 0.0);
+        Expression<Func<double, bool>> predicate = val => val > 0.0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Positive(Func<T, decimal> selector, decimal value)
+    public TBuilder Positive(Expression<Func<T, decimal>> selector)
     {
-        return Add(x => selector(x) > 0m);
+        Expression<Func<decimal, bool>> predicate = val => val > 0m;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Positive(Func<T, short> selector, short value)
+    public TBuilder Positive(Expression<Func<T, short>> selector)
     {
-        return Add(x => selector(x) > 0);
+        Expression<Func<short, bool>> predicate = val => val > 0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Negative(Func<T, int> selector)
+    public TBuilder Negative(Expression<Func<T, int>> selector)
     {
-        return Add(x => selector(x) < 0);
+        Expression<Func<int,bool>> predicate = val => val < 0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Negative(Func<T, long> selector)
+    public TBuilder Negative(Expression<Func<T, long>> selector)
     {
-        return Add(x => selector(x) < 0L);
+        Expression<Func<long,bool>> predicate = val => val < 0L;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Negative(Func<T, float> selector)
+    public TBuilder Negative(Expression<Func<T, float>> selector)
     {
-        return Add(x => selector(x) < 0f);
+        Expression<Func<float,bool>> predicate = val => val < 0f;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Negative(Func<T, double> selector)
+    public TBuilder Negative(Expression<Func<T, double>> selector)
     {
-        return Add(x => selector(x) < 0.0);
+        Expression<Func<double,bool>> predicate = val => val < 0.0;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Negative(Func<T, decimal> selector, decimal value)
+    public TBuilder Negative(Expression<Func<T, decimal>> selector)
     {
-        return Add(x => selector(x) < 0m);
+        Expression<Func<decimal,bool>> predicate = val => val < 0m;
+        return Add(selector, predicate);
     }
 
-    public TBuilder Negative(Func<T, short> selector, short value)
+    public TBuilder Negative(Expression<Func<T, short>> selector)
     {
-        return Add(x => selector(x) < 0);
+        Expression<Func<short,bool>> predicate = val => val < 0;
+        return Add(selector, predicate);
     }
 
     public TBuilder NotEqualTo<TValue>(Expression<Func<T, TValue>> selector, TValue value)
@@ -468,64 +504,76 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
         return Add(selector, predicate);
     }
 
-    public TBuilder MinValue(Func<T, int> selector, int minValue)
+    public TBuilder MinValue(Expression<Func<T, int>> selector, int minValue)
     {
-        return Add(x => selector(x) >= minValue);
+        Expression<Func<int,bool>> predicate = val => val >= minValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MinValue(Func<T, long> selector, long minValue)
+    public TBuilder MinValue(Expression<Func<T, long>> selector, long minValue)
     {
-        return Add(x => selector(x) >= minValue);
+        Expression<Func<long,bool>> predicate = val => val >= minValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MinValue(Func<T, float> selector, float minValue)
+    public TBuilder MinValue(Expression<Func<T, float>> selector, float minValue)
     {
-        return Add(x => selector(x) >= minValue);
+        Expression<Func<float,bool>> predicate = val => val >= minValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MinValue(Func<T, double> selector, double minValue)
+    public TBuilder MinValue(Expression<Func<T, double>> selector, double minValue)
     {
-        return Add(x => selector(x) >= minValue);
+        Expression<Func<double,bool>> predicate = val => val >= minValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MinValue(Func<T, decimal> selector, decimal minValue)
+    public TBuilder MinValue(Expression<Func<T, decimal>> selector, decimal minValue)
     {
-        return Add(x => selector(x) >= minValue);
+        Expression<Func<decimal,bool>> predicate = val => val >= minValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MinValue(Func<T, short> selector, short minValue)
+    public TBuilder MinValue(Expression<Func<T, short>> selector, short minValue)
     {
-        return Add(x => selector(x) >= minValue);
+        Expression<Func<short,bool>> predicate = val => val >= minValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MaxValue(Func<T, int> selector, int maxValue)
+    public TBuilder MaxValue(Expression<Func<T, int>> selector, int maxValue)
     {
-        return Add(x => selector(x) <= maxValue);
+        Expression<Func<int,bool>> predicate = val => val <= maxValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MaxValue(Func<T, long> selector, long maxValue)
+    public TBuilder MaxValue(Expression<Func<T, long>> selector, long maxValue)
     {
-        return Add(x => selector(x) <= maxValue);
+        Expression<Func<long,bool>> predicate = val => val <= maxValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MaxValue(Func<T, float> selector, float maxValue)
+    public TBuilder MaxValue(Expression<Func<T, float>> selector, float maxValue)
     {
-        return Add(x => selector(x) <= maxValue);
+        Expression<Func<float,bool>> predicate = val => val <= maxValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MaxValue(Func<T, double> selector, double maxValue)
+    public TBuilder MaxValue(Expression<Func<T, double>> selector, double maxValue)
     {
-        return Add(x => selector(x) <= maxValue);
+        Expression<Func<double,bool>> predicate = val => val <= maxValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MaxValue(Func<T, decimal> selector, decimal maxValue)
+    public TBuilder MaxValue(Expression<Func<T, decimal>> selector, decimal maxValue)
     {
-        return Add(x => selector(x) <= maxValue);
+        Expression<Func<decimal,bool>> predicate = val => val <= maxValue;
+        return Add(selector, predicate);
     }
 
-    public TBuilder MaxValue(Func<T, short> selector, short maxValue)
+    public TBuilder MaxValue(Expression<Func<T, short>> selector, short maxValue)
     {
-        return Add(x => selector(x) <= maxValue);
+        Expression<Func<short,bool>> predicate = val => val <= maxValue;
+        return Add(selector, predicate);
     }
 
     public TBuilder Email(Expression<Func<T, string?>> selector)
