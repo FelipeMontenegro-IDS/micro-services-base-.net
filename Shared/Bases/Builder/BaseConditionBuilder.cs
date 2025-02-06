@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Shared.Interfaces.Builders;
 using Shared.RegularExpressions;
@@ -463,37 +464,37 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
 
     public TBuilder Negative(Expression<Func<T, int>> selector)
     {
-        Expression<Func<int,bool>> predicate = val => val < 0;
+        Expression<Func<int, bool>> predicate = val => val < 0;
         return Add(selector, predicate);
     }
 
     public TBuilder Negative(Expression<Func<T, long>> selector)
     {
-        Expression<Func<long,bool>> predicate = val => val < 0L;
+        Expression<Func<long, bool>> predicate = val => val < 0L;
         return Add(selector, predicate);
     }
 
     public TBuilder Negative(Expression<Func<T, float>> selector)
     {
-        Expression<Func<float,bool>> predicate = val => val < 0f;
+        Expression<Func<float, bool>> predicate = val => val < 0f;
         return Add(selector, predicate);
     }
 
     public TBuilder Negative(Expression<Func<T, double>> selector)
     {
-        Expression<Func<double,bool>> predicate = val => val < 0.0;
+        Expression<Func<double, bool>> predicate = val => val < 0.0;
         return Add(selector, predicate);
     }
 
     public TBuilder Negative(Expression<Func<T, decimal>> selector)
     {
-        Expression<Func<decimal,bool>> predicate = val => val < 0m;
+        Expression<Func<decimal, bool>> predicate = val => val < 0m;
         return Add(selector, predicate);
     }
 
     public TBuilder Negative(Expression<Func<T, short>> selector)
     {
-        Expression<Func<short,bool>> predicate = val => val < 0;
+        Expression<Func<short, bool>> predicate = val => val < 0;
         return Add(selector, predicate);
     }
 
@@ -506,73 +507,73 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
 
     public TBuilder MinValue(Expression<Func<T, int>> selector, int minValue)
     {
-        Expression<Func<int,bool>> predicate = val => val >= minValue;
+        Expression<Func<int, bool>> predicate = val => val >= minValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MinValue(Expression<Func<T, long>> selector, long minValue)
     {
-        Expression<Func<long,bool>> predicate = val => val >= minValue;
+        Expression<Func<long, bool>> predicate = val => val >= minValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MinValue(Expression<Func<T, float>> selector, float minValue)
     {
-        Expression<Func<float,bool>> predicate = val => val >= minValue;
+        Expression<Func<float, bool>> predicate = val => val >= minValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MinValue(Expression<Func<T, double>> selector, double minValue)
     {
-        Expression<Func<double,bool>> predicate = val => val >= minValue;
+        Expression<Func<double, bool>> predicate = val => val >= minValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MinValue(Expression<Func<T, decimal>> selector, decimal minValue)
     {
-        Expression<Func<decimal,bool>> predicate = val => val >= minValue;
+        Expression<Func<decimal, bool>> predicate = val => val >= minValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MinValue(Expression<Func<T, short>> selector, short minValue)
     {
-        Expression<Func<short,bool>> predicate = val => val >= minValue;
+        Expression<Func<short, bool>> predicate = val => val >= minValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MaxValue(Expression<Func<T, int>> selector, int maxValue)
     {
-        Expression<Func<int,bool>> predicate = val => val <= maxValue;
+        Expression<Func<int, bool>> predicate = val => val <= maxValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MaxValue(Expression<Func<T, long>> selector, long maxValue)
     {
-        Expression<Func<long,bool>> predicate = val => val <= maxValue;
+        Expression<Func<long, bool>> predicate = val => val <= maxValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MaxValue(Expression<Func<T, float>> selector, float maxValue)
     {
-        Expression<Func<float,bool>> predicate = val => val <= maxValue;
+        Expression<Func<float, bool>> predicate = val => val <= maxValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MaxValue(Expression<Func<T, double>> selector, double maxValue)
     {
-        Expression<Func<double,bool>> predicate = val => val <= maxValue;
+        Expression<Func<double, bool>> predicate = val => val <= maxValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MaxValue(Expression<Func<T, decimal>> selector, decimal maxValue)
     {
-        Expression<Func<decimal,bool>> predicate = val => val <= maxValue;
+        Expression<Func<decimal, bool>> predicate = val => val <= maxValue;
         return Add(selector, predicate);
     }
 
     public TBuilder MaxValue(Expression<Func<T, short>> selector, short maxValue)
     {
-        Expression<Func<short,bool>> predicate = val => val <= maxValue;
+        Expression<Func<short, bool>> predicate = val => val <= maxValue;
         return Add(selector, predicate);
     }
 
@@ -685,6 +686,51 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
 
         Expression<Func<TValue, bool>> predicate = val => !valueSet.Contains(val);
         return Add(selector, predicate);
+    }
+
+    public TBuilder Count(Expression<Func<T, IEnumerable<object?>>> selector, int count)
+    {
+        Expression<Func<IEnumerable<object?>, bool>> predicate = val => val.Count() == count;
+        return Add(selector, predicate);
+    }
+
+    public TBuilder CountBetween(Expression<Func<T, IEnumerable<object?>>> selector, int min, int max)
+    {
+        Expression<Func<IEnumerable<object?>, bool>> predicate = val => val.Count() >= min && val.Count() <= max;
+        return Add(selector, predicate);
+    }
+
+    public TBuilder All<TValue>(Expression<Func<T, IEnumerable<TValue>>> selector,
+        Expression<Func<TValue, bool>> predicate)
+    {
+        Expression<Func<IEnumerable<TValue>, bool>> allPredicate = collection => collection.All(predicate.Compile());
+        return Add(selector, allPredicate);
+    }
+
+    public TBuilder Any<TValue>(Expression<Func<T, IEnumerable<TValue>>> selector,
+        Expression<Func<TValue, bool>> predicate)
+    {
+        Expression<Func<IEnumerable<TValue>, bool>> anyPredicate = collection => collection.Any(predicate.Compile());
+        return Add(selector, anyPredicate);
+    }
+
+    public TBuilder Contains<TValue>(Expression<Func<T, IEnumerable<TValue>>> selector, TValue value)
+    {
+        Expression<Func<IEnumerable<TValue>, bool>> predicate = collection => collection.Contains(value);
+        return Add(selector, predicate);
+    }
+
+    public TBuilder DistinctCount(Expression<Func<T, IEnumerable<object?>>> selector, int count)
+    {
+        Expression<Func<IEnumerable<object?>, bool>> predicate = val => val.Distinct().Count() == count;
+        return Add(selector, predicate);
+    }
+
+    public TBuilder None<TValue>(Expression<Func<T, IEnumerable<TValue>>> selector,
+        Expression<Func<TValue, bool>> predicate)
+    {
+        Expression<Func<IEnumerable<TValue>, bool>> nonePredicate = collection => !collection.Any(predicate.Compile());
+        return Add(selector, nonePredicate);
     }
 
     public TBuilder BetweenDates(Expression<Func<T, DateTime>> selector, DateTime startDate, DateTime endDate)
@@ -822,6 +868,63 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
     public TBuilder Contains(Expression<Func<T, string>> selector, string value)
     {
         Expression<Func<string, bool>> predicate = val => val.Contains(value);
+        return Add(selector, predicate);
+    }
+
+    public TBuilder ExactLength(Expression<Func<T, string?>> selector, int length)
+    {
+        Expression<Func<string?, bool>> predicate = val => val != null && val.Length == length;
+        return Add(selector, predicate);
+    }
+
+    public TBuilder EqualsIgnoreCase(Expression<Func<T, string?>> selector, string? value)
+    {
+        Expression<Func<string?, bool>> predicate = val => 
+            val != null && value != null && val.Equals(value, StringComparison.OrdinalIgnoreCase);
+        return Add(selector, predicate);
+    }
+
+    public TBuilder Trimmed(Expression<Func<T, string?>> selector)
+    {
+        Expression<Func<string?, bool>> predicate = val => val != null && val == val.Trim();
+        return Add(selector, predicate);
+    }
+
+    public TBuilder HasOnlyDigits(Expression<Func<T, string?>> selector)
+    {
+        Expression<Func<string?, bool>> predicate = val => !string.IsNullOrEmpty(val) && val.All(char.IsDigit);
+        return Add(selector, predicate);
+    }
+
+    public TBuilder HasOnlyLetters(Expression<Func<T, string?>> selector)
+    {
+        Expression<Func<string?, bool>> predicate = val => !string.IsNullOrEmpty(val) && val.All(char.IsLetter);
+        return Add(selector, predicate);
+    }
+
+    public TBuilder HasLettersAndNumbers(Expression<Func<T, string?>> selector)
+    {
+        Expression<Func<string?, bool>> predicate = val => 
+            !string.IsNullOrEmpty(val) && val.Any(char.IsLetter) && val.Any(char.IsDigit);
+        return Add(selector, predicate);
+    }
+
+    public TBuilder HasSpecialCharacters(Expression<Func<T, string?>> selector)
+    {
+        Expression<Func<string?, bool>> predicate = val => 
+            !string.IsNullOrEmpty(val) && val.Any(c => !char.IsLetterOrDigit(c));
+        return Add(selector, predicate);
+    }
+
+    public TBuilder IsJson(Expression<Func<T, string?>> selector)
+    {
+        Expression<Func<string?, bool>> predicate = val => IsValidJson(val);
+        return Add(selector, predicate);
+    }
+
+    public TBuilder IsBase64(Expression<Func<T, string?>> selector)
+    {
+        Expression<Func<string?,bool>> predicate = val => !string.IsNullOrEmpty(val) && val.Length % 4 == 0 && RegularExpression.FormatBase64.IsMatch(val);
         return Add(selector, predicate);
     }
 
@@ -964,6 +1067,22 @@ public abstract class BaseConditionBuilder<TBuilder, T> : ICondition<TBuilder, T
                 binaryExpression.Left is ConstantExpression leftConstant &&
                 leftConstant.Value is int leftValue && leftValue == 0:
                 throw new ArgumentException("The condition provided has no effect because it is always '0'.");
+        }
+    }
+    
+    private static bool IsValidJson(string? val)
+    {
+        if (string.IsNullOrWhiteSpace(val))
+            return false;
+
+        try
+        {
+            JsonDocument.Parse(val);
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
         }
     }
 }
